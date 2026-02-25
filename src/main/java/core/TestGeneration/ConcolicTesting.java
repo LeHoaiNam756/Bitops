@@ -48,7 +48,7 @@ public class ConcolicTesting {
          long endTime = System.currentTimeMillis();
          double memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
          testResult.setTimeToGenerate(endTime - startTime);
-         testResult.setMemoryUsed(memoryUsed);
+         testResult.setMemoryUsed(memoryUsed / (1024 * 1024));
          return testResult;
     }
 
