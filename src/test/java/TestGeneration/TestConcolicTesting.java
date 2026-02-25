@@ -19,19 +19,21 @@ import static org.junit.Assert.assertEquals;
 public class TestConcolicTesting {
     @Test
     public void test_setAllCfgNode_1() {
-        String sourceCode = "    public void testMethod() {\n" +
-                "        for (int i = 0; i < 10; i++) {\n" +
-                "            if (i % 2 == 0) {\n" +
-                "                int j = 0;\n" +
-                "                while (j < i) {\n" +
-                "                    System.out.println(j);\n" +
-                "                    j++;\n" +
-                "                }\n" +
-                "            } else {\n" +
-                "                System.out.println(\"Odd\");\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }";
+        String sourceCode = """
+                    public void testMethod() {
+                        for (int i = 0; i < 10; i++) {
+                            if (i % 2 == 0) {
+                                int j = 0;
+                                while (j < i) {
+                                    System.out.println(j);
+                                    j++;
+                                }
+                            } else {
+                                System.out.println("Odd");
+                            }
+                        }
+                    }\
+                """;
         CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
         CfgNode beginNode = new CfgNode();
         beginNode.setBeginCfgNode(true);
@@ -50,15 +52,17 @@ public class TestConcolicTesting {
 
     @Test
     public void test_setAllCfgNode_2() {
-        String sourceCode = "    public void testMethod(int x, int y) {\n" +
-                "        do {\n" +
-                "            do {\n" +
-                "                System.out.println(x + y);\n" +
-                "                y++;\n" +
-                "            } while (y < 5 && x > 0);\n" +
-                "            x--;\n" +
-                "        } while (x > 0 && y < 10);\n" +
-                "    }";
+        String sourceCode = """
+                    public void testMethod(int x, int y) {
+                        do {
+                            do {
+                                System.out.println(x + y);
+                                y++;
+                            } while (y < 5 && x > 0);
+                            x--;
+                        } while (x > 0 && y < 10);
+                    }\
+                """;
         CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
         CfgNode beginNode = new CfgNode();
         beginNode.setBeginCfgNode(true);
