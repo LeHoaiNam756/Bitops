@@ -88,7 +88,6 @@ public class SymbolicExecution {
         }
 
         model = createModel(ctx, finalZ3Expression);
-        System.out.println("Final Z3 Expression: " + finalZ3Expression);
     }
 
     private Model createModel(Context ctx, BoolExpr f) {
