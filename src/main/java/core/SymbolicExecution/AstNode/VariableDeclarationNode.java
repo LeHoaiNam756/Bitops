@@ -1,5 +1,6 @@
 package core.SymbolicExecution.AstNode;
 
+import core.SymbolicExecution.SymbolicExecution;
 import org.eclipse.jdt.core.dom.*;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
 import core.SymbolicExecution.MemoryModel;
@@ -61,6 +62,8 @@ public class VariableDeclarationNode extends ExpressionNode {
 
         if (initializer != null) {
             initValue = ExpressionNode.executeExpression(initializer, memoryModel);
+            //TODO: temp solution for variable declaration related to parameter, need to be refactored later
+            variable.setParameter(SymbolicExecution.isRelatedToParameter);
         }
 
         memoryModel.declareVariable(variable, initValue);
