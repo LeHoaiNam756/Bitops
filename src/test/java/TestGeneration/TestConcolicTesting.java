@@ -249,4 +249,57 @@ public class TestConcolicTesting {
         }
         assertEquals(100.0, result.getCoveragePercent(), 0.01);
     }
+
+    public void test_runFullConcolic_Independence_Loop_BRANCH() {
+        ConcolicTesting concolicTesting = new ConcolicTesting();
+        int id = 1;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\Independence.java";
+        String className = "Independence.java";
+        String methodName = "loop";
+        ASTHelper.Coverage coverage = ASTHelper.Coverage.BRANCH;
+        TestResult result = concolicTesting.runConcolicTesting(
+                id, filePath, className, methodName,  coverage
+        );
+        List<TestData> fullTestData = result.getFullTestData();
+        for (TestData data : fullTestData) {
+            System.out.println(data);
+        }
+        assertEquals(100.0, result.getCoveragePercent(), 0.01);
+    }
+
+    @Test
+     public void test_runFullConcolic_AccountBalance_STATEMENT() {
+        ConcolicTesting concolicTesting = new ConcolicTesting();
+        int id = 1;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\AccountBalance.java";
+        String className = "AccountBalance.java";
+        String methodName = "processTransaction";
+        ASTHelper.Coverage coverage = ASTHelper.Coverage.STATEMENT;
+        TestResult result = concolicTesting.runConcolicTesting(
+                id, filePath, className, methodName,  coverage
+        );
+        List<TestData> fullTestData = result.getFullTestData();
+        for (TestData data : fullTestData) {
+            System.out.println(data);
+        }
+        assertEquals(100.0, result.getCoveragePercent(), 0.01);
+     }
+
+    @Test
+    public void test_runFullConcolic_AccountBalance_BRANCH() {
+        ConcolicTesting concolicTesting = new ConcolicTesting();
+        int id = 1;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\AccountBalance.java";
+        String className = "AccountBalance.java";
+        String methodName = "processTransaction";
+        ASTHelper.Coverage coverage = ASTHelper.Coverage.BRANCH;
+        TestResult result = concolicTesting.runConcolicTesting(
+                id, filePath, className, methodName,  coverage
+        );
+        List<TestData> fullTestData = result.getFullTestData();
+        for (TestData data : fullTestData) {
+            System.out.println(data);
+        }
+        assertEquals(100.0, result.getCoveragePercent(), 0.01);
+    }
 }
