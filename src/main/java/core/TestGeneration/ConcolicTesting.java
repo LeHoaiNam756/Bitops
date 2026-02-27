@@ -1,5 +1,6 @@
 package core.TestGeneration;
 
+import lombok.Getter;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
@@ -25,8 +26,13 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ConcolicTesting {
-    private List<ASTNode> unitsASTNodeList;
-    private ASTNode testUnit;
+    //TODO: Refactor this class, it is too long and has too many responsibilities.
+    // Consider applying Single Responsibility Principle by breaking it down into smaller classes or
+    // methods with clear responsibilities.
+    // TODO: This should not be static, it should be an instance variable. Refactor accordingly.
+    public static List<ASTNode> unitsASTNodeList;
+    // TODO: This should not be static, it should be an instance variable. Refactor accordingly.
+    public static ASTNode testUnit;
     private List<ASTNode> parameterList;
     private CompilationUnit compilationUnit;
     private Class<?>[] parameterClasses;
