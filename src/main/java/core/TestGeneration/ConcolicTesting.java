@@ -26,34 +26,34 @@ import java.util.*;
 
 public class ConcolicTesting {
     private List<ASTNode> unitsASTNodeList;
-    private ASTNode testUnit;
-    private List<ASTNode> parameterList;
+    protected ASTNode testUnit;
+    protected List<ASTNode> parameterList;
     private CompilationUnit compilationUnit;
-    private Class<?>[] parameterClasses;
+    protected Class<?>[] parameterClasses;
     private List<String> parameterNames;
-    private String simpleClassName;
-    private String fullyClonedClassName;
-    private CfgNode rootCfgNode;
-    private CfgNode finalEndCfgNode;
-    private Set<CfgNode> totalCfgNodes;
+    protected String simpleClassName;
+    protected String fullyClonedClassName;
+    protected CfgNode rootCfgNode;
+    protected CfgNode finalEndCfgNode;
+    protected Set<CfgNode> totalCfgNodes;
 
     public TestResult runConcolicTesting(int id, String filePath, String className, String methodName,
-                                                ASTHelper.Coverage coverage) {
-         long startTime = System.currentTimeMillis();
-         setup(filePath, className, methodName, coverage);
-         setupCfgTree(coverage);
-         setupParameters();
+                                         ASTHelper.Coverage coverage) {
+        long startTime = System.currentTimeMillis();
+        setup(filePath, className, methodName, coverage);
+        setupCfgTree(coverage);
+        setupParameters();
 
-         TestResult testResult = generateTests(id, coverage);
-         long endTime = System.currentTimeMillis();
-         double memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-         testResult.setTimeToGenerate(endTime - startTime);
-         testResult.setMemoryUsed(memoryUsed / (1024 * 1024));
-         return testResult;
+        TestResult testResult = generateTests(id, coverage);
+        long endTime = System.currentTimeMillis();
+        double memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        testResult.setTimeToGenerate(endTime - startTime);
+        testResult.setMemoryUsed(memoryUsed / (1024 * 1024));
+        return testResult;
     }
 
 
-    private TestResult generateTests(int id, ASTHelper.Coverage coverage) {
+    protected TestResult generateTests(int id, ASTHelper.Coverage coverage) {
         TestResult testResult = new TestResult();
         testResult.setId(id);
 
@@ -103,7 +103,7 @@ public class ConcolicTesting {
         return testResult;
     }
 
-    private void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
+    protected void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
         TestDriverRunner.runTestDriver(FilePath.PATH_TO_TEST_DRIVER, testInputs);
         MarkedPath.markPathToCfg(rootCfgNode);
         MarkedPath.getMarkedStatements().forEach(markedStatement -> {
@@ -120,7 +120,7 @@ public class ConcolicTesting {
     }
 
     private void setup(String filePath, String className, String methodName,
-                             ASTHelper.Coverage coverage) {
+                       ASTHelper.Coverage coverage) {
         RamStorage.reset();
         MarkedPath.resetVisitedNodes();
         this.compilationUnit = ProjectParser.getCompilationUnit(filePath);
@@ -146,7 +146,7 @@ public class ConcolicTesting {
     }
 
     private void setupFullyClonedClassName(String className, String filePath,
-                                               ASTHelper.Coverage coverage) {
+                                           ASTHelper.Coverage coverage) {
         try {
             String newPath = getRootProjectPath(filePath);
             Path rootPackagePath = CloneProject.findRootPackage(Paths.get(newPath));
@@ -287,7 +287,7 @@ public class ConcolicTesting {
         MethodDeclaration testMethod = (MethodDeclaration) testUnit;
         String testMethodName = testMethod.getName().getIdentifier();
         List<?> testMethodParams = testMethod.parameters();
-        
+
         return CloneProject.getInformationOfMethods().entrySet().stream()
                 .filter(entry -> {
                     ASTNode key = entry.getKey();
@@ -337,7 +337,7 @@ public class ConcolicTesting {
         return (coveredBranches / totalBranches) * 100;
     }
 
-    private double calculateFullUnitCoverage(ASTHelper.Coverage coverage) {
+    protected double calculateFullUnitCoverage(ASTHelper.Coverage coverage) {
         if (coverage == ASTHelper.Coverage.STATEMENT) {
             return calculateFullUnitStatementCoverage();
         } else {
@@ -364,6 +364,4 @@ public class ConcolicTesting {
         }
         return (coveredStatements / totalStatements) * 100;
     }
-
 }
-

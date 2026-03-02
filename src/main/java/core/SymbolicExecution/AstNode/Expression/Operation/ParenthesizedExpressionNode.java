@@ -3,6 +3,7 @@ package core.SymbolicExecution.AstNode.Expression.Operation;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import lombok.Getter;
+import lombok.Setter;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
@@ -10,6 +11,7 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNode;
 import core.SymbolicExecution.MemoryModel;
 
 @Getter
+@Setter
 public class ParenthesizedExpressionNode extends OperationExpressionNode {
     private AstNode innerAstNode;
 
@@ -29,7 +31,8 @@ public class ParenthesizedExpressionNode extends OperationExpressionNode {
         return parenthesizedExpressionNode;
     }
 
-    public static Expr<?> convertParenthesizedExpressionToZ3Expr(ParenthesizedExpressionNode astNode, Context ctx, MemoryModel memoryModel) {
+    public static Expr<?> convertParenthesizedExpressionToZ3Expr(ParenthesizedExpressionNode astNode, Context ctx,
+                                                                 MemoryModel memoryModel) {
         AstNode innerAstNode = astNode.innerAstNode;
         return ExpressionNode.convertAstNodeToZ3Expr(innerAstNode, ctx, memoryModel);
     }

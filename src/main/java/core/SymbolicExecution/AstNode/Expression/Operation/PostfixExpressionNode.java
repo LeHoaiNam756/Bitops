@@ -1,6 +1,8 @@
 package core.SymbolicExecution.AstNode.Expression.Operation;
 
 import com.microsoft.z3.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -10,6 +12,8 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNode;
 import core.SymbolicExecution.MemoryModel;
 import core.SymbolicExecution.TypedExpr;
 
+@Getter
+@Setter
 public class PostfixExpressionNode extends OperationExpressionNode{
     private PostfixExpression.Operator operator;
     private AstNode operand;
