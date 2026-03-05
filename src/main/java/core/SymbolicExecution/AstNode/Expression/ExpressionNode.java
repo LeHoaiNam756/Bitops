@@ -24,7 +24,7 @@ public abstract class ExpressionNode extends AstNode {
         } else if (isOperationExpression(expression)) {
             return OperationExpressionNode.executeOperation(expression, memoryModel);
         } else if (expression instanceof MethodInvocation) {
-            return null;
+            return MethodInvocationNode.executeMethodInvocation((MethodInvocation) expression, memoryModel);
         }
         else {
             throw new RuntimeException("Unknown expression type: " + expression.getClass());

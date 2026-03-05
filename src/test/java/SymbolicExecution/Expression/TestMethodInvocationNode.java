@@ -217,4 +217,34 @@ public class TestMethodInvocationNode {
         assertEquals("stub_param", param.getName().getIdentifier());
         assertEquals("int", param.getType().toString());
     }
+
+    @Test
+    public void testGetInvokedMethodReturnTypeName_1() {
+        String src = "class TestClass {\n" +
+                "    public void trigger() { int x = Math.min(2, 3);}\n" +
+                "}";
+        ASTParser parser = ASTParser.newParser(AST.JLS8);
+        parser.setSource(src.toCharArray());
+        parser.setResolveBindings(true);
+        parser.setUnitName("TestClass.java");
+        parser.setEnvironment(null, null, null, true);
+        List<MethodDeclaration> decls = new ArrayList<>();
+        List<MethodInvocation> invox = new ArrayList<>();
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+        cu.accept(new ASTVisitor() {
+            public boolean visit(MethodDeclaration node) {
+                decls.add(node);
+                return true;
+            }
+            public boolean visit(MethodInvocation node) {
+                if (node.getName().getIdentifier().equals("min")) {
+                    invox.add(node);
+                }
+                return true;
+            }
+        });
+        String returnTypeName = MethodInvocationNode.getInvokedMethodReturnTypeName(invox.get(0));
+        assertEquals("int", returnTypeName);
+    }
+
 }

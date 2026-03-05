@@ -110,7 +110,11 @@ public class ConcolicTesting {
     }
 
     private void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
-        TestDriverRunner.runTestDriver(FilePath.PATH_TO_TEST_DRIVER, testInputs);
+        // TODO: test input includes both parameter and stub parameter,
+        //  temp solution is to only use the first n parameter where n
+        //  is the number of parameters of the test unit, need to refactor this part later
+        Object[] parameterTestInputs = Arrays.copyOfRange(testInputs, 0, parameterClasses.length);
+        TestDriverRunner.runTestDriver(FilePath.PATH_TO_TEST_DRIVER, parameterTestInputs);
         MarkedPath.markPathToCfg(rootCfgNode);
         MarkedPath.getMarkedStatements().forEach(markedStatement -> {
             RamStorage.getCoveredStatements().add(markedStatement);

@@ -19,6 +19,7 @@ import java.util.*;
 
 public class SymbolicExecution {
     private List<ASTNode> parameterList;
+    private Class<?>[] parameterClasses;
     private final LinkedHashSet<Expr<?>> paramZ3ExprList = new LinkedHashSet<>();
     private List<PathNode> testPath;
     private MemoryModel memoryModel;
@@ -144,8 +145,25 @@ public class SymbolicExecution {
         return result;
     }
 
+    @Deprecated
     public Object[] getTestInputFromModel(Class<?>[] parameterClasses) {
         return getSolutionFromModel(model, ctx, parameterClasses);
+    }
+
+    public Object[] getTestInputFromModel_v2(Class<?>[] parameterClasses) {
+        int oldLen = (this.parameterClasses != null) ? this.parameterClasses.length : 0;
+        int newLen = parameterClasses.length + oldLen;
+
+        Class<?>[] combined = new Class<?>[newLen];
+
+        System.arraycopy(parameterClasses, 0, combined, 0, parameterClasses.length);
+
+        if (oldLen > 0) {
+            System.arraycopy(this.parameterClasses, 0, combined, parameterClasses.length, oldLen);
+        }
+
+        this.parameterClasses = combined;
+        return getSolutionFromModel(model, ctx, this.parameterClasses);
     }
 
     private Object[] getSolutionFromModel(Model model, Context ctx, Class<?>[] parameterClasses) {

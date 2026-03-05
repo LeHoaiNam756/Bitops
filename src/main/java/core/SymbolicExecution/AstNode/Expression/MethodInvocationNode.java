@@ -7,9 +7,7 @@ import core.SymbolicExecution.Variable.PrimitiveVariable;
 import core.SymbolicExecution.Variable.Variable;
 import core.TestGeneration.ConcolicTesting;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MethodInvocationNode extends ExpressionNode {
@@ -22,9 +20,8 @@ public class MethodInvocationNode extends ExpressionNode {
             return declareStubVariable(methodInvocation, methodDeclaration, memoryModel);
         } else {
             // method invocation outside the class or in libs
-//            Class<?> invokedMethodReturnClass = getInvokedMethodReturnClass(methodInvocation, memoryModel);
-//            return declareStubVariable(methodName, invokedMethodReturnClass, memoryModel, methodInvocation);
-            return null;
+            Class<?> invokedMethodReturnClass = getInvokedMethodReturnClass(methodInvocation);
+            return declareStubVariable(methodInvocation, invokedMethodReturnClass, memoryModel);
         }
     }
 
@@ -79,6 +76,38 @@ public class MethodInvocationNode extends ExpressionNode {
         return null;
     }
 
+    /**
+     * return the return type of the method invocation in fully qualified name
+     * (e.g., "java.lang.String" or "com.app.User"), fallback to "Object"
+     * @param methodInvocation AST node of the method invocation
+     * @return String representing the return type
+     */
+    public static String getInvokedMethodReturnTypeName(MethodInvocation methodInvocation) {
+        IMethodBinding methodBinding = methodInvocation.resolveMethodBinding();
+
+        if (methodBinding != null) {
+            ITypeBinding returnType = methodBinding.getReturnType();
+
+            return returnType.getQualifiedName();
+        }
+
+        return "Object";
+    }
+
+    /**
+     * using java reflection to get the return type class of the method invocation, fallback to Object.class
+     * @param methodInvocation AST node of the method invocation
+     * @return Class<?> representing the return type
+     */
+    public static Class<?> getInvokedMethodReturnClass(MethodInvocation methodInvocation) {
+        String returnTypeName = getInvokedMethodReturnTypeName(methodInvocation);
+        try {
+            return Class.forName(returnTypeName);
+        } catch (ClassNotFoundException e) {
+            return Object.class;
+        }
+    }
+
     private static AstNode declareStubVariable(MethodInvocation methodInvocation,
                                                MethodDeclaration methodDeclaration,
                                                MemoryModel memoryModel) {
@@ -98,6 +127,52 @@ public class MethodInvocationNode extends ExpressionNode {
             throw new RuntimeException("Unexpected array type");
         } else {
             throw new RuntimeException("Invalid type");
+        }
+    }
+
+    public static AstNode declareStubVariable(MethodInvocation methodInvocation,
+                                               Class<?> returnTypeClass,
+                                               MemoryModel memoryModel) {
+        String methodName = methodInvocation.getName().getIdentifier();
+        String stubName = methodName + "_call_" + numberOfFunctionsCall;
+        numberOfFunctionsCall++;
+        SimpleNameNode stubVariableAstNode= SimpleNameNode.of(stubName);
+        replaceMethodInvocationWithStub(methodInvocation, stubName);
+        if (returnTypeClass.isPrimitive()) {
+            PrimitiveType primitiveType = getPrimitiveTypeFromClass(returnTypeClass, methodInvocation.getAST());
+            Variable stubVariable = new PrimitiveVariable(primitiveType, stubName);
+            memoryModel.declareVariable(stubVariable, stubVariableAstNode);
+            stubVariable.setParameter(true);
+            addStubVariableToParameterList(stubName, primitiveType);
+            return stubVariableAstNode;
+        } else if (returnTypeClass.isArray()) {
+            throw new UnsupportedOperationException("Stub not supported array type yet!");
+        } else {
+            throw new UnsupportedOperationException("Stub not supported non-primitive type yet!");
+        }
+    }
+
+    public static PrimitiveType getPrimitiveTypeFromClass(Class<?> clazz, AST ast) {
+        if (clazz == int.class) {
+            return ast.newPrimitiveType(PrimitiveType.INT);
+        } else if (clazz == boolean.class) {
+            return ast.newPrimitiveType(PrimitiveType.BOOLEAN);
+        } else if (clazz == byte.class) {
+            return ast.newPrimitiveType(PrimitiveType.BYTE);
+        } else if (clazz == short.class) {
+            return ast.newPrimitiveType(PrimitiveType.SHORT);
+        } else if (clazz == char.class) {
+            return ast.newPrimitiveType(PrimitiveType.CHAR);
+        } else if (clazz == long.class) {
+            return ast.newPrimitiveType(PrimitiveType.LONG);
+        } else if (clazz == float.class) {
+            return ast.newPrimitiveType(PrimitiveType.FLOAT);
+        } else if (clazz == double.class) {
+            return ast.newPrimitiveType(PrimitiveType.DOUBLE);
+        } else if (clazz == void.class) {
+            return ast.newPrimitiveType(PrimitiveType.VOID);
+        } else {
+            throw new RuntimeException("Unsupported primitive type: " + clazz.getName());
         }
     }
 
@@ -131,5 +206,9 @@ public class MethodInvocationNode extends ExpressionNode {
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> parameters = methodInvokedStub.parameters();
         parameters.add(singleVariableDeclaration);
+    }
+
+    public static void resetNumberOfFunctionsCall() {
+        numberOfFunctionsCall = 1;
     }
 }
