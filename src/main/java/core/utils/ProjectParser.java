@@ -12,36 +12,83 @@ import java.util.List;
 import java.util.Map;
 
 public class ProjectParser {
+
+    private final ASTParser parser;
+
+    private String lastFilePath;
+    private String lastSourceCode;
+    private CompilationUnit lastCompilationUnit;
+    private List<ASTNode> lastMethodDecls;
+
+    public ProjectParser() {
+        this.parser = ASTParser.newParser(AST.JLS8);
+        configureParser();
+    }
+
     /**
-     * Parses a Java file and returns a list of AST nodes representing functions/methods.
-     * 
-     * @param filePath the path to the Java source file
-     * @return a list of AST nodes representing methods in the file, or an empty list if parsing fails
+     * Load and parse a Java file, caching its source, CompilationUnit and method list.
+     *
+     * @param filePath path to the Java source file
      */
-    public static List<ASTNode> parseFile(String filePath) {
+    public void loadFile(String filePath) {
         try {
-            String sourceCode = readFileToString(filePath);
-            
-            return parseSourceCodeToAstFuncList(sourceCode);
+            this.lastSourceCode = readFileToString(filePath);
+            this.lastFilePath = filePath;
+
+            this.lastCompilationUnit = parseSourceCodeToCompilationUnit(this.lastSourceCode);
+            this.lastMethodDecls = extractMethodsFromCompilationUnit(this.lastCompilationUnit);
         } catch (IOException e) {
             System.err.println("Error reading file: " + filePath + " - " + e.getMessage());
-            return new ArrayList<>();
+            this.lastSourceCode = null;
+            this.lastFilePath = null;
+            this.lastCompilationUnit = null;
+            this.lastMethodDecls = new ArrayList<>();
         }
     }
 
     /**
+     * @return cached CompilationUnit, or throws if {@link #loadFile(String)} was not called.
+     */
+    public CompilationUnit getCompilationUnit() {
+        if (lastCompilationUnit == null) {
+            throw new IllegalStateException("CompilationUnit not initialized. Call loadFile() first.");
+        }
+        return lastCompilationUnit;
+    }
+
+    /**
+     * @return cached list of method declarations (non-constructors) from last CompilationUnit.
+     */
+    public List<ASTNode> getMethods() {
+        if (lastMethodDecls == null) {
+            throw new IllegalStateException("Methods not initialized. Call loadFile() first.");
+        }
+        return lastMethodDecls;
+    }
+
+    /**
+     * Clears cached state and reinitializes parser configuration.
+     */
+    public void reset() {
+        lastFilePath = null;
+        lastSourceCode = null;
+        lastCompilationUnit = null;
+        lastMethodDecls = null;
+        configureParser();
+    }
+
+    /**
      * Reads a file and returns its content as a String.
-     * 
+     *
      * @param filePath the path to the file to read
      * @return the file content as a String
-     * @throws IOException if an I/O error occurs while reading the file
      */
     private static String readFileToString(String filePath) throws IOException {
         StringBuilder fileData = new StringBuilder(1000);
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
 
         char[] buf = new char[10];
-        int numRead = 0;
+        int numRead;
         while ((numRead = reader.read(buf)) != -1) {
             String readData = String.valueOf(buf, 0, numRead);
             fileData.append(readData);
@@ -54,18 +101,24 @@ public class ProjectParser {
     }
 
     /**
-     * Parses Java source code and extracts AST nodes for all methods (excluding constructors).
-     * 
+     * Parses Java source code and returns a CompilationUnit with binding resolution enabled
+     * using this instance's {@link #parser}.
+     *
      * @param sourceCode the Java source code to parse
-     * @return a list of AST nodes representing methods in the source code
+     * @return the CompilationUnit AST node
      */
-    private static List<ASTNode> parseSourceCodeToAstFuncList(String sourceCode) {
-        List<ASTNode> astFuncList = new ArrayList<>();
-        ASTParser parser = ASTParser.newParser(AST.JLS8);
+    private CompilationUnit parseSourceCodeToCompilationUnit(String sourceCode) {
         parser.setSource(sourceCode.toCharArray());
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-        
+        return (CompilationUnit) parser.createAST(null);
+    }
+
+    /**
+     * Extracts method declarations (excluding constructors) from a CompilationUnit.
+     */
+    private static List<ASTNode> extractMethodsFromCompilationUnit(CompilationUnit cu) {
+        List<ASTNode> astFuncList = new ArrayList<>();
+
         ASTVisitor visitor = new ASTVisitor() {
             @Override
             public boolean visit(TypeDeclaration node) {
@@ -75,13 +128,12 @@ public class ProjectParser {
         };
 
         cu.accept(visitor);
-
         return astFuncList;
     }
 
     /**
      * Extracts method declarations (excluding constructors) from a TypeDeclaration node.
-     * 
+     *
      * @param node the TypeDeclaration node to extract methods from
      * @param astFuncList the list to add the extracted method AST nodes to
      */
@@ -97,39 +149,18 @@ public class ProjectParser {
     }
 
     /**
-     * Parses a Java file and returns its CompilationUnit AST node.
-     * This method enables binding resolution and recovery for better AST analysis.
-     * 
-     * @param filePath the path to the Java source file
-     * @return the CompilationUnit AST node, or null if parsing fails
+     * Configure the underlying ASTParser with binding/compliance options.
      */
-    public static CompilationUnit getCompilationUnit(String filePath) {
-        try {
-            String sourceCode = readFileToString(filePath);
-            return parseSourceCodeToCompilationUnit(sourceCode);
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + filePath + " - " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Parses Java source code and returns a CompilationUnit with binding resolution enabled.
-     * 
-     * @param sourceCode the Java source code to parse
-     * @return the CompilationUnit AST node
-     */
-    private static CompilationUnit parseSourceCodeToCompilationUnit(String sourceCode) {
-        ASTParser parser = ASTParser.newParser(AST.JLS8);
-        parser.setSource(sourceCode.toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+    private void configureParser() {
         parser.setResolveBindings(true);
         parser.setBindingsRecovery(true);
+
+
+        parser.setEnvironment(null, null, null, true);
+        parser.setUnitName("dummy.java");
 
         Map<String, String> options = JavaCore.getOptions();
         JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
         parser.setCompilerOptions(options);
-        
-        return (CompilationUnit) parser.createAST(null);
     }
 }

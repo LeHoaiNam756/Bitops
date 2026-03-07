@@ -253,4 +253,22 @@ public class TestConcolicTesting {
         }
         assertEquals(100.0, result.getCoveragePercent(), 0.01);
     }
+
+    @Test
+    public void test_runFullConcolicWithStub_1() {
+        ConcolicTesting concolicTesting = new ConcolicTesting();
+        int id = 1;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\StubOne.java";
+        String className = "StubOne.java.java";
+        String methodName = "getValue";
+        ASTHelper.Coverage coverage = ASTHelper.Coverage.STATEMENT;
+        TestResult result = concolicTesting.runConcolicTesting(
+                id, filePath, className, methodName,  coverage
+        );
+        Set<TestData> fullTestData = result.getFullTestData();
+        for (TestData data : fullTestData) {
+            System.out.println(data);
+        }
+        assertEquals(100.0, result.getCoveragePercent(), 0.01);
+    }
 }

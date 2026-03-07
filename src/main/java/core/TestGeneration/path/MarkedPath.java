@@ -38,8 +38,17 @@ public final class MarkedPath {
         markedStatements.add(markedStatement);
     }
 
+    public static void resetMarkStatements() {
+        markedStatements.clear();
+    }
+
     public static void reset() {
         markedStatements.clear();
+        totalCoveredBranchAndMCDC.clear();
+        totalCoveredStatement.clear();
+        fullTestSuiteCoveredStatements.clear();
+        fullTestSuiteCoveredBranchesAndMCDC.clear();
+        visitedNodes.clear();
     }
 
 
@@ -102,6 +111,7 @@ public final class MarkedPath {
         }
 
         for (MarkedStatement marked : markedStatements) {
+            System.out.println("Đang xử lý statement đã đánh dấu: [" + marked.getContent() + "] tại vị trí " + marked.getStartPosition());
             if (marked == null) continue;
             String stmt = marked.getContent();
             int startPosition = marked.getStartPosition();
@@ -110,9 +120,10 @@ public final class MarkedPath {
 
             List<CfgNode> candidates = statementToNodes.get(key);
             CfgNode matched = null;
-            //TO DO: Improve, need this code because a boolean statement can be stored twice
+            //TODO: Improve, need this code because a boolean statement can be stored twice
             if (candidates != null && !candidates.isEmpty()) {
                 for (CfgNode n : candidates) {
+                    System.out.println("Kiểm tra candidate CFG node: [" + n.getContent() + "] tại vị trí " + n.getStartPosition());
                     if (n.getStartPosition() == startPosition) {
                         matched = n;
                         break;

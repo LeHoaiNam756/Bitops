@@ -34,6 +34,18 @@ public class CfgNode {
         setEndPosition(ast.getStartPosition() + ast.getLength());
     }
 
+    public int getStartPosition() {
+        return ast.getStartPosition();
+    }
+
+    public String getContent() {
+        if (ast != null) {
+            return ast.toString();
+        }
+        return content;
+    }
+
+
     public void setAst(ASTNode ast) {
         this.ast = ast;
         if (ast != null) {

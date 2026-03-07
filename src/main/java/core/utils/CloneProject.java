@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+
 import java.util.*;
-import java.util.stream.Stream;
 
 public final class CloneProject {
     @Getter
@@ -28,138 +28,98 @@ public final class CloneProject {
     private static CompilationUnit classCompilationUnit;
     private static StringBuilder command;
 
-    public static void cloneProject(String originalDirPath, String destinationDirPath,
-                                    ASTHelper.Coverage coverage, String fileName) {
-        // Prepare a javac command that:
-        //  - Uses the already compiled project classes on the classpath (so cloned code can reference them)
-        //  - Emits all compiled .class files directly into Maven's target/classes folder
-        //    so they are immediately visible to TestDriverRunner on the first run.
-        command = new StringBuilder("javac ");
-        command.append("-cp \"")
-               .append(FilePath.PATH_TO_MAVEN_TARGET_CLASSES)
-               .append("\" ");
-        command.append("-d \"")
-               .append(FilePath.PATH_TO_MAVEN_TARGET_CLASSES)
-               .append("\" ");
-
-        iCloneProject(originalDirPath, destinationDirPath, coverage, fileName);
-
+    public static void cloneProject(String filePath, ASTHelper.Coverage coverage) throws Exception {
+        deleteFilesInDirectory(FilePath.PATH_TO_CLONED_PROJECT);
+        String instrumentedFilePath = makeInstrumentedTestingFile(filePath, coverage);
         try {
-            CommandLine.executeCommand(command.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Can not execution command: " + command.toString(), e);
+            Compiler.getInstance().compileJavaFile(instrumentedFilePath
+                    , FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
+        } catch (RuntimeException e) {
+            throw new Exception("Compilation failed for file: " + instrumentedFilePath, e);
         }
+
     }
 
 
 
 
-    /**
-     * Recursively clones the project structure and instruments target files.
-     */
-    private static void iCloneProject(String originalDirPath, String destinationDirPath,
-                                      ASTHelper.Coverage coverage, String fileToTestName) {
+
+    private static String makeInstrumentedTestingFile(String file2TestPath, ASTHelper.Coverage coverage) {
         try {
-            deleteFilesInDirectory(destinationDirPath);
-            boolean existJavaFile = false;
-            File[] files = getFilesInDirectory(originalDirPath);
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    String dirName = file.getName();
-                    createCloneDirectory(destinationDirPath, dirName);
-                    iCloneProject(originalDirPath + "/" + dirName,
-                            destinationDirPath + "/" + dirName,
-                            coverage, fileToTestName);
-                } else if (file.isFile() && file.getName().endsWith(".java") &&
-                          file.getName().equals(fileToTestName)) {
-                    existJavaFile = true;
-                    totalClassStatement = 0;
-                    String fileName = file.getName();
-                    String sourcePath = originalDirPath + "/" + fileName;
-                    classCompilationUnit = ProjectParser.getCompilationUnit(sourcePath);
-                    createCloneFile(destinationDirPath, fileName);
-                    String sourceCode = createCloneSourceCode(classCompilationUnit,
-                                                             destinationDirPath, coverage);
-                    writeDataToFile(sourceCode, destinationDirPath + "/" + fileName);
-                    command.append("\"")
-                           .append(destinationDirPath)
-                           .append(File.separator)
-                           .append(fileName)
-                           .append("\" ");
-                }
+            File file = new File(file2TestPath);
+            if (!file.exists() || !file.isFile() || !file.getName().endsWith(".java")) {
+                throw new NoSuchFileException("Target Java file not found: " + file2TestPath);
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            ProjectParser parser = new ProjectParser();
+            parser.loadFile(file2TestPath);
+            CompilationUnit compilationUnit = parser.getCompilationUnit();
+            createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, file.getName());
+            String sourceCode = createCloneSourceCode(compilationUnit, coverage);
+            writeDataToFile(sourceCode, FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName());
+            return FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName();
+        } catch (IOException e) {
+            throw new RuntimeException("Error processing file: " + file2TestPath, e);
         }
     }
 
     /**
-     * Gets the Java directory path from a given directory.
+     * Creates a cloned source code for supporting classes without instrumentation
+     * marks,
+     * but updates the package declaration to be inside the cloned root.
      */
-    public static String getJavaDirPath(String originDir) {
-        File dir = new File(originDir);
+    private static String createNonInstrumentedClone(CompilationUnit compilationUnit) {
+        StringBuilder result = new StringBuilder();
 
-        if (!dir.isDirectory()) {
-            throw new RuntimeException("Invalid Dir");
+        if (compilationUnit.getPackage() != null) {
+            result.append("package ")
+                    .append(FilePath.CLONED_PROJECT_ROOT_PACKAGE)
+                    .append(".")
+                    .append(compilationUnit.getPackage().getName().toString())
+                    .append(";\n");
+        } else {
+            result.append("package " + FilePath.CLONED_PROJECT_ROOT_PACKAGE + ";").append("\n");
         }
-        for (File file : Objects.requireNonNull(dir.listFiles())) {
-            if (file.isDirectory()) {
-                if (file.getName().equals("java")) {
-                    return file.getPath();
-                } else {
-                    String dirPath = getJavaDirPath(file.getPath());
-                    if (dirPath.endsWith("java")) return dirPath;
-                }
-            }
+
+        // Imports
+        @SuppressWarnings("unchecked")
+        List<ASTNode> imports = compilationUnit.imports();
+        for (ASTNode iImport : imports) {
+            result.append(iImport);
         }
-        return "";
+
+        // Add the rest of the file content directly
+        @SuppressWarnings("unchecked")
+        List<AbstractTypeDeclaration> types = compilationUnit.types();
+        for (AbstractTypeDeclaration type : types) {
+            result.append(type.toString()).append("\n");
+        }
+
+        return result.toString();
     }
 
+
     /**
-     * Finds the root package directory of a Java project.
+     * Finds the root package directory of a Java project given a specific target
+     * file Path.
      */
-    public static Path findRootPackage(Path sourceDir) throws IOException {
-        if (!Files.exists(sourceDir)) {
-            throw new NoSuchFileException(sourceDir.toString());
-        }
-        Path base = Files.isDirectory(sourceDir) ? sourceDir : sourceDir.getParent();
-
-        List<Path> javaFiles;
-        try (Stream<Path> s = Files.walk(base)) {
-            javaFiles = s.filter(p -> Files.isRegularFile(p) && p.toString().endsWith(".java"))
-                    .toList();
-        }
-        if (javaFiles.isEmpty()) {
-            return base;
+    public static Path findRootPackage(Path targetFile) throws IOException {
+        if (!Files.exists(targetFile) || !Files.isRegularFile(targetFile)) {
+            throw new NoSuchFileException("Target Java file not found: " + targetFile.toString());
         }
 
-        List<Path> candidates = new ArrayList<>();
-        for (Path jf : javaFiles) {
-            String pkg = readPackageDecl(jf);
-            int depth = (pkg == null || pkg.isEmpty()) ? 0 : pkg.split(File.separator + ".").length;
+        String pkg = readPackageDecl(targetFile);
+        int depth = (pkg == null || pkg.isEmpty()) ? 0 : pkg.split("\\.").length;
 
-            Path p = jf.getParent();
-            for (int i = 0; i < depth && p != null; i++) {
-                p = p.getParent();
-            }
-            if (p != null) {
-                candidates.add(p.toAbsolutePath().normalize());
-            }
+        Path root = targetFile.getParent();
+        for (int i = 0; i < depth && root != null; i++) {
+            root = root.getParent();
         }
 
-        Path root = candidates.get(0);
-        for (int i = 1; i < candidates.size(); i++) {
-            root = commonPrefix(root, candidates.get(i));
-            if (root == null) {
-                return base.toAbsolutePath().normalize();
-            }
+        if (root == null) {
+            return targetFile.getParent().toAbsolutePath().normalize();
         }
 
-        if (!root.startsWith(base.toAbsolutePath().normalize())) {
-            return base.toAbsolutePath().normalize();
-        }
-        return root;
+        return root.toAbsolutePath().normalize();
     }
 
     /**
@@ -189,7 +149,7 @@ public final class CloneProject {
     /**
      * Creates a clone directory.
      */
-    public static void createCloneDirectory(String parent, String child) {
+    public static void createDirectory(String parent, String child) {
         File newDirectory = new File(parent, child);
 
         boolean created = newDirectory.mkdir();
@@ -202,7 +162,7 @@ public final class CloneProject {
     /**
      * Creates a clone file.
      */
-    private static void createCloneFile(String directoryPath, String fileName) {
+    private static void createFile(String directoryPath, String fileName) {
         File directory = new File(directoryPath);
         if (!directory.isDirectory()) {
             throw new RuntimeException("Invalid dir");
@@ -224,13 +184,10 @@ public final class CloneProject {
     /**
      * Creates the cloned source code with instrumentation marks.
      */
-    private static String createCloneSourceCode(CompilationUnit compilationUnit, 
-                                               String destinationDirPath,
-                                               ASTHelper.Coverage coverage) throws IOException {
+    private static String createCloneSourceCode(CompilationUnit compilationUnit,
+            ASTHelper.Coverage coverage) throws IOException {
         StringBuilder result = new StringBuilder();
 
-        // Package declaration: put cloned classes under the configured cloned root package,
-        // preserving the original package structure as a suffix.
         if (compilationUnit.getPackage() != null) {
             result.append("package ")
                     .append(FilePath.CLONED_PROJECT_ROOT_PACKAGE)
@@ -238,14 +195,14 @@ public final class CloneProject {
                     .append(compilationUnit.getPackage().getName().toString())
                     .append(";\n");
         } else {
-            result.append(buildPackage(destinationDirPath)).append("\n");
+            result.append("package " + FilePath.CLONED_PROJECT_ROOT_PACKAGE + ";").append("\n");
         }
 
         // Imports
         for (ASTNode iImport : (List<ASTNode>) compilationUnit.imports()) {
             result.append(iImport);
         }
-        
+
         result.append("import static ").append(FilePath.MARKED_STATEMENT_METHOD_IMPORT).append(";\n");
 
         // Extract class data
@@ -261,15 +218,9 @@ public final class CloneProject {
 
         ClassData classData = classDataArr.get(0);
 
-        // Class declaration
-        String modifier = classData.getClassModifier();
-        if (modifier.equals("default") || modifier.equals("private")) {
-            result.append(classData.getTypeOfClass()).append(" ")
-                  .append(classData.getClassName());
-        } else {
-            result.append(modifier).append(" ").append(classData.getTypeOfClass())
-                  .append(" ").append(classData.getClassName());
-        }
+        result.append("public ")
+                .append(classData.getTypeOfClass()).append(" ")
+                .append(classData.getClassName());
 
         // Extensions
         if (classData.getSuperClassName() != null) {
@@ -291,7 +242,6 @@ public final class CloneProject {
         result.append(" {\n");
 
         result.append(classData.getFields());
-        
 
         // Process methods
         List<ASTNode> methods = new ArrayList<>();
@@ -309,22 +259,48 @@ public final class CloneProject {
             totalFunctionBranch = 0;
             MethodDeclaration methodDeclaration = (MethodDeclaration) astNode;
 
-
             if (!methodDeclaration.isConstructor()) {
                 result.append(createCloneMethod(methodDeclaration, coverage));
             } else {
                 result.append(methodDeclaration);
             }
             informationOfMethods.put(methodDeclaration,
-                            Map.of("TotalStatement", totalFunctionStatement,
-                                   "TotalBranch", totalFunctionBranch)
-                    );
+                    Map.of("TotalStatement", totalFunctionStatement,
+                            "TotalBranch", totalFunctionBranch));
         }
 
         result.append(createTotalClassStatementVariable(classData));
         result.append("}");
 
         return result.toString();
+    }
+
+    public static void regenerateCloneFromCompilationUnit(CompilationUnit compilationUnit,
+                                                          String fileName,
+                                                          ASTHelper.Coverage coverage) throws Exception {
+        if (compilationUnit == null) {
+            throw new IllegalArgumentException("CompilationUnit cannot be null");
+        }
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("FileName cannot be null or empty");
+        }
+
+        // Ensure the file has .java extension
+        if (!fileName.endsWith(".java")) {
+            fileName = fileName + ".java";
+        }
+
+        createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, fileName);
+        String sourceCode = createCloneSourceCode(compilationUnit, coverage);
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + fileName;
+        writeDataToFile(sourceCode, filePath);
+
+        try {
+            Compiler.getInstance().compileJavaFile(filePath, FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
+        } catch (RuntimeException e) {
+            throw new Exception("Compilation failed for regenerated file: " + filePath, e);
+        }
+
     }
 
     /**
@@ -342,11 +318,12 @@ public final class CloneProject {
         }
 
         cloneMethod.append(method.getReturnType2() != null ? method.getReturnType2() : "")
-                   .append(" ").append(method.getName()).append("(");
+                .append(" ").append(method.getName()).append("(");
         List<ASTNode> parameters = method.parameters();
         for (int i = 0; i < parameters.size(); i++) {
             cloneMethod.append(parameters.get(i));
-            if (i != parameters.size() - 1) cloneMethod.append(", ");
+            if (i != parameters.size() - 1)
+                cloneMethod.append(", ");
         }
         cloneMethod.append(") {\n");
         cloneMethod.append(generateCodeForBlock(method.getBody(), coverage)).append("\n");
@@ -376,7 +353,7 @@ public final class CloneProject {
      * Generates code for one statement with instrumentation.
      */
     private static String generateCodeForOneStatement(ASTNode statement, String markMethodSeparator,
-                                                      ASTHelper.Coverage coverage) {
+            ASTHelper.Coverage coverage) {
         if (statement == null) {
             return "";
         }
@@ -399,12 +376,12 @@ public final class CloneProject {
     /**
      * Generates code for an if statement with instrumentation.
      */
-    private static String generateCodeForIfStatement(IfStatement ifStatement, 
-                                                     ASTHelper.Coverage coverage) {
+    private static String generateCodeForIfStatement(IfStatement ifStatement,
+            ASTHelper.Coverage coverage) {
         StringBuilder result = new StringBuilder();
 
         result.append("if (").append(generateCodeForCondition(ifStatement.getExpression(), coverage))
-              .append(")\n");
+                .append(")\n");
         result.append("{\n");
         result.append(generateCodeForOneStatement(ifStatement.getThenStatement(), ";", coverage));
         result.append("}\n");
@@ -420,8 +397,8 @@ public final class CloneProject {
     /**
      * Generates code for a for statement with instrumentation.
      */
-    private static String generateCodeForForStatement(ForStatement forStatement, 
-                                                      ASTHelper.Coverage coverage) {
+    private static String generateCodeForForStatement(ForStatement forStatement,
+            ASTHelper.Coverage coverage) {
         StringBuilder result = new StringBuilder();
 
         // Initializers
@@ -432,7 +409,8 @@ public final class CloneProject {
         result.append("for (");
         for (int i = 0; i < initializers.size(); i++) {
             result.append(initializers.get(i));
-            if (i != initializers.size() - 1) result.append(", ");
+            if (i != initializers.size() - 1)
+                result.append(", ");
         }
 
         // Condition
@@ -444,7 +422,8 @@ public final class CloneProject {
         List<ASTNode> updaters = forStatement.updaters();
         for (int i = 0; i < updaters.size(); i++) {
             result.append(generateCodeForOneStatement(updaters.get(i), ",", coverage));
-            if (i != updaters.size() - 1) result.append(", ");
+            if (i != updaters.size() - 1)
+                result.append(", ");
         }
 
         // Body
@@ -458,8 +437,8 @@ public final class CloneProject {
     /**
      * Generates code for a while statement with instrumentation.
      */
-    private static String generateCodeForWhileStatement(WhileStatement whileStatement, 
-                                                       ASTHelper.Coverage coverage) {
+    private static String generateCodeForWhileStatement(WhileStatement whileStatement,
+            ASTHelper.Coverage coverage) {
         StringBuilder result = new StringBuilder();
 
         result.append("while (");
@@ -475,8 +454,8 @@ public final class CloneProject {
     /**
      * Generates code for a do-while statement with instrumentation.
      */
-    private static String generateCodeForDoStatement(DoStatement doStatement, 
-                                                    ASTHelper.Coverage coverage) {
+    private static String generateCodeForDoStatement(DoStatement doStatement,
+            ASTHelper.Coverage coverage) {
         StringBuilder result = new StringBuilder();
 
         result.append("do {");
@@ -493,8 +472,8 @@ public final class CloneProject {
     /**
      * Generates code for a normal statement with markOneStatement method.
      */
-    private static String generateCodeForNormalStatement(ASTNode statement, 
-                                                        String markMethodSeparator) {
+    private static String generateCodeForNormalStatement(ASTNode statement,
+            String markMethodSeparator) {
         StringBuilder result = new StringBuilder();
 
         result.append(generateCodeForMarkMethod(statement, markMethodSeparator));
@@ -522,8 +501,8 @@ public final class CloneProject {
             } else if (charAt == '"') {
                 newStatement.append("\\").append('"');
                 continue;
-            } else if (i != stringStatement.length() - 1 && charAt == '\\' && 
-                      stringStatement.charAt(i + 1) == 'n') {
+            } else if (i != stringStatement.length() - 1 && charAt == '\\' &&
+                    stringStatement.charAt(i + 1) == 'n') {
                 newStatement.append("\" + \"").append("\\n").append("\" + \"");
                 i++;
                 continue;
@@ -534,8 +513,8 @@ public final class CloneProject {
 
         int position = statement.getStartPosition();
         result.append("markOneStatement(\"").append(newStatement)
-              .append("\", false, false, ").append(position).append(')')
-              .append(markMethodSeparator).append("\n");
+                .append("\", false, false, ").append(position).append(')')
+                .append(markMethodSeparator).append("\n");
         totalFunctionStatement++;
         totalClassStatement++;
 
@@ -545,12 +524,12 @@ public final class CloneProject {
     /**
      * Generates code for a condition with instrumentation based on coverage type.
      */
-    private static String generateCodeForCondition(Expression condition, 
-                                                    ASTHelper.Coverage coverage) {
+    private static String generateCodeForCondition(Expression condition,
+            ASTHelper.Coverage coverage) {
         if (coverage == ASTHelper.Coverage.MCDC) {
             return generateCodeForConditionForMCDCCoverage(condition);
-        } else if (coverage == ASTHelper.Coverage.BRANCH || 
-                  coverage == ASTHelper.Coverage.STATEMENT) {
+        } else if (coverage == ASTHelper.Coverage.BRANCH ||
+                coverage == ASTHelper.Coverage.STATEMENT) {
             return generateCodeForConditionForBranchAndStatementCoverage(condition);
         } else {
             throw new RuntimeException("Invalid coverage!");
@@ -565,9 +544,9 @@ public final class CloneProject {
         totalClassStatement++;
         totalFunctionBranch += 2;
         int position = condition.getStartPosition();
-        return "((" + condition + ") && markOneStatement(\"" + condition + "\", true, false, " + 
-               position + "))" +
-               " || markOneStatement(\"" + condition + "\", false, true, " + position + ")";
+        return "((" + condition + ") && markOneStatement(\"" + condition + "\", true, false, " +
+                position + "))" +
+                " || markOneStatement(\"" + condition + "\", false, true, " + position + ")";
     }
 
     /**
@@ -576,13 +555,13 @@ public final class CloneProject {
     private static String generateCodeForConditionForMCDCCoverage(Expression condition) {
         StringBuilder result = new StringBuilder();
 
-        if (condition instanceof InfixExpression && 
-            isSeparableOperator(((InfixExpression) condition).getOperator())) {
+        if (condition instanceof InfixExpression &&
+                isSeparableOperator(((InfixExpression) condition).getOperator())) {
             InfixExpression infixCondition = (InfixExpression) condition;
 
             result.append("(").append(generateCodeForConditionForMCDCCoverage(
                     infixCondition.getLeftOperand()))
-                  .append(") ").append(infixCondition.getOperator()).append(" (");
+                    .append(") ").append(infixCondition.getOperator()).append(" (");
             result.append(generateCodeForConditionForMCDCCoverage(
                     infixCondition.getRightOperand())).append(")");
 
@@ -598,9 +577,9 @@ public final class CloneProject {
             totalFunctionBranch += 2;
             int position = condition.getStartPosition();
             result.append("((").append(condition).append(") && markOneStatement(\"").append(condition)
-                  .append("\", true, false, ").append(position).append("))");
+                    .append("\", true, false, ").append(position).append("))");
             result.append(" || markOneStatement(\"").append(condition).append("\", false, true, ")
-                  .append(position).append(")");
+                    .append(position).append(")");
         }
 
         return result.toString();
@@ -625,7 +604,6 @@ public final class CloneProject {
                 .replace("<", "").replace(">", "")
                 .replace(",", "");
     }
-
 
     /**
      * Creates a total class statement variable declaration.
@@ -658,7 +636,8 @@ public final class CloneProject {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("//") || line.startsWith("/*") || line.isEmpty()) continue;
+                if (line.startsWith("//") || line.startsWith("/*") || line.isEmpty())
+                    continue;
                 if (line.startsWith("package ")) {
                     int semi = line.indexOf(';');
                     if (semi > 0) {
@@ -687,16 +666,10 @@ public final class CloneProject {
         int n = Math.min(a.getNameCount(), b.getNameCount());
         Path res = a.getRoot();
         for (int i = 0; i < n; i++) {
-            if (!a.getName(i).equals(b.getName(i))) break;
+            if (!a.getName(i).equals(b.getName(i)))
+                break;
             res = res.resolve(a.getName(i).toString());
         }
         return res;
-    }
-
-
-    public static String buildPackage(String sourceDir) {
-        // Fallback for files without an explicit package:
-        // they live directly in the cloned root package.
-        return "package " + FilePath.CLONED_PROJECT_ROOT_PACKAGE + ";";
     }
 }

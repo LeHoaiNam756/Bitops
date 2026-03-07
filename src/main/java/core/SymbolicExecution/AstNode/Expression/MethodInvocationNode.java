@@ -11,8 +11,6 @@ import org.eclipse.jdt.core.dom.*;
 import java.util.List;
 
 public class MethodInvocationNode extends ExpressionNode {
-    private static int numberOfFunctionsCall = 1;
-
     public static AstNode executeMethodInvocation(MethodInvocation methodInvocation, MemoryModel memoryModel) {
         if (methodInvocation.getExpression() == null) {
             // method invocation in the same class
@@ -35,6 +33,7 @@ public class MethodInvocationNode extends ExpressionNode {
         String methodName = methodInvocation.getName().getIdentifier();
         @SuppressWarnings("unchecked")
         List<ASTNode> argumentNodes = methodInvocation.arguments();
+        int argumentCount = argumentNodes.size();
 
         for (ASTNode node : listOfMethods) {
             if (node instanceof MethodDeclaration) {
@@ -49,7 +48,7 @@ public class MethodInvocationNode extends ExpressionNode {
                 if (methodBinding.getName().equals(methodName)) {
                     ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 
-                    if (parameterTypes.length == argumentNodes.size()) {
+                    if (parameterTypes.length == argumentCount) {
                         boolean allMatch = true;
 
                         for (int i = 0; i < argumentNodes.size(); i++) {
@@ -66,7 +65,31 @@ public class MethodInvocationNode extends ExpressionNode {
                 }
             }
         }
-        throw new RuntimeException("Could not find a matching binding for: " + methodName);
+
+        for (ASTNode node : listOfMethods) {
+            if (node instanceof MethodDeclaration) {
+                @SuppressWarnings("PatternVariableCanBeUsed")
+                MethodDeclaration methodDecl = (MethodDeclaration) node;
+                
+                IMethodBinding methodBinding = methodDecl.resolveBinding();
+                if (methodBinding != null) {
+                    continue;
+                }
+
+                if (!methodDecl.getName().getIdentifier().equals(methodName)) {
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                List<SingleVariableDeclaration> methodParams = methodDecl.parameters();
+                if (methodParams.size() == argumentCount) {
+                    return methodDecl;
+                }
+            }
+        }
+
+        throw new RuntimeException("Could not find a matching method for: " + methodName + 
+                " with " + argumentCount + " argument(s)");
     }
 
     private static ITypeBinding resolveExpressionBinding(ASTNode node) {
@@ -91,6 +114,49 @@ public class MethodInvocationNode extends ExpressionNode {
             return returnType.getQualifiedName();
         }
 
+        // Fallback: use Java reflection to resolve the return type when binding is unavailable
+        // (e.g., when the parser was not configured with the JRE classpath)
+        return resolveReturnTypeViaReflection(methodInvocation);
+    }
+
+    /**
+     * Attempts to resolve the return type of a method invocation using Java reflection.
+     * Handles cases like Math.min(x, y) where the expression is a simple class name.
+     *
+     * @param methodInvocation the method invocation node
+     * @return the fully qualified return type name, or "Object" if resolution fails
+     */
+    private static String resolveReturnTypeViaReflection(MethodInvocation methodInvocation) {
+        Expression expr = methodInvocation.getExpression();
+        if (expr == null) {
+            return "Object";
+        }
+
+        String className = expr.toString();
+        String methodName = methodInvocation.getName().getIdentifier();
+        @SuppressWarnings("unchecked")
+        List<ASTNode> arguments = methodInvocation.arguments();
+        int argCount = arguments.size();
+
+        // Try common packages to resolve the class
+        String[] candidatePackages = { "java.lang.", "java.util.", "java.io.", "java.math.", "" };
+        for (String pkg : candidatePackages) {
+            try {
+                Class<?> clazz = Class.forName(pkg + className);
+                for (java.lang.reflect.Method method : clazz.getMethods()) {
+                    if (method.getName().equals(methodName) && method.getParameterCount() == argCount) {
+                        Class<?> returnType = method.getReturnType();
+                        if (returnType.isPrimitive()) {
+                            return returnType.getName();
+                        }
+                        return returnType.getCanonicalName();
+                    }
+                }
+            } catch (ClassNotFoundException ignored) {
+                // try next package
+            }
+        }
+
         return "Object";
     }
 
@@ -101,10 +167,23 @@ public class MethodInvocationNode extends ExpressionNode {
      */
     public static Class<?> getInvokedMethodReturnClass(MethodInvocation methodInvocation) {
         String returnTypeName = getInvokedMethodReturnTypeName(methodInvocation);
-        try {
-            return Class.forName(returnTypeName);
-        } catch (ClassNotFoundException e) {
-            return Object.class;
+
+        switch (returnTypeName) {
+            case "int":     return int.class;
+            case "long":    return long.class;
+            case "double":  return double.class;
+            case "float":   return float.class;
+            case "boolean": return boolean.class;
+            case "char":    return char.class;
+            case "byte":    return byte.class;
+            case "short":   return short.class;
+            case "void":    return void.class;
+            default:
+                try {
+                    return Class.forName(returnTypeName);
+                } catch (ClassNotFoundException e) {
+                    return Object.class;
+                }
         }
     }
 
@@ -112,12 +191,13 @@ public class MethodInvocationNode extends ExpressionNode {
                                                MethodDeclaration methodDeclaration,
                                                MemoryModel memoryModel) {
         Type returnType = methodDeclaration.getReturnType2();
-        String methodName = methodInvocation.getName().getIdentifier();
-        String stubName = methodName + "_call_" + numberOfFunctionsCall;
-        numberOfFunctionsCall++;
+        String stubName = buildStubName(methodInvocation);
         SimpleNameNode stubVariableAstNode= SimpleNameNode.of(stubName);
         replaceMethodInvocationWithStub(methodInvocation, stubName);
         if (returnType instanceof PrimitiveType) {
+            if (returnType.toString().equals("void")) {
+                return null;
+            }
             Variable stubVariable = new PrimitiveVariable( (PrimitiveType) returnType, stubName);
             memoryModel.declareVariable(stubVariable, stubVariableAstNode);
             stubVariable.setParameter(true);
@@ -133,12 +213,13 @@ public class MethodInvocationNode extends ExpressionNode {
     public static AstNode declareStubVariable(MethodInvocation methodInvocation,
                                                Class<?> returnTypeClass,
                                                MemoryModel memoryModel) {
-        String methodName = methodInvocation.getName().getIdentifier();
-        String stubName = methodName + "_call_" + numberOfFunctionsCall;
-        numberOfFunctionsCall++;
+        String stubName = buildStubName(methodInvocation);
         SimpleNameNode stubVariableAstNode= SimpleNameNode.of(stubName);
         replaceMethodInvocationWithStub(methodInvocation, stubName);
         if (returnTypeClass.isPrimitive()) {
+            if (returnTypeClass == void.class) {
+                return null;
+            }
             PrimitiveType primitiveType = getPrimitiveTypeFromClass(returnTypeClass, methodInvocation.getAST());
             Variable stubVariable = new PrimitiveVariable(primitiveType, stubName);
             memoryModel.declareVariable(stubVariable, stubVariableAstNode);
@@ -199,6 +280,9 @@ public class MethodInvocationNode extends ExpressionNode {
 
     public static void addStubVariableToParameterList(String stubName, Type returnType,
                                                       MethodDeclaration methodInvokedStub) {
+        if (hasParameter(methodInvokedStub, stubName)) {
+            return;
+        }
         AST ast = methodInvokedStub.getAST();
         SingleVariableDeclaration singleVariableDeclaration = ast.newSingleVariableDeclaration();
         singleVariableDeclaration.setName(ast.newSimpleName(stubName));
@@ -208,7 +292,20 @@ public class MethodInvocationNode extends ExpressionNode {
         parameters.add(singleVariableDeclaration);
     }
 
-    public static void resetNumberOfFunctionsCall() {
-        numberOfFunctionsCall = 1;
+    private static String buildStubName(MethodInvocation mi) {
+        String methodName = mi.getName().getIdentifier();
+        int pos = mi.getStartPosition();
+        return methodName + "_call_at_" + pos;
+    }
+
+    private static boolean hasParameter(MethodDeclaration method, String name) {
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> params = method.parameters();
+        for (SingleVariableDeclaration p : params) {
+            if (p.getName().getIdentifier().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
