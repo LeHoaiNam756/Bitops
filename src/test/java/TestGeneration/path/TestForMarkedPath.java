@@ -10,7 +10,7 @@ import test.ParserForTest;
 public class TestForMarkedPath {
     @Before
     public void setUp() {
-        MarkedPath.reset();
+        MarkedPath.resetMarkStatements();
         MarkedPath.resetVisitedNodes();
         MarkedPath.resetFullTestSuiteCoveredStatements();
     }

@@ -19,19 +19,21 @@ import static org.junit.Assert.assertEquals;
 public class TestConcolicTesting {
     @Test
     public void test_setAllCfgNode_1() {
-        String sourceCode = "    public void testMethod() {\n" +
-                "        for (int i = 0; i < 10; i++) {\n" +
-                "            if (i % 2 == 0) {\n" +
-                "                int j = 0;\n" +
-                "                while (j < i) {\n" +
-                "                    System.out.println(j);\n" +
-                "                    j++;\n" +
-                "                }\n" +
-                "            } else {\n" +
-                "                System.out.println(\"Odd\");\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }";
+        String sourceCode = """
+                    public void testMethod() {
+                        for (int i = 0; i < 10; i++) {
+                            if (i % 2 == 0) {
+                                int j = 0;
+                                while (j < i) {
+                                    System.out.println(j);
+                                    j++;
+                                }
+                            } else {
+                                System.out.println("Odd");
+                            }
+                        }
+                    }\
+                """;
         CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
         CfgNode beginNode = new CfgNode();
         beginNode.setBeginCfgNode(true);
@@ -50,15 +52,17 @@ public class TestConcolicTesting {
 
     @Test
     public void test_setAllCfgNode_2() {
-        String sourceCode = "    public void testMethod(int x, int y) {\n" +
-                "        do {\n" +
-                "            do {\n" +
-                "                System.out.println(x + y);\n" +
-                "                y++;\n" +
-                "            } while (y < 5 && x > 0);\n" +
-                "            x--;\n" +
-                "        } while (x > 0 && y < 10);\n" +
-                "    }";
+        String sourceCode = """
+                    public void testMethod(int x, int y) {
+                        do {
+                            do {
+                                System.out.println(x + y);
+                                y++;
+                            } while (y < 5 && x > 0);
+                            x--;
+                        } while (x > 0 && y < 10);
+                    }\
+                """;
         CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
         CfgNode beginNode = new CfgNode();
         beginNode.setBeginCfgNode(true);
@@ -117,7 +121,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -135,7 +139,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -153,7 +157,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -171,7 +175,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -189,7 +193,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -207,7 +211,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -225,7 +229,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -243,7 +247,25 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
+        for (TestData data : fullTestData) {
+            System.out.println(data);
+        }
+        assertEquals(100.0, result.getCoveragePercent(), 0.01);
+    }
+
+    @Test
+    public void test_runFullConcolicWithStub_1() {
+        ConcolicTesting concolicTesting = new ConcolicTesting();
+        int id = 1;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\StubOne.java";
+        String className = "StubOne.java.java";
+        String methodName = "getValue";
+        ASTHelper.Coverage coverage = ASTHelper.Coverage.STATEMENT;
+        TestResult result = concolicTesting.runConcolicTesting(
+                id, filePath, className, methodName,  coverage
+        );
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }

@@ -38,6 +38,20 @@ public class FindPath {
             this.node = node;
             this.decision = decision;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof PathNode)) return false;
+            @SuppressWarnings("PatternVariableCanBeUsed")
+            PathNode p = (PathNode) o;
+            return Objects.equals(node, p.node) && Objects.equals(decision, p.decision);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(node, decision);
+        }
     }
 
     public static CfgNode getUncoveredNode(Set<CfgNode> totalCfgNodes, Set<CfgNode> coveredCfgNodes) {

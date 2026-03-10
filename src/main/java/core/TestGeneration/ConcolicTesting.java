@@ -1,5 +1,6 @@
 package core.TestGeneration;
 
+import core.SymbolicExecution.AstNode.Expression.MethodInvocationNode;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
@@ -25,38 +26,50 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ConcolicTesting {
-    private List<ASTNode> unitsASTNodeList;
-    protected ASTNode testUnit;
-    protected List<ASTNode> parameterList;
+    //TODO: Refactor this class, it is too long and has too many responsibilities.
+    // Consider applying Single Responsibility Principle by breaking it down into smaller classes or
+    // methods with clear responsibilities.
+    // TODO: This should not be static, it should be an instance variable. Refactor accordingly.
+    public static List<ASTNode> unitsASTNodeList;
+    // TODO: This should not be static, it should be an instance variable. Refactor accordingly.
+    public static ASTNode testUnit;
+
+    private final ProjectParser projectParser = new ProjectParser();
+    private List<ASTNode> parameterList;
     private CompilationUnit compilationUnit;
-    protected Class<?>[] parameterClasses;
+    private Class<?>[] parameterClasses;
     private List<String> parameterNames;
-    protected String simpleClassName;
-    protected String fullyClonedClassName;
-    protected CfgNode rootCfgNode;
-    protected CfgNode finalEndCfgNode;
-    protected Set<CfgNode> totalCfgNodes;
+    private String simpleClassName;
+    private String fullyClonedClassName;
+    private String originalFileName;
+    private CfgNode rootCfgNode;
+    private CfgNode finalEndCfgNode;
+    private Set<CfgNode> totalCfgNodes;
+
+    
+
 
     public TestResult runConcolicTesting(int id, String filePath, String className, String methodName,
-                                         ASTHelper.Coverage coverage) {
-        long startTime = System.currentTimeMillis();
-        setup(filePath, className, methodName, coverage);
-        setupCfgTree(coverage);
-        setupParameters();
+                                                ASTHelper.Coverage coverage) {
+         long startTime = System.currentTimeMillis();
+         setup(filePath, className, methodName, coverage);
+         setupCfgTree(coverage);
+         setupParameters();
 
-        TestResult testResult = generateTests(id, coverage);
-        long endTime = System.currentTimeMillis();
-        double memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        testResult.setTimeToGenerate(endTime - startTime);
-        testResult.setMemoryUsed(memoryUsed / (1024 * 1024));
-        return testResult;
+         TestResult testResult = generateTests(id, coverage);
+         long endTime = System.currentTimeMillis();
+         double memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+         testResult.setTimeToGenerate(endTime - startTime);
+         testResult.setMemoryUsed(memoryUsed / (1024.0 * 1024.0)); // Convert to MB
+         return testResult;
     }
 
 
-    protected TestResult generateTests(int id, ASTHelper.Coverage coverage) {
+    private TestResult generateTests(int id, ASTHelper.Coverage coverage) {
         TestResult testResult = new TestResult();
         testResult.setId(id);
 
+        refreshParameterMetadataIfNeeded();
         TestDriverGenerator.generateTestDriver((MethodDeclaration) testUnit, this.parameterClasses,
                 fullyClonedClassName, simpleClassName);
         TestDriverRunner.reset();
@@ -71,7 +84,7 @@ public class ConcolicTesting {
                 uncoveredNode.setFakeVisited(true);
             }
             prevUncoveredNode = uncoveredNode;
-            MarkedPath.reset();
+            MarkedPath.resetMarkStatements();
             List<FindPath.PathNode> testPath = FindPath.findPathThrough(rootCfgNode, uncoveredNode, finalEndCfgNode);
             if (testPath == null) {
                 uncoveredNode.setFakeVisited(true);
@@ -92,6 +105,24 @@ public class ConcolicTesting {
                 continue;
             }
 
+            boolean metadataUpdated = refreshParameterMetadataIfNeeded();
+            if (metadataUpdated) {
+                try {
+                    CloneProject.regenerateCloneFromCompilationUnit(
+                            this.compilationUnit, 
+                            this.originalFileName, 
+                            coverage);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to regenerate cloned class after stub introduction: " +
+                            e.getMessage(), e);
+                }
+                
+                TestDriverGenerator.generateTestDriver((MethodDeclaration) testUnit, this.parameterClasses,
+                        fullyClonedClassName, simpleClassName);
+                
+                TestDriverRunner.reset();
+            }
+
             Object[] newTestInputs = symbolicExecution.getTestInputFromModel(parameterClasses);
             executeTestAndRecord(newTestInputs, testResult, coverage);
 
@@ -103,7 +134,7 @@ public class ConcolicTesting {
         return testResult;
     }
 
-    protected void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
+    private void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
         TestDriverRunner.runTestDriver(FilePath.PATH_TO_TEST_DRIVER, testInputs);
         MarkedPath.markPathToCfg(rootCfgNode);
         MarkedPath.getMarkedStatements().forEach(markedStatement -> {
@@ -120,14 +151,22 @@ public class ConcolicTesting {
     }
 
     private void setup(String filePath, String className, String methodName,
-                       ASTHelper.Coverage coverage) {
+            ASTHelper.Coverage coverage) {
         RamStorage.reset();
-        MarkedPath.resetVisitedNodes();
-        this.compilationUnit = ProjectParser.getCompilationUnit(filePath);
-        this.unitsASTNodeList = ProjectParser.parseFile(filePath);
+        MarkedPath.reset();
+        TestDriverRunner.reset();
+
+        projectParser.reset();
+        projectParser.loadFile(filePath);
+        this.compilationUnit = projectParser.getCompilationUnit();
+        this.unitsASTNodeList = projectParser.getMethods();
+        
+        // Extract file name from path
+        File file = new File(filePath);
+        this.originalFileName = file.getName();
+        
         setupFullyClonedClassName(className, filePath, coverage);
         setupTestUnit(methodName);
-        MarkedPath.resetFullTestSuiteCoveredStatements();
     }
 
     private void setupTestUnit(String methodName) {
@@ -142,15 +181,14 @@ public class ConcolicTesting {
         }
         @SuppressWarnings("unchecked")
         List<ASTNode> params = ((MethodDeclaration) testUnit).parameters();
-        this.parameterList = new ArrayList<>(params);
+        this.parameterList = params;
     }
 
     private void setupFullyClonedClassName(String className, String filePath,
-                                           ASTHelper.Coverage coverage) {
+            ASTHelper.Coverage coverage) {
         try {
-            String newPath = getRootProjectPath(filePath);
-            Path rootPackagePath = CloneProject.findRootPackage(Paths.get(newPath));
-            CloneProject.cloneProject(rootPackagePath.toString(), FilePath.PATH_TO_CLONED_PROJECT, coverage, className);
+            Path rootPackagePath = CloneProject.findRootPackage(Paths.get(filePath));
+            CloneProject.cloneProject(filePath, coverage);
             className = className.replace(".java", "");
             this.simpleClassName = getClassFromCU(compilationUnit);
 
@@ -180,30 +218,6 @@ public class ConcolicTesting {
             }
         });
         return classes.get(0).getName().toString();
-    }
-
-    private String getRootProjectPath(String filePath) {
-        Path path = Paths.get(filePath).toAbsolutePath().normalize();
-        Path current = path.getParent();
-
-        while (current != null) {
-            if (Files.exists(current.resolve("pom.xml")) ||
-                    Files.exists(current.resolve("build.gradle"))) {
-                return current.toString();
-            }
-            current = current.getParent();
-        }
-
-        current = path.getParent();
-        while (current != null) {
-            if (current.getFileName() != null &&
-                    current.getFileName().toString().equals("src")) {
-                return current.getParent().toString();
-            }
-            current = current.getParent();
-        }
-
-        throw new IllegalStateException("Could not determine project root for: " + filePath);
     }
 
     private void setupCfgTree(ASTHelper.Coverage coverage) {
@@ -274,6 +288,27 @@ public class ConcolicTesting {
         this.parameterClasses = TestDriverUtils.getParameterClasses(this.parameterList);
         this.parameterNames = TestDriverUtils.getParameterNames(this.parameterList);
     }
+
+    private boolean refreshParameterMetadataIfNeeded() {
+        if (!(testUnit instanceof MethodDeclaration)) {
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        List<ASTNode> currentParameters = ((MethodDeclaration) testUnit).parameters();
+        this.parameterList = currentParameters;
+
+        int currentSize = parameterList != null ? parameterList.size() : 0;
+        int existingSize = parameterClasses != null ? parameterClasses.length : -1;
+
+        if (parameterClasses == null || parameterNames == null || currentSize != existingSize) {
+            setupParameters();
+            return true;
+        }
+
+        return false;
+    }
+
 
     private double calculateUnitCoverage(ASTHelper.Coverage coverage) {
         if (coverage == ASTHelper.Coverage.STATEMENT) {
@@ -364,4 +399,6 @@ public class ConcolicTesting {
         }
         return (coveredStatements / totalStatements) * 100;
     }
+
 }
+

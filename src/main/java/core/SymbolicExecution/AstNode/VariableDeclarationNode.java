@@ -63,9 +63,7 @@ public class VariableDeclarationNode extends ExpressionNode {
         if (initializer != null) {
             initValue = ExpressionNode.executeExpression(initializer, memoryModel);
             //TODO: temporary check if the initializer is parameter, change isParameter to true
-            if (SymbolicExecution.isRelatedToParameter) {
-                variable.setParameter(true);
-            }
+            variable.setParameter(SymbolicExecution.isRelatedToParameter);
         }
 
         memoryModel.declareVariable(variable, initValue);

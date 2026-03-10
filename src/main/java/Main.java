@@ -1,56 +1,7 @@
-import core.CFG.Utils.ASTHelper;
-import core.TestGeneration.ConcolicTesting;
-import core.TestGeneration.result.TestData;
-import core.TestGeneration.result.TestResult;
-import core.utils.FilePath;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
+import view.RunTool;
 
 public class Main {
     public static void main(String[] args) {
-        ConcolicTesting concolicTesting = new ConcolicTesting();
-        int id = 1;
-        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + "\\TestSrc\\Utf8Validator.java";
-        String className = "Utf8Validator.java";
-        String methodName = "feed";
-        ASTHelper.Coverage coverage = ASTHelper.Coverage.MCDC;
-
-        TestResult result = concolicTesting.runConcolicTesting(
-                id, filePath, className, methodName, coverage
-        );
-
-        String outputFileName = "C:\\CIA\\JCIA\\CT4J\\src\\main\\java\\core\\output\\output.txt";
-
-        try (PrintWriter out = new PrintWriter(new FileWriter(outputFileName, true))) {
-            out.println("Test Result for " + className + "." + methodName  + " (Coverage: " + coverage + "):");
-
-            List<TestData> fullTestData = result.getFullTestData();
-
-            for (TestData data : fullTestData) {
-                System.out.println(data);
-                out.println(data);
-            }
-
-            String coverageStr = "Coverage: " + result.getCoveragePercent() + "%";
-            String memoryStr = "Memory: " + result.getMemoryUsed() + " mb";
-            String timeStr = "Generation Time: " + result.getTimeToGenerate() + " ms";
-
-            System.out.println(coverageStr);
-            out.println(coverageStr);
-
-            System.out.println(memoryStr);
-            out.println(memoryStr);
-
-            System.out.println(timeStr);
-            out.println(timeStr);
-
-            out.println("------------------------------------------");
-
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
-        }
+        RunTool.main(args);
     }
 }

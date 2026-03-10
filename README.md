@@ -4,7 +4,7 @@ java 17 (Cách làm https://www.youtube.com/watch?v=YONvtseO574)
 ## Bước 1: Clone code
 Mở terminal hoặc git bash trong folder bạn muốn đặt project, nhập từng lệnh sau:
 - `git clone https://github.com/LeHoaiNam756/CT4J.git`
-- `git checkout temp-version-no-ui`
+- `git checkout feature-greedy-path-finder`
 ## Bước 2: Cầu hình tool
 Trong **/src/core/utils/FilePath.java**, sửa biến `JCIA_PROJECT_ROOT_PATH` thành nới bạn đặt project, ví dụ - 
 *"C:\CIA\JCIA\CT4Jj"*
@@ -15,6 +15,5 @@ Do z3 trên maven repo đã cũ, vì vậy ta phải thêm thủ công z3 phiên
  Nếu gặp lỗi mà không xử lý được, bạn hãy tìm .m2 folder trong máy (nếu window thì nó thuờng nằm trong ổ C\User\Admin). Bạn sẽ 
 thấy folder repository. Hãy tạo và copy file jar của z3 vào đùng folder com\microsoft\z3\4.14.0 rồi load lại project
 
-## Bước 4: Chạy concolic testing
-Vì phần clone project đang có bug, muốn test unit trong class nào thì bạn hay ném file java chứa class đó vào `TestSrc` folder
-rồi đổi tên file, tên class, tên method, độ phủ trong file `Main` để có thể test.
+## Bước 4: Chạy tool
+Mở file `src\main\java\core\Main.java`, chạy hàm main.

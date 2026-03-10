@@ -19,6 +19,8 @@ import java.util.*;
 
 public class SymbolicExecution {
     private List<ASTNode> parameterList;
+    private Class<?>[] parameterClasses;
+    // Kept for backward compatibility but no longer used for determining ordering
     private final LinkedHashSet<Expr<?>> paramZ3ExprList = new LinkedHashSet<>();
     private List<PathNode> testPath;
     private MemoryModel memoryModel;
@@ -41,7 +43,6 @@ public class SymbolicExecution {
         HashMap<String, String> cfg = new HashMap<>();
         cfg.put("model", "true");
         ctx = new Context(cfg);
-        paramZ3ExprList.clear();
         executeParameters(ctx);
 
         for (PathNode pathNode : testPath) {
@@ -127,6 +128,8 @@ public class SymbolicExecution {
                 if (variable != null) {
                     Expr<?> paramExpr = variable.createZ3Expr(ctx);
                     variable.setParameter(true);
+                    // paramZ3ExprList is no longer used to determine ordering, but we keep it
+                    // populated for potential diagnostic or backward-compat uses.
                     paramZ3ExprList.add(paramExpr);
                 }
             }
@@ -145,6 +148,7 @@ public class SymbolicExecution {
     }
 
     public Object[] getTestInputFromModel(Class<?>[] parameterClasses) {
+        this.parameterClasses = parameterClasses;
         return getSolutionFromModel(model, ctx, parameterClasses);
     }
 
@@ -171,11 +175,24 @@ public class SymbolicExecution {
 
         Object[] result = new Object[parameterClasses.length];
 
-        int i = 0;
-        for (Expr<?> param : paramZ3ExprList) {
-            Expr<?> evaluatedResult = model.evaluate(param, true);
-            result[i] = convertEvaluatedResultToJavaType(evaluatedResult, parameterClasses[i]);
-            i++;
+        int index = 0;
+        for (ASTNode astNode : parameterList) {
+            if (!(astNode instanceof SingleVariableDeclaration)) {
+                throw new IllegalStateException("Unsupported parameter AST node: " + astNode.getClass());
+            }
+
+            SingleVariableDeclaration svd = (SingleVariableDeclaration) astNode;
+            String paramName = svd.getName().getIdentifier();
+
+            Variable variable = memoryModel.getVariable(paramName);
+            if (variable == null) {
+                throw new IllegalStateException("No variable found in memory model for parameter: " + paramName);
+            }
+
+            Expr<?> paramExpr = variable.createZ3Expr(ctx);
+            Expr<?> evaluatedResult = model.evaluate(paramExpr, true);
+            result[index] = convertEvaluatedResultToJavaType(evaluatedResult, parameterClasses[index]);
+            index++;
         }
 
         return result;

@@ -4,17 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import core.TestGeneration.path.MarkedStatement;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Getter
 @Setter
 public class TestData {
     private Set<MarkedStatement> markedStatements = new HashSet<>();
-    private List<ParameterData> parameterDataList = new ArrayList<>();
+    private Set<ParameterData> parameterDataList = new HashSet<>();
     private Object output;
     private double unitCoverage;
     private String status;
@@ -53,6 +50,20 @@ public class TestData {
             result.add(parameterData.getValue());
         }
         return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        TestData that = (TestData) obj;
+        return Objects.equals(parameterDataList, that.parameterDataList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parameterDataList);
     }
 
     @Override

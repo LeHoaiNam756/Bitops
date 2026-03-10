@@ -4,14 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Setter
 @Getter
 public class TestResult {
     private int id = 0;
-    private List<TestData> fullTestData = new ArrayList<>();
+    private Set<TestData> fullTestData = new HashSet<>();
     private double coveragePercent = 0;
     private double timeToGenerate = 0;
     private double memoryUsed = 0;

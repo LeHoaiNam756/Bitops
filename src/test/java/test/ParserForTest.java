@@ -149,7 +149,8 @@ public class ParserForTest {
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(wrappedSource.toCharArray());
-        parser.setResolveBindings(false);
+        parser.setResolveBindings(true);
+        parser.setBindingsRecovery(true);
 
         CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 
