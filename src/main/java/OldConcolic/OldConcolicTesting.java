@@ -1,6 +1,8 @@
 package OldConcolic;
 
+import core.SymbolicExecution.SymbolicExecution;
 import core.TestGeneration.ConcolicTesting;
+import core.utils.CloneProject;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgNode;
 import core.CFG.Utils.ASTHelper;
@@ -18,6 +20,7 @@ public class OldConcolicTesting extends ConcolicTesting {
         TestResult testResult = new TestResult();
         testResult.setId(id);
 
+        refreshParameterMetadataIfNeeded();
         TestDriverGenerator.generateTestDriver((MethodDeclaration) testUnit, this.parameterClasses,
                 fullyClonedClassName, simpleClassName);
         TestDriverRunner.reset();
@@ -32,7 +35,7 @@ public class OldConcolicTesting extends ConcolicTesting {
                 uncoveredNode.setFakeVisited(true);
             }
             prevUncoveredNode = uncoveredNode;
-            MarkedPath.reset();
+            MarkedPath.resetMarkStatements();
             List<FindPath.PathNode> testPath = FindPath.findPathThrough(rootCfgNode, uncoveredNode, finalEndCfgNode);
             if (testPath == null) {
                 uncoveredNode.setFakeVisited(true);
@@ -51,6 +54,24 @@ public class OldConcolicTesting extends ConcolicTesting {
                 uncoveredNode.setFakeVisited(true);
                 uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
                 continue;
+            }
+
+            boolean metadataUpdated = refreshParameterMetadataIfNeeded();
+            if (metadataUpdated) {
+                try {
+                    CloneProject.regenerateCloneFromCompilationUnit(
+                            this.compilationUnit,
+                            this.originalFileName,
+                            coverage);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to regenerate cloned class after stub introduction: " +
+                            e.getMessage(), e);
+                }
+
+                TestDriverGenerator.generateTestDriver((MethodDeclaration) testUnit, this.parameterClasses,
+                        fullyClonedClassName, simpleClassName);
+
+                TestDriverRunner.reset();
             }
 
             Object[] newTestInputs = symbolicExecution.getTestInputFromModel(parameterClasses);

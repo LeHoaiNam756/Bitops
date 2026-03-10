@@ -1,6 +1,5 @@
 package core.TestGeneration;
 
-import core.SymbolicExecution.AstNode.Expression.MethodInvocationNode;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
@@ -34,17 +33,17 @@ public class ConcolicTesting {
     // TODO: This should not be static, it should be an instance variable. Refactor accordingly.
     public static ASTNode testUnit;
 
-    private final ProjectParser projectParser = new ProjectParser();
-    private List<ASTNode> parameterList;
-    private CompilationUnit compilationUnit;
-    private Class<?>[] parameterClasses;
-    private List<String> parameterNames;
-    private String simpleClassName;
-    private String fullyClonedClassName;
-    private String originalFileName;
-    private CfgNode rootCfgNode;
-    private CfgNode finalEndCfgNode;
-    private Set<CfgNode> totalCfgNodes;
+    protected final ProjectParser projectParser = new ProjectParser();
+    protected List<ASTNode> parameterList;
+    protected CompilationUnit compilationUnit;
+    protected Class<?>[] parameterClasses;
+    protected List<String> parameterNames;
+    protected String simpleClassName;
+    protected String fullyClonedClassName;
+    protected String originalFileName;
+    protected CfgNode rootCfgNode;
+    protected CfgNode finalEndCfgNode;
+    protected Set<CfgNode> totalCfgNodes;
 
     
 
@@ -65,7 +64,7 @@ public class ConcolicTesting {
     }
 
 
-    private TestResult generateTests(int id, ASTHelper.Coverage coverage) {
+    protected TestResult generateTests(int id, ASTHelper.Coverage coverage) {
         TestResult testResult = new TestResult();
         testResult.setId(id);
 
@@ -134,7 +133,7 @@ public class ConcolicTesting {
         return testResult;
     }
 
-    private void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
+    protected void executeTestAndRecord(Object[] testInputs, TestResult testResult, ASTHelper.Coverage coverage) {
         TestDriverRunner.runTestDriver(FilePath.PATH_TO_TEST_DRIVER, testInputs);
         MarkedPath.markPathToCfg(rootCfgNode);
         MarkedPath.getMarkedStatements().forEach(markedStatement -> {
@@ -289,7 +288,7 @@ public class ConcolicTesting {
         this.parameterNames = TestDriverUtils.getParameterNames(this.parameterList);
     }
 
-    private boolean refreshParameterMetadataIfNeeded() {
+    protected boolean refreshParameterMetadataIfNeeded() {
         if (!(testUnit instanceof MethodDeclaration)) {
             return false;
         }

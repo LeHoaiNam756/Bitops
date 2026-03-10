@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="view.ToolView"
+            prefWidth="1200" prefHeight="780">
+    <top>
+        <VBox>
+            <VBox spacing="8">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Unit Test Generation &amp; Coverage" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="Upload Project ZIP" onAction="#handleUploadProject"/>
+                    <Label fx:id="projectPath" text="Project: (none)" />
+                    <Separator orientation="VERTICAL"/>
+                    <Label text="Test Generation Mode:"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT">
+                        <RadioButton fx:id="originalConcolic" text="BitOps Concolic"/>
+                        <RadioButton fx:id="greedyPathFinder" text="Original Concolic"/>
+                    </HBox>
+                    <Separator orientation="VERTICAL" />
+                    <Label text="Coverage mode:"/>
+                    <HBox spacing="6" alignment="CENTER_LEFT">
+                        <RadioButton fx:id="statementCoverage" text="Statement"/>
+                        <RadioButton fx:id="branchCoverage" text="Branch"/>
+                        <RadioButton fx:id="mcdcCoverage" text="MC/DC"/>
+                    </HBox>
+                    <Separator orientation="VERTICAL"/>
+                    <Button text="Run Concolic" onAction="#handleRunConcolic"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </top>
+    <left>
+        <VBox spacing="6" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Label text="Project Tree"/>
+            <TreeView fx:id="projectTree" prefWidth="280" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="6">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Source Viewer"/>
+            </HBox>
+            <ListView fx:id="sourceList" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+    <bottom>
+        <VBox spacing="6">
+            <padding>
+                <Insets top="8" right="10" bottom="8" left="10"/>
+            </padding>
+            <Label text="Generated Test Report" style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+            <!-- Two Column Layout: Summary and Test Inputs Table -->
+            <HBox spacing="12">
+                <!-- Summary Section (Left Column) -->
+                <VBox spacing="6" style="-fx-background-color: #f5f5f5; -fx-padding: 8;"
+                      HBox.hgrow="NEVER" prefWidth="350">
+                    <Label text="Summary" style="-fx-font-size: 11px; -fx-font-weight: bold;"/>
+                    <GridPane hgap="12" vgap="6">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="100" prefWidth="100"/>
+                            <ColumnConstraints minWidth="130" prefWidth="130"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="22" prefHeight="22"/>
+                            <RowConstraints minHeight="22" prefHeight="22"/>
+                            <RowConstraints minHeight="22" prefHeight="22"/>
+                        </rowConstraints>
+                        <Label text="Full Coverage:" GridPane.columnIndex="0"
+                               GridPane.rowIndex="0" style="-fx-font-size: 10px;"/>
+                        <Label fx:id="fullCoverageLabel" text="0.00%"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0"
+                               style="-fx-font-weight: bold; -fx-font-size: 10px;"/>
+                        <Label text="Memory Usage:" GridPane.columnIndex="0"
+                               GridPane.rowIndex="1" style="-fx-font-size: 10px;"/>
+                        <Label fx:id="memoryUsageLabel" text="0.00 MB"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1"
+                               style="-fx-font-weight: bold; -fx-font-size: 10px;"/>
+                        <Label text="Run Time:" GridPane.columnIndex="0"
+                               GridPane.rowIndex="2" style="-fx-font-size: 10px;"/>
+                        <Label fx:id="runtimeLabel" text="0.00 ms" GridPane.columnIndex="1"
+                               GridPane.rowIndex="2" style="-fx-font-weight: bold; -fx-font-size: 10px;"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Test Inputs Table (Right Column) -->
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Test Inputs" style="-fx-font-size: 11px; -fx-font-weight: bold;"/>
+                    <TableView fx:id="reportTable" prefHeight="180" maxHeight="180" VBox.vgrow="ALWAYS">
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                        <columns>
+                            <TableColumn fx:id="testInputsColumn" text="Test Inputs"/>
+                            <TableColumn fx:id="testCoverageColumn" text="Coverage" />
+                            <TableColumn fx:id="testOutputsColumn" text="Test Outputs"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>
+
+

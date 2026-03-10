@@ -12,15 +12,16 @@ import java.util.List;
 
 public class MethodInvocationNode extends ExpressionNode {
     public static AstNode executeMethodInvocation(MethodInvocation methodInvocation, MemoryModel memoryModel) {
-        if (methodInvocation.getExpression() == null) {
-            // method invocation in the same class
-            MethodDeclaration methodDeclaration = getInvokedMethodAST(methodInvocation);
-            return declareStubVariable(methodInvocation, methodDeclaration, memoryModel);
-        } else {
-            // method invocation outside the class or in libs
-            Class<?> invokedMethodReturnClass = getInvokedMethodReturnClass(methodInvocation);
-            return declareStubVariable(methodInvocation, invokedMethodReturnClass, memoryModel);
-        }
+//        if (methodInvocation.getExpression() == null) {
+//            // method invocation in the same class
+//            MethodDeclaration methodDeclaration = getInvokedMethodAST(methodInvocation);
+//            return declareStubVariable(methodInvocation, methodDeclaration, memoryModel);
+//        } else {
+//            // method invocation outside the class or in libs
+//            Class<?> invokedMethodReturnClass = getInvokedMethodReturnClass(methodInvocation);
+//            return declareStubVariable(methodInvocation, invokedMethodReturnClass, memoryModel);
+//        }
+        return null;
     }
 
 

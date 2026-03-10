@@ -1,5 +1,6 @@
 package view;
 
+import OldConcolic.OldConcolicTesting;
 import core.CFG.Utils.ASTHelper;
 import core.TestGeneration.ConcolicTesting;
 import core.TestGeneration.result.ParameterData;
@@ -352,7 +353,7 @@ public class ToolView {
     private ConcolicTesting createConcolicEngine() {
         if (greedyPathFinder.isSelected()) {
             // TODO: implement others if needed
-            return new ConcolicTesting();
+            return new OldConcolicTesting();
         }
         return new ConcolicTesting();
     }
