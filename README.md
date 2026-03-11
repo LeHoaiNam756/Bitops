@@ -69,4 +69,4 @@ Open `src/main/java/Main.java` in your IDE and run the `main` method. The JavaFX
 4. Click **Run** to start concolic test generation.
    ![Step 4: Run test generation](./assets/step4.png)
 5. View the generated test inputs, coverage results, and execution output in the report table.
-6. ![Step 5: View the results](./assets/step5.png)
+ ![Step 5: View the results](./assets/step5.png)
