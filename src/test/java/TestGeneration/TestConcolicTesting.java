@@ -282,7 +282,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -300,7 +300,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -318,7 +318,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        Set<TestData> fullTestData = result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }

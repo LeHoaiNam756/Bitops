@@ -1,7 +1,6 @@
 package core.SymbolicExecution.AstNode.Expression.Name;
 
 
-import OldConcolic.OldSymbolicExecution;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import lombok.Getter;
@@ -36,7 +35,6 @@ public class SimpleNameNode extends NameNode {
         //  We should find a better way to do this.
         if (variable.isParameter()) {
             SymbolicExecution.isRelatedToParameter = true;
-            OldSymbolicExecution.isRelatedToParameter = true;
         }
         return memoryModel.accessVariable(name);
     }
