@@ -1,10 +1,6 @@
-# Bitops: A Concolic-Based Test Input Generation Method for Units with Bit Operators of Java Projects
+# BitOps: A Concolic-Based Test Input Generation Method for Units with Bit Operators of Java Projects
 
-A concolic testing tool that automatically generates test inputs for Java methods, with dedicated support for bitwise and shift operators (`&`, `|`, `^`, `~`, `<<`, `>>`, `>>>`).
-
-## Abstract
-
-Existing concolic testing tools often lack proper support for bitwise and shift operations, leading to incomplete path exploration and inaccurate constraint solving. This tool addresses that gap by encoding bitwise semantics directly into Z3 BitVector constraints, enabling correct and complete test input generation for Java units that contain bit operators.
+BitOps is the prototype tool developed for the research *"BitOps: A Concolic-Based Test Input Generation Method for Units with Bit Operators of Java Projects"*. It implements concolic (concrete + symbolic) execution with dedicated support for bitwise and shift operators (`&`, `|`, `^`, `~`, `<<`, `>>`, `>>>`), addressing a common gap in existing concolic testing tools by encoding bitwise semantics as Z3 BitVector constraints. This enables accurate path exploration and complete test input generation for Java units that involve bit operators, across multiple coverage criteria (Statement, Branch, MC/DC), via a JavaFX-based GUI.
 
 ---
 
@@ -64,18 +60,13 @@ Open `src/main/java/Main.java` in your IDE and run the `main` method. The JavaFX
 
 **Using the GUI:**
 
-1. Load your Java project by selecting the source file or project folder via the file browser.
+1. Load your Java project by selecting the source file or project zip file via the file browser.
+![Step 1: Upload project zip file](./assets/step1.png)
 2. Select the class and method you want to test from the project tree.
-3. Choose a coverage criterion: **Statement**, **Branch**, or **MC/DC**.
+   ![Step 2: Select unit](./assets/step2.png)
+3. Choose test generation mode (**BitOps** or **ISDART**) and run coverage mode (**Statement**, **Branch**, or **MC/DC**).
+   ![Step 3: Upload project zip file](./assets/step3.png)
 4. Click **Run** to start concolic test generation.
+   ![Step 4: Run test generation](./assets/step4.png)
 5. View the generated test inputs, coverage results, and execution output in the report table.
-
----
-
-## Running Tests
-
-```bash
-mvn test
-```
-
-Test suites are located under `src/test/java/` and cover CFG construction, symbolic execution, and test generation modules.
+6. ![Step 5: View the results](./assets/step5.png)

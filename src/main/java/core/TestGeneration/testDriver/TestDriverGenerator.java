@@ -251,7 +251,9 @@ public class TestDriverGenerator {
     }
 
     private static void createTestDriverFile(String content) throws IOException {
-        Files.write(Path.of(FilePath.PATH_TO_TEST_DRIVER), content.getBytes());
+        Path path = Path.of(FilePath.PATH_TO_TEST_DRIVER);
+        Files.createDirectories(path.getParent());
+        Files.write(path, content.getBytes());
     }
     
     /**

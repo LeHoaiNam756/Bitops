@@ -10,7 +10,7 @@ public class RunTool extends Application{
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ToolView.fxml"));
         Scene scene = new Scene(loader.load(), 1200, 780);
-        primaryStage.setTitle("CT4J");
+        primaryStage.setTitle("BitOps");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

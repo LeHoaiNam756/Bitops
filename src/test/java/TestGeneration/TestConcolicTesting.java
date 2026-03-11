@@ -282,7 +282,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        List<TestData> fullTestData = (List<TestData>) result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -300,7 +300,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        List<TestData> fullTestData = (List<TestData>) result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
@@ -309,7 +309,8 @@ public class TestConcolicTesting {
 
     @Test
     public void test_runFullConcolic_AccountBalance_BRANCH() {
-        ConcolicTesting concolicTesting = new ConcolicTesting();
+        ConcolicTesting concolicTesting = new
+                ConcolicTesting();
         int id = 1;
         String filePath = FilePath.JCIA_PROJECT_ROOT_PATH +  "\\TestSrc\\AccountBalance.java";
         String className = "AccountBalance.java";
@@ -318,7 +319,7 @@ public class TestConcolicTesting {
         TestResult result = concolicTesting.runConcolicTesting(
                 id, filePath, className, methodName,  coverage
         );
-        List<TestData> fullTestData = result.getFullTestData();
+        List<TestData> fullTestData = (List<TestData>) result.getFullTestData();
         for (TestData data : fullTestData) {
             System.out.println(data);
         }
