@@ -53,10 +53,11 @@ public final class CloneProject {
             ProjectParser parser = new ProjectParser();
             parser.loadFile(file2TestPath);
             CompilationUnit compilationUnit = parser.getCompilationUnit();
-            createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, file.getName());
+            createFile(Path.of(FilePath.JCIA_PROJECT_ROOT_PATH, FilePath.PATH_TO_CLONED_PROJECT).toString(), file.getName());
             String sourceCode = createCloneSourceCode(compilationUnit, coverage);
-            writeDataToFile(sourceCode, FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName());
-            return FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName();
+            String clonedFilePath = Path.of(FilePath.JCIA_PROJECT_ROOT_PATH, FilePath.PATH_TO_CLONED_PROJECT, file.getName()).toString();
+            writeDataToFile(sourceCode, clonedFilePath);
+            return clonedFilePath;
         } catch (IOException e) {
             throw new RuntimeException("Error processing file: " + file2TestPath, e);
         }
@@ -290,9 +291,9 @@ public final class CloneProject {
             fileName = fileName + ".java";
         }
 
-        createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, fileName);
+        createFile(Path.of(FilePath.JCIA_PROJECT_ROOT_PATH, FilePath.PATH_TO_CLONED_PROJECT).toString(), fileName);
         String sourceCode = createCloneSourceCode(compilationUnit, coverage);
-        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + fileName;
+        String filePath = Path.of(FilePath.JCIA_PROJECT_ROOT_PATH, FilePath.PATH_TO_CLONED_PROJECT, fileName).toString();
         writeDataToFile(sourceCode, filePath);
 
         try {
