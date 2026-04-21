@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Runtime-generated concolic artifacts ###
+/src/main/java/core/output/
