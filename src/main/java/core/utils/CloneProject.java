@@ -369,9 +369,260 @@ public final class CloneProject {
             return generateCodeForWhileStatement((WhileStatement) statement, coverage);
         } else if (statement instanceof DoStatement) {
             return generateCodeForDoStatement((DoStatement) statement, coverage);
+        } else if (isReturnWithConditionalExpression(statement)) {
+            return generateCodeForReturnConditionalExpression((ReturnStatement) statement, coverage);
+        } else if (isAssignmentWithConditionalExpression(statement)) {
+            return generateCodeForAssignmentConditionalExpression((ExpressionStatement) statement, coverage);
+        } else if (hasTernaryVariableDeclarationFragment(statement)) {
+            return generateCodeForVariableDeclarationConditionalExpression((VariableDeclarationStatement) statement, coverage);
         } else {
             return generateCodeForNormalStatement(statement, markMethodSeparator);
         }
+    }
+
+    private static boolean isReturnWithConditionalExpression(ASTNode statement) {
+        if (!(statement instanceof ReturnStatement)) {
+            return false;
+        }
+
+        ReturnStatement returnStatement = (ReturnStatement) statement;
+        return getConditionalExpression(returnStatement.getExpression()) != null;
+    }
+
+    private static String generateCodeForReturnConditionalExpression(ReturnStatement returnStatement,
+                                                                     ASTHelper.Coverage coverage) {
+        ConditionalExpression conditionalExpression = getConditionalExpression(returnStatement.getExpression());
+        if (conditionalExpression == null) {
+            return generateCodeForNormalStatement(returnStatement, ";");
+        }
+        AST ast = returnStatement.getAST();
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (")
+                .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        ReturnStatement thenReturn = ast.newReturnStatement();
+        thenReturn.setExpression((Expression) ASTNode.copySubtree(ast, conditionalExpression.getThenExpression()));
+        result.append(generateCodeForNormalStatement(thenReturn, ";"));
+
+        result.append("}\n");
+        result.append("else {\n");
+
+        ReturnStatement elseReturn = ast.newReturnStatement();
+        elseReturn.setExpression((Expression) ASTNode.copySubtree(ast, conditionalExpression.getElseExpression()));
+        result.append(generateCodeForNormalStatement(elseReturn, ";"));
+
+        result.append("}\n");
+
+        return result.toString();
+    }
+
+    private static boolean isAssignmentWithConditionalExpression(ASTNode statement) {
+        if (!(statement instanceof ExpressionStatement)) {
+            return false;
+        }
+
+        Expression expression = ((ExpressionStatement) statement).getExpression();
+        if (!(expression instanceof Assignment)) {
+            return false;
+        }
+
+        Assignment assignment = (Assignment) expression;
+        if (!(assignment.getLeftHandSide() instanceof SimpleName)) {
+            return false;
+        }
+
+        return getConditionalExpression(assignment.getRightHandSide()) != null;
+    }
+
+    private static String generateCodeForAssignmentConditionalExpression(ExpressionStatement statement,
+                                                                         ASTHelper.Coverage coverage) {
+        Assignment assignment = (Assignment) statement.getExpression();
+        ConditionalExpression conditionalExpression = getConditionalExpression(assignment.getRightHandSide());
+        if (conditionalExpression == null) {
+            return generateCodeForNormalStatement(statement, ";");
+        }
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (")
+                .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        ExpressionStatement thenAssignment = createAssignmentStatement(
+                assignment.getAST(),
+                assignment.getLeftHandSide(),
+                assignment.getOperator(),
+                conditionalExpression.getThenExpression());
+        result.append(generateCodeForNormalStatement(thenAssignment, ";"));
+
+        result.append("}\n");
+        result.append("else {\n");
+
+        ExpressionStatement elseAssignment = createAssignmentStatement(
+                assignment.getAST(),
+                assignment.getLeftHandSide(),
+                assignment.getOperator(),
+                conditionalExpression.getElseExpression());
+        result.append(generateCodeForNormalStatement(elseAssignment, ";"));
+
+        result.append("}\n");
+
+        return result.toString();
+    }
+
+    private static boolean hasTernaryVariableDeclarationFragment(ASTNode statement) {
+        if (!(statement instanceof VariableDeclarationStatement)) {
+            return false;
+        }
+
+        VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement) statement;
+        @SuppressWarnings("unchecked")
+        List<VariableDeclarationFragment> fragments = declarationStatement.fragments();
+
+        for (VariableDeclarationFragment fragment : fragments) {
+            if (getConditionalExpression(fragment.getInitializer()) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String generateCodeForVariableDeclarationConditionalExpression(
+            VariableDeclarationStatement declarationStatement,
+            ASTHelper.Coverage coverage) {
+        StringBuilder result = new StringBuilder();
+        AST ast = declarationStatement.getAST();
+
+        @SuppressWarnings("unchecked")
+        List<VariableDeclarationFragment> fragments = declarationStatement.fragments();
+
+        for (VariableDeclarationFragment fragment : fragments) {
+            Expression initializer = fragment.getInitializer();
+            ConditionalExpression conditionalExpression = getConditionalExpression(initializer);
+
+            if (conditionalExpression != null && canSafelySplitTernaryDeclarationFragment(declarationStatement)) {
+
+                VariableDeclarationStatement declarationOnly = createSingleFragmentDeclaration(
+                        declarationStatement,
+                        fragment,
+                        false);
+                result.append(generateCodeForNormalStatement(declarationOnly, ";"));
+
+                result.append("if (")
+                        .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
+                        .append(")\n");
+                result.append("{\n");
+
+                ExpressionStatement thenAssign = createAssignmentStatement(
+                        ast,
+                        fragment.getName(),
+                        Assignment.Operator.ASSIGN,
+                        conditionalExpression.getThenExpression());
+                result.append(generateCodeForNormalStatement(thenAssign, ";"));
+
+                result.append("}\n");
+                result.append("else {\n");
+
+                ExpressionStatement elseAssign = createAssignmentStatement(
+                        ast,
+                        fragment.getName(),
+                        Assignment.Operator.ASSIGN,
+                        conditionalExpression.getElseExpression());
+                result.append(generateCodeForNormalStatement(elseAssign, ";"));
+
+                result.append("}\n");
+            } else {
+                VariableDeclarationStatement keptDeclaration = createSingleFragmentDeclaration(
+                        declarationStatement,
+                        fragment,
+                        true);
+                result.append(generateCodeForNormalStatement(keptDeclaration, ";"));
+            }
+        }
+
+        return result.toString();
+    }
+
+    private static VariableDeclarationStatement createSingleFragmentDeclaration(
+            VariableDeclarationStatement template,
+            VariableDeclarationFragment fragment,
+            boolean keepInitializer) {
+        AST ast = template.getAST();
+
+        VariableDeclarationFragment fragmentCopy =
+                (VariableDeclarationFragment) ASTNode.copySubtree(ast, fragment);
+        if (!keepInitializer) {
+            fragmentCopy.setInitializer(null);
+        }
+
+        VariableDeclarationStatement singleDeclaration = ast.newVariableDeclarationStatement(fragmentCopy);
+        singleDeclaration.setType((Type) ASTNode.copySubtree(ast, template.getType()));
+
+        @SuppressWarnings("unchecked")
+        List<IExtendedModifier> templateModifiers = template.modifiers();
+        @SuppressWarnings("unchecked")
+        List<IExtendedModifier> singleModifiers = singleDeclaration.modifiers();
+        for (IExtendedModifier modifier : templateModifiers) {
+            singleModifiers.add((IExtendedModifier) ASTNode.copySubtree(ast, (ASTNode) modifier));
+        }
+
+        return singleDeclaration;
+    }
+
+    private static ExpressionStatement createAssignmentStatement(
+            AST ast,
+            Expression leftHandSide,
+            Assignment.Operator operator,
+            Expression rightHandSide) {
+        Assignment assignment = ast.newAssignment();
+        assignment.setLeftHandSide((Expression) ASTNode.copySubtree(ast, leftHandSide));
+        assignment.setOperator(operator);
+        assignment.setRightHandSide((Expression) ASTNode.copySubtree(ast, rightHandSide));
+        return ast.newExpressionStatement(assignment);
+    }
+
+    private static ConditionalExpression getConditionalExpression(Expression expression) {
+        Expression unwrappedExpression = unwrapParenthesizedExpression(expression);
+        if (unwrappedExpression instanceof ConditionalExpression) {
+            return (ConditionalExpression) unwrappedExpression;
+        }
+        return null;
+    }
+
+    private static Expression unwrapParenthesizedExpression(Expression expression) {
+        Expression unwrappedExpression = expression;
+        while (unwrappedExpression instanceof ParenthesizedExpression) {
+            unwrappedExpression = ((ParenthesizedExpression) unwrappedExpression).getExpression();
+        }
+        return unwrappedExpression;
+    }
+
+    private static boolean canSafelySplitTernaryDeclarationFragment(VariableDeclarationStatement declarationStatement) {
+        if (isFinalDeclaration(declarationStatement)) {
+            return false;
+        }
+        return !isVarType(declarationStatement.getType());
+    }
+
+    private static boolean isFinalDeclaration(VariableDeclarationStatement declarationStatement) {
+        @SuppressWarnings("unchecked")
+        List<IExtendedModifier> modifiers = declarationStatement.modifiers();
+        for (IExtendedModifier modifier : modifiers) {
+            if (modifier instanceof Modifier && ((Modifier) modifier).isFinal()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isVarType(Type type) {
+        if (!(type instanceof SimpleType)) {
+            return false;
+        }
+        return "var".equals(((SimpleType) type).getName().getFullyQualifiedName());
     }
 
     /**
