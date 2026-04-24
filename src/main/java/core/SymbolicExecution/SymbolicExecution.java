@@ -235,6 +235,11 @@ public class SymbolicExecution {
                 } else if (fpNum.isInf()) {
                     return fpNum.isNegative() ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
                 } else {
+                    if (fpNum.toString().contains("/")) {
+                        String[] parts = fpNum.toString().split("/");
+                        return Double.parseDouble(parts[0])
+                                / Double.parseDouble(parts[1]);
+                    }
                     return Double.parseDouble(fpNum.toString());
                 }
             } else {
