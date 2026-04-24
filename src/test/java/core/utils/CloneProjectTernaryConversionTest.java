@@ -178,4 +178,45 @@ public class CloneProjectTernaryConversionTest {
 
         assertContainsNormalized(generated, "var v = cond ? 1 : 2;");
     }
+
+    @Test
+    public void generateCodeForOneStatement_returnNestedTernary_convertsInnerTernary() throws Exception {
+        ASTNode stmt = parseFirstStatement("return a ? (b ? c : d) : e;");
+        String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
+
+        assertContainsNormalized(generated, "if (a)");
+        assertContainsNormalized(generated, "if (b)");
+        assertContainsNormalized(generated, "return c;");
+        assertContainsNormalized(generated, "return d;");
+        assertContainsNormalized(generated, "return e;");
+    }
+
+    @Test
+    public void generateCodeForOneStatement_assignmentNestedTernary_convertsInnerTernary() throws Exception {
+        ASTNode stmt = parseFirstStatement("a = x ? (y ? 1 : 2) : 3;");
+        String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
+
+        System.out.println("ASSIGN NESTED: " + normalize(generated));
+        
+        assertContainsNormalized(generated, "if (x)");
+        assertContainsNormalized(generated, "if (y)");
+        assertContainsNormalized(generated, "a = 1;");
+        assertContainsNormalized(generated, "a = 2;");
+        assertContainsNormalized(generated, "a = 3;");
+    }
+
+    @Test
+    public void generateCodeForOneStatement_variableDeclarationNestedTernary_convertsInnerTernary() throws Exception {
+        ASTNode stmt = parseFirstStatement("int v = a ? b ? 1 : 2 : 3;");
+        String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
+
+        System.out.println("VAR NESTED: " + normalize(generated));
+        
+        assertContainsNormalized(generated, "int v;");
+        assertContainsNormalized(generated, "if (a)");
+        assertContainsNormalized(generated, "if (b)");
+        assertContainsNormalized(generated, "v = 1;");
+        assertContainsNormalized(generated, "v = 2;");
+        assertContainsNormalized(generated, "v = 3;");
+    }
 }

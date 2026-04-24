@@ -121,6 +121,7 @@ public class ASTHelper {
     private static CfgNode createStatementNode(ASTNode statement, CfgNode beforeStatementNode,
                                                CfgNode afterStatementNode) {
         CfgNode currentNode = null;
+        statement = TernaryOperatorsConverter.convertTernaryToIfThenElse(statement);
 
         if (statement instanceof SwitchStatement) {
             currentNode = new CfgSwitchStatementNode();

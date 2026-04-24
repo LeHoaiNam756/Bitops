@@ -398,6 +398,10 @@ public final class CloneProject {
         AST ast = returnStatement.getAST();
         StringBuilder result = new StringBuilder();
 
+        if (hasNestedTernary(returnStatement.getExpression())) {
+            return convertReturnNestedTernary(returnStatement, coverage);
+        }
+
         result.append("if (")
                 .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
                 .append(")\n");
@@ -419,6 +423,54 @@ public final class CloneProject {
         return result.toString();
     }
 
+    private static String convertReturnNestedTernary(ReturnStatement returnStatement, ASTHelper.Coverage coverage) {
+        Expression expr = returnStatement.getExpression();
+        ConditionalExpression ce = getConditionalExpression(expr);
+        if (ce == null) {
+            return generateCodeForNormalStatement(returnStatement, ";");
+        }
+
+        AST ast = returnStatement.getAST();
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (")
+                .append(generateCodeForCondition(ce.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        Expression thenExpr = ce.getThenExpression();
+        ConditionalExpression nestedThen = getConditionalExpression(thenExpr);
+        if (nestedThen != null) {
+            ReturnStatement nestedReturn = ast.newReturnStatement();
+            nestedReturn.setExpression((Expression) ASTNode.copySubtree(ast, nestedThen));
+            result.append(convertReturnNestedTernary(nestedReturn, coverage));
+            result.append("}\n");
+        } else {
+            ReturnStatement thenReturn = ast.newReturnStatement();
+            thenReturn.setExpression((Expression) ASTNode.copySubtree(ast, thenExpr));
+            result.append(generateCodeForNormalStatement(thenReturn, ";"));
+            result.append("}\n");
+        }
+        
+        result.append("else {\n");
+
+        Expression elseExpr = ce.getElseExpression();
+        ConditionalExpression nestedElse = getConditionalExpression(elseExpr);
+        if (nestedElse != null) {
+            ReturnStatement nestedReturn = ast.newReturnStatement();
+            nestedReturn.setExpression((Expression) ASTNode.copySubtree(ast, nestedElse));
+            result.append(convertReturnNestedTernary(nestedReturn, coverage));
+            result.append("}\n");
+        } else {
+            ReturnStatement elseReturn = ast.newReturnStatement();
+            elseReturn.setExpression((Expression) ASTNode.copySubtree(ast, elseExpr));
+            result.append(generateCodeForNormalStatement(elseReturn, ";"));
+            result.append("}\n");
+        }
+
+        return result.toString();
+    }
+
     private static boolean isAssignmentWithConditionalExpression(ASTNode statement) {
         if (!(statement instanceof ExpressionStatement)) {
             return false;
@@ -430,6 +482,7 @@ public final class CloneProject {
         }
 
         Assignment assignment = (Assignment) expression;
+        //TODO: handle simple
         if (!(assignment.getLeftHandSide() instanceof SimpleName)) {
             return false;
         }
@@ -444,6 +497,11 @@ public final class CloneProject {
         if (conditionalExpression == null) {
             return generateCodeForNormalStatement(statement, ";");
         }
+
+        if (hasNestedTernary(assignment.getRightHandSide())) {
+            return convertAssignmentNestedTernary(assignment, coverage);
+        }
+
         StringBuilder result = new StringBuilder();
 
         result.append("if (")
@@ -471,6 +529,66 @@ public final class CloneProject {
         result.append("}\n");
 
         return result.toString();
+    }
+
+    private static String convertAssignmentNestedTernary(Assignment assignment, ASTHelper.Coverage coverage) {
+        ConditionalExpression ce = getConditionalExpression(assignment.getRightHandSide());
+        if (ce == null) {
+            return generateCodeForNormalStatement(
+                    assignment.getAST().newExpressionStatement(assignment), ";");
+        }
+
+        AST ast = assignment.getAST();
+        SimpleName leftHandSide = (SimpleName) assignment.getLeftHandSide();
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (")
+                .append(generateCodeForCondition(ce.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        ConditionalExpression nestedThen = getConditionalExpression(ce.getThenExpression());
+        if (nestedThen != null) {
+            result.append(convertAssignmentNestedTernary(
+                    createAssignment(ast, leftHandSide, assignment.getOperator(), nestedThen.getThenExpression()),
+                    coverage));
+            result.append("}\n");
+            result.append("else {\n");
+            result.append(generateCodeForNormalStatement(
+                    createAssignmentStatement(ast, leftHandSide, Assignment.Operator.ASSIGN, nestedThen.getElseExpression()), ";"));
+            result.append("}\n");
+        } else {
+            ExpressionStatement thenAssign = createAssignmentStatement(
+                    ast, leftHandSide, assignment.getOperator(), ce.getThenExpression());
+            result.append(generateCodeForNormalStatement(thenAssign, ";"));
+            result.append("}\n");
+        }
+
+
+        result.append("else {\n");
+
+        ConditionalExpression nestedElse = getConditionalExpression(ce.getElseExpression());
+        if (nestedElse != null) {
+            result.append(convertAssignmentNestedTernary(
+                    createAssignment(ast, leftHandSide, assignment.getOperator(), nestedElse.getThenExpression()),
+                    coverage));
+            result.append("}\n");
+        } else {
+            ExpressionStatement elseAssign = createAssignmentStatement(
+                    ast, leftHandSide, assignment.getOperator(), ce.getElseExpression());
+            result.append(generateCodeForNormalStatement(elseAssign, ";"));
+            result.append("}\n");
+        }
+
+        return result.toString();
+    }
+
+    private static Assignment createAssignment(AST ast, SimpleName leftHandSide, Assignment.Operator operator, Expression rightHandSide) {
+        Assignment assign = ast.newAssignment();
+        assign.setLeftHandSide((Expression) ASTNode.copySubtree(ast, leftHandSide));
+        assign.setOperator(operator);
+        assign.setRightHandSide((Expression) ASTNode.copySubtree(ast, rightHandSide));
+        return assign;
     }
 
     private static boolean hasTernaryVariableDeclarationFragment(ASTNode statement) {
@@ -505,35 +623,39 @@ public final class CloneProject {
 
             if (conditionalExpression != null && canSafelySplitTernaryDeclarationFragment(declarationStatement)) {
 
-                VariableDeclarationStatement declarationOnly = createSingleFragmentDeclaration(
-                        declarationStatement,
-                        fragment,
-                        false);
-                result.append(generateCodeForNormalStatement(declarationOnly, ";"));
+                if (hasNestedTernary(initializer)) {
+                    result.append(convertVariableDeclarationNestedTernary(declarationStatement, fragment, coverage));
+                } else {
+                    VariableDeclarationStatement declarationOnly = createSingleFragmentDeclaration(
+                            declarationStatement,
+                            fragment,
+                            false);
+                    result.append(generateCodeForNormalStatement(declarationOnly, ";"));
 
-                result.append("if (")
-                        .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
-                        .append(")\n");
-                result.append("{\n");
+                    result.append("if (")
+                            .append(generateCodeForCondition(conditionalExpression.getExpression(), coverage))
+                            .append(")\n");
+                    result.append("{\n");
 
-                ExpressionStatement thenAssign = createAssignmentStatement(
-                        ast,
-                        fragment.getName(),
-                        Assignment.Operator.ASSIGN,
-                        conditionalExpression.getThenExpression());
-                result.append(generateCodeForNormalStatement(thenAssign, ";"));
+                    ExpressionStatement thenAssign = createAssignmentStatement(
+                            ast,
+                            fragment.getName(),
+                            Assignment.Operator.ASSIGN,
+                            conditionalExpression.getThenExpression());
+                    result.append(generateCodeForNormalStatement(thenAssign, ";"));
 
-                result.append("}\n");
-                result.append("else {\n");
+                    result.append("}\n");
+                    result.append("else {\n");
 
-                ExpressionStatement elseAssign = createAssignmentStatement(
-                        ast,
-                        fragment.getName(),
-                        Assignment.Operator.ASSIGN,
-                        conditionalExpression.getElseExpression());
-                result.append(generateCodeForNormalStatement(elseAssign, ";"));
+                    ExpressionStatement elseAssign = createAssignmentStatement(
+                            ast,
+                            fragment.getName(),
+                            Assignment.Operator.ASSIGN,
+                            conditionalExpression.getElseExpression());
+                    result.append(generateCodeForNormalStatement(elseAssign, ";"));
 
-                result.append("}\n");
+                    result.append("}\n");
+                }
             } else {
                 VariableDeclarationStatement keptDeclaration = createSingleFragmentDeclaration(
                         declarationStatement,
@@ -542,6 +664,103 @@ public final class CloneProject {
                 result.append(generateCodeForNormalStatement(keptDeclaration, ";"));
             }
         }
+
+        return result.toString();
+    }
+
+    private static String convertVariableDeclarationNestedTernary(
+            VariableDeclarationStatement declarationStatement,
+            VariableDeclarationFragment fragment,
+            ASTHelper.Coverage coverage) {
+        Expression initializer = fragment.getInitializer();
+        ConditionalExpression ce = getConditionalExpression(initializer);
+        if (ce == null) {
+            return generateCodeForNormalStatement(declarationStatement, ";");
+        }
+
+        AST ast = declarationStatement.getAST();
+        SimpleName varName = fragment.getName();
+        StringBuilder result = new StringBuilder();
+
+        VariableDeclarationStatement declarationOnly = createSingleFragmentDeclaration(
+                declarationStatement,
+                fragment,
+                false);
+        result.append(generateCodeForNormalStatement(declarationOnly, ";"));
+
+        result.append("if (")
+                .append(generateCodeForCondition(ce.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        ConditionalExpression nestedThen = getConditionalExpression(ce.getThenExpression());
+        if (nestedThen != null) {
+            result.append(convertVariableDeclarationNestedTernaryTwoLevel(
+                    ast, varName, nestedThen, coverage));
+        } else {
+            ExpressionStatement thenAssign = createAssignmentStatement(
+                    ast, varName, Assignment.Operator.ASSIGN, ce.getThenExpression());
+            result.append(generateCodeForNormalStatement(thenAssign, ";"));
+        }
+
+        result.append("}\n");
+        result.append("else {\n");
+
+        ConditionalExpression nestedElse = getConditionalExpression(ce.getElseExpression());
+        if (nestedElse != null) {
+            result.append(convertVariableDeclarationNestedTernaryTwoLevel(
+                    ast, varName, nestedElse, coverage));
+        } else {
+            ExpressionStatement elseAssign = createAssignmentStatement(
+                    ast, varName, Assignment.Operator.ASSIGN, ce.getElseExpression());
+            result.append(generateCodeForNormalStatement(elseAssign, ";"));
+        }
+
+        result.append("}\n");
+
+        return result.toString();
+    }
+
+    private static String convertVariableDeclarationNestedTernaryTwoLevel(
+            AST ast, SimpleName varName, ConditionalExpression ce, ASTHelper.Coverage coverage) {
+        StringBuilder result = new StringBuilder();
+
+        result.append("if (")
+                .append(generateCodeForCondition(ce.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        ConditionalExpression nestedThen = getConditionalExpression(ce.getThenExpression());
+        if (nestedThen != null) {
+            result.append(convertVariableDeclarationNestedTernaryTwoLevel(
+                    ast, varName, nestedThen, coverage));
+            result.append("}\n");
+            result.append("else {\n");
+            ExpressionStatement elseAssign = createAssignmentStatement(
+                    ast, varName, Assignment.Operator.ASSIGN, nestedThen.getElseExpression());
+            result.append(generateCodeForNormalStatement(elseAssign, ";"));
+            result.append("}\n");
+        } else {
+            ExpressionStatement thenAssign = createAssignmentStatement(
+                    ast, varName, Assignment.Operator.ASSIGN, ce.getThenExpression());
+            result.append(generateCodeForNormalStatement(thenAssign, ";"));
+            result.append("}\n");
+        }
+
+        result.append("else {\n");
+
+        ConditionalExpression nestedElse = getConditionalExpression(ce.getElseExpression());
+        if (nestedElse != null) {
+            result.append(convertVariableDeclarationNestedTernaryTwoLevel(
+                    ast, varName, nestedElse, coverage));
+            result.append("}\n");
+        } else {
+            ExpressionStatement elseAssign = createAssignmentStatement(
+                    ast, varName, Assignment.Operator.ASSIGN, ce.getElseExpression());
+            result.append(generateCodeForNormalStatement(elseAssign, ";"));
+            result.append("}\n");
+        }
+
 
         return result.toString();
     }
@@ -598,6 +817,16 @@ public final class CloneProject {
             unwrappedExpression = ((ParenthesizedExpression) unwrappedExpression).getExpression();
         }
         return unwrappedExpression;
+    }
+
+    private static boolean hasNestedTernary(Expression expr) {
+        Expression unwrapped = unwrapParenthesizedExpression(expr);
+        if (unwrapped instanceof ConditionalExpression) {
+            ConditionalExpression ce = (ConditionalExpression) unwrapped;
+            return getConditionalExpression(ce.getThenExpression()) != null
+                    || getConditionalExpression(ce.getElseExpression()) != null;
+        }
+        return false;
     }
 
     private static boolean canSafelySplitTernaryDeclarationFragment(VariableDeclarationStatement declarationStatement) {
