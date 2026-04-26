@@ -9,6 +9,7 @@ import core.TestGeneration.path.FindPath;
 import test.ParserForTest;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -429,37 +430,12 @@ public class TestFindPath {
     }
 
     @Test
-    public void test_findPath_LogicFlow() {
-        String sourceCode = "public int processValue(int input, int threshold, boolean scaleUp) {\n" +
-                "        int result = 0;\n" +
-                "\n" +
-                "        if (input < 0) {\n" +
-                "            result = -1;\n" +
-                "        } else if (input == 0) {\n" +
-                "            result = 0;\n" +
-                "        } else if (input > threshold) {\n" +
-                "            int temp = input;\n" +
-                "            while (temp > threshold) {\n" +
-                "                temp -= 2;\n" +
-                "                result++;\n" +
-                "            }\n" +
-                "        } else {\n" +
-                "            for (int i = 0; i < input; i++) {\n" +
-                "                result += i;\n" +
-                "            }\n" +
+    public void test_findBackEdges_SimpleWhileLoop() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int i = 0;\n" +
+                "        while (i < 10) {\n" +
+                "            i++;\n" +
                 "        }\n" +
-                "\n" +
-                "        int counter = 0;\n" +
-                "        do {\n" +
-                "            if (scaleUp) {\n" +
-                "                result += 10;\n" +
-                "            } else {\n" +
-                "                result -= 5;\n" +
-                "            }\n" +
-                "            counter++;\n" +
-                "        } while (counter < 3);\n" +
-                "\n" +
-                "        return result;\n" +
                 "    }";
         CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
         CfgNode beginNode = new CfgNode();
@@ -471,10 +447,239 @@ public class TestFindPath {
         block.setAfterNode(endNode);
         endNode.setBeforeNode(block);
         ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
-        CfgNode resultEqualsZeroNode = beginNode.getAfterNode();
-        CfgBoolExprNode inputLessThanZeroNode = (CfgBoolExprNode) resultEqualsZeroNode.getAfterNode();
-        CfgBoolExprNode inputEqualsZeroNode = (CfgBoolExprNode) inputLessThanZeroNode.getFalseNode();
-//        List<CfgNode> path = FindPath.findPathThrough(beginNode, inputEqualsZeroNode, endNode);
-//        assertNotNull("Should find an uncovered node", path);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertFalse("Should find at least one back-edge in while loop", backEdges.isEmpty());
+        assertEquals("Should find exactly one back-edge", 1, backEdges.size());
+        FindPath.BackEdge backEdge = backEdges.get(0);
+        assertTrue(backEdge.head().getContent().contains("i < 10"));
+        assertTrue(backEdge.tail().getContent().contains("i++"));
     }
+
+    @Test
+    public void test_findBackEdges_SimpleForLoop() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        for (int i = 0; i < 10; i++) {\n" +
+                "            System.out.println(i);\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertFalse("Should find at least one back-edge in for loop", backEdges.isEmpty());
+        assertEquals("Should find exactly one back-edge", 1, backEdges.size());
+        FindPath.BackEdge backEdge = backEdges.get(0);
+        assertTrue(backEdge.head().getContent().contains("i < 10"));
+        assertTrue(backEdge.tail().getContent().contains("i++"));
+    }
+
+    @Test
+    public void test_findBackEdges_NoLoops() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int x = 5;\n" +
+                "        if (x > 0) {\n" +
+                "            x++;\n" +
+                "        } else {\n" +
+                "            x--;\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertTrue("Should find no back-edges in acyclic code", backEdges.isEmpty());
+    }
+
+    @Test
+    public void test_findBackEdges_NestedLoops() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        for (int i = 0; i < 5; i++) {\n" +
+                "            int j = 0;\n" +
+                "            while (j < 3) {\n" +
+                "                j++;\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertFalse("Should find back-edges in nested loops", backEdges.isEmpty());
+        assertEquals("Should find two back-edges (for and while)", 2, backEdges.size());
+    }
+
+    @Test
+    public void test_findBackEdges_NullInput() {
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(null);
+        
+        assertNotNull("Should return empty list, not null", backEdges);
+        assertTrue("Should return empty list for null input", backEdges.isEmpty());
+    }
+
+    @Test
+    public void test_findBackEdges_DoWhileLoop() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int i = 0;\n" +
+                "        do {\n" +
+                "            i++;\n" +
+                "        } while (i < 10);\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertFalse("Should find at least one back-edge in do-while loop", backEdges.isEmpty());
+    }
+
+    @Test
+    public void test_findBackEdges_BackEdgeStructure() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int i = 0;\n" +
+                "        while (i < 10) {\n" +
+                "            i++;\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertEquals("Should find exactly one back-edge", 1, backEdges.size());
+        FindPath.BackEdge edge = backEdges.get(0);
+        assertNotNull("BackEdge head should not be null", edge.head());
+        assertNotNull("BackEdge tail should not be null", edge.tail());
+    }
+
+    @Test
+    public void test_findBackEdges_LinearCode() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int a = 1;\n" +
+                "        int b = 2;\n" +
+                "        int c = a + b;\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertTrue("Should find no back-edges in linear code", backEdges.isEmpty());
+    }
+
+    @Test
+    public void test_findBackEdges_MultipleLoops() {
+        String sourceCode = "    public void testMethod() {\n" +
+                "        int i = 0;\n" +
+                "        while (i < 3) {\n" +
+                "            i++;\n" +
+                "        }\n" +
+                "        int j = 0;\n" +
+                "        while (j < 5) {\n" +
+                "            j++;\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertEquals("Should find two back-edges (two separate while loops)", 2, backEdges.size());
+    }
+
+    @Test
+    public void test_findBackEdges_IfElseWithLoop() {
+        String sourceCode = "    public void testMethod(int x) {\n" +
+                "        if (x > 0) {\n" +
+                "            while (x < 10) {\n" +
+                "                x++;\n" +
+                "            }\n" +
+                "        } else {\n" +
+                "            x = 0;\n" +
+                "        }\n" +
+                "    }";
+        CfgNode block = ParserForTest.generateBlockFromSource(sourceCode);
+        CfgNode beginNode = new CfgNode();
+        beginNode.setBeginCfgNode(true);
+        CfgNode endNode = new CfgNode();
+        endNode.setEndCfgNode(true);
+        beginNode.setAfterNode(block);
+        block.setBeforeNode(beginNode);
+        block.setAfterNode(endNode);
+        endNode.setBeforeNode(block);
+        ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
+        
+        List<FindPath.BackEdge> backEdges = FindPath.findBackEdges(beginNode);
+        
+        assertNotNull("Back edges list should not be null", backEdges);
+        assertEquals("Should find one back-edge (loop inside if)", 1, backEdges.size());
+    }
+
 }

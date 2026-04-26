@@ -992,9 +992,10 @@ public final class CloneProject {
             newStatement.append(charAt);
         }
 
-        int position = statement.getStartPosition();
+
+        String id = AstIdGenerator.buildSignature(statement);
         result.append("markOneStatement(\"").append(newStatement)
-                .append("\", false, false, ").append(position).append(')')
+                .append("\", false, false, ").append("\"").append(id).append("\"").append(')')
                 .append(markMethodSeparator).append("\n");
         totalFunctionStatement++;
         totalClassStatement++;
@@ -1024,10 +1025,10 @@ public final class CloneProject {
         totalFunctionStatement++;
         totalClassStatement++;
         totalFunctionBranch += 2;
-        int position = condition.getStartPosition();
-        return "((" + condition + ") && markOneStatement(\"" + condition + "\", true, false, " +
-                position + "))" +
-                " || markOneStatement(\"" + condition + "\", false, true, " + position + ")";
+        String id = AstIdGenerator.buildSignature(condition);
+        return "((" + condition + ") && markOneStatement(\"" + condition + "\", true, false, \"" +
+                id + "\"))" +
+                " || markOneStatement(\"" + condition + "\", false, true, \"" + id + "\")";
     }
 
     /**
@@ -1056,11 +1057,11 @@ public final class CloneProject {
             totalFunctionStatement++;
             totalClassStatement++;
             totalFunctionBranch += 2;
-            int position = condition.getStartPosition();
+            String id = AstIdGenerator.buildSignature(condition);
             result.append("((").append(condition).append(") && markOneStatement(\"").append(condition)
-                    .append("\", true, false, ").append(position).append("))");
-            result.append(" || markOneStatement(\"").append(condition).append("\", false, true, ")
-                    .append(position).append(")");
+                    .append("\", true, false, \"").append(id).append("\"))");
+            result.append(" || markOneStatement(\"").append(condition).append("\", false, true, \"")
+                    .append(id).append("\")");
         }
 
         return result.toString();

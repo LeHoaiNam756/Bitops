@@ -1,5 +1,6 @@
 package core.CFG;
 
+import core.utils.AstIdGenerator;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -9,8 +10,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 @Setter
 public class CfgNode {
     private ASTNode ast;
-    private int startPosition;
-    private int endPosition;
 
     private CfgNode beforeNode;
     private CfgNode afterNode;
@@ -23,6 +22,7 @@ public class CfgNode {
     private boolean isVisited = false;
     private boolean isFakeVisited = false;
     private boolean isEndBlock = false;
+    private String id = "";
 
 
     public CfgNode() {}
@@ -30,8 +30,7 @@ public class CfgNode {
     public CfgNode(ASTNode ast)
     {
         this.ast = ast;
-        setStartPosition(ast.getStartPosition());
-        setEndPosition(ast.getStartPosition() + ast.getLength());
+        this.id = AstIdGenerator.buildSignature(ast);
     }
 
     public int getStartPosition() {
@@ -49,15 +48,13 @@ public class CfgNode {
     public void setAst(ASTNode ast) {
         this.ast = ast;
         if (ast != null) {
-            setStartPosition(ast.getStartPosition());
-            setEndPosition(ast.getStartPosition() + ast.getLength());
+           this.id = AstIdGenerator.buildSignature(ast);
         }
     }
 
     public CfgNode(CfgNode otherCfgNode) {
         this.ast = otherCfgNode.ast;
-        this.startPosition = otherCfgNode.getStartPosition();
-        this.endPosition = otherCfgNode.getEndPosition();
+        this.id = otherCfgNode.id;
         this.beforeNode = otherCfgNode.getBeforeNode();
         this.afterNode = otherCfgNode.getAfterNode();
         this.isBeginCfgNode = otherCfgNode.isBeginCfgNode();
@@ -74,8 +71,7 @@ public class CfgNode {
         }
 
         this.setAst(other.getAst());
-        this.setStartPosition(other.getStartPosition());
-        this.setEndPosition(other.getEndPosition());
+        this.setId(other.getId());
         this.setBeforeNode(other.getBeforeNode());
         this.setAfterNode(other.getAfterNode());
         this.setBeginCfgNode(other.isBeginCfgNode());

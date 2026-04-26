@@ -25,16 +25,16 @@ public final class MarkedPath {
 
 
     public static boolean markOneStatement(String statement, boolean isTrueCondition, boolean isFalseCondition,
-                                           int startPosition) {
-        addNewStatementToPath(statement, isTrueCondition, isFalseCondition, startPosition);
+                                           String id) {
+        addNewStatementToPath(statement, isTrueCondition, isFalseCondition, id);
         if (!isTrueCondition && !isFalseCondition) return true;
         return !isFalseCondition;
     }
 
 
     private static void addNewStatementToPath(String statement, boolean isTrueCondition,
-                                              boolean isFalseCondition, int lineNumber) {
-        MarkedStatement markedStatement = new MarkedStatement(statement, isTrueCondition, isFalseCondition, lineNumber);
+                                              boolean isFalseCondition, String id ) {
+        MarkedStatement markedStatement = new MarkedStatement(statement, isTrueCondition, isFalseCondition, id);
         markedStatements.add(markedStatement);
     }
 
@@ -113,7 +113,7 @@ public final class MarkedPath {
         for (MarkedStatement marked : markedStatements) {
             if (marked == null) continue;
             String stmt = marked.getContent();
-            int startPosition = marked.getStartPosition();
+            String id = marked.getId();
             if (stmt == null || stmt.trim().isEmpty()) continue;
             String key = stmt.trim();
 
@@ -122,7 +122,7 @@ public final class MarkedPath {
             //TODO: Improve, need this code because a boolean statement can be stored twice
             if (candidates != null && !candidates.isEmpty()) {
                 for (CfgNode n : candidates) {
-                    if (n.getStartPosition() == startPosition) {
+                    if (n.getId().equals(id)) {
                         matched = n;
                         break;
                     }
@@ -138,7 +138,7 @@ public final class MarkedPath {
             boolean wasMarkedBefore = matched.isVisited();
             for (MarkedStatement s : totalCoveredStatement) {
                 if (s.getContent().trim().equals(matched.getContent().trim())
-                        && s.getStartPosition() == matched.getStartPosition()) {
+                        && s.getId().equals(id)) {
                     wasMarkedBefore = true;
                     break;
                 }
@@ -161,7 +161,7 @@ public final class MarkedPath {
                 if (marked.isTrueConditionalStatement()) {
                     MarkedStatement trueBranch = new MarkedStatement(
                         marked.getContent(), true, false,
-                        marked.getStartPosition());
+                        marked.getId());
                     totalCoveredBranchAndMCDC.add(trueBranch);
                     fullTestSuiteCoveredBranchesAndMCDC.add(trueBranch);
 
@@ -172,7 +172,7 @@ public final class MarkedPath {
                 if (marked.isFalseConditionalStatement()) {
                     MarkedStatement falseBranch = new MarkedStatement(
                         marked.getContent(), false, true,
-                        marked.getStartPosition());
+                        marked.getId());
                     totalCoveredBranchAndMCDC.add(falseBranch);
                     fullTestSuiteCoveredBranchesAndMCDC.add(falseBranch);
 

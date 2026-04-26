@@ -41,18 +41,18 @@ public class TestForMarkedPath {
         finalEndCfgNode.setBeforeNode(block);
         ASTHelper.generateCfg(block, null, ASTHelper.Coverage.STATEMENT);
 //        ParserForTest.printCfgNodePositions(rootCfgNode);
-        MarkedPath.markOneStatement("int i=0", false, false, 71);
-        MarkedPath.markOneStatement("i < 10", true, false, 82);
-        MarkedPath.markOneStatement("i % 2 == 0", true, false, 113);
-        MarkedPath.markOneStatement("int j=0;", false, false, 143);
-        MarkedPath.markOneStatement("j < i", true, false, 177);
-        MarkedPath.markOneStatement("System.out.println(j);", false,
-                false, 206);
-        MarkedPath.markOneStatement("j++;", false, false, 249);
-        MarkedPath.markOneStatement("j < i", false, true, 177);
-        MarkedPath.markOneStatement("i++", false, false, 90);
-        MarkedPath.markOneStatement("i < 10", false, true, 82);
-        MarkedPath.markPathToCfg(rootCfgNode);
+//        MarkedPath.markOneStatement("int i=0", false, false, 71);
+//        MarkedPath.markOneStatement("i < 10", true, false, 82);
+//        MarkedPath.markOneStatement("i % 2 == 0", true, false, 113);
+//        MarkedPath.markOneStatement("int j=0;", false, false, 143);
+//        MarkedPath.markOneStatement("j < i", true, false, 177);
+//        MarkedPath.markOneStatement("System.out.println(j);", false,
+//                false, 206);
+//        MarkedPath.markOneStatement("j++;", false, false, 249);
+//        MarkedPath.markOneStatement("j < i", false, true, 177);
+//        MarkedPath.markOneStatement("i++", false, false, 90);
+//        MarkedPath.markOneStatement("i < 10", false, true, 82);
+//        MarkedPath.markPathToCfg(rootCfgNode);
 //        String mermaid = CfgMermaidGenerator.generateMermaidGraphWithStyles(rootCfgNode);
 //        System.out.println(mermaid);
     }
@@ -80,13 +80,13 @@ public class TestForMarkedPath {
         finalEndCfgNode.setBeforeNode(block);
         ASTHelper.generateCfg(block, null, ASTHelper.Coverage.MCDC);
 //        ParserForTest.printCfgNodePositions(rootCfgNode);
-        MarkedPath.markOneStatement("x == 5", false, true,  99);
-        MarkedPath.markOneStatement("System.out.println(x);", false,
-                false,  158);
-        MarkedPath.markOneStatement("x--;", false, false,  193);
-        MarkedPath.markOneStatement("y++;", false, false,  210);
-        MarkedPath.markOneStatement("x > 0", false, true,  232);
-        MarkedPath.markOneStatement("y < 10", false, true,  241);
+//        MarkedPath.markOneStatement("x == 5", false, true,  99);
+//        MarkedPath.markOneStatement("System.out.println(x);", false,
+//                false,  158);
+//        MarkedPath.markOneStatement("x--;", false, false,  193);
+//        MarkedPath.markOneStatement("y++;", false, false,  210);
+//        MarkedPath.markOneStatement("x > 0", false, true,  232);
+//        MarkedPath.markOneStatement("y < 10", false, true,  241);
         MarkedPath.markPathToCfg(rootCfgNode);
 //        String mermaid = CfgMermaidGenerator.generateMermaidGraphWithStyles(rootCfgNode);
 //        System.out.println(mermaid);

@@ -7,7 +7,7 @@ public class Setup {
     public static final float floatMax = 100.0f;
     public static final double doubleMin = -100.0;
     public static final double doubleMax = 100.0;
-    public static final int nodeVisitLimit = 3;
+    public static final int nodeVisitLimit = 2;
 
     
 }
