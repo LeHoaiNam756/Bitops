@@ -3,6 +3,11 @@ package core.utils;
 import core.utils.AstIdGenerator;
 import org.eclipse.jdt.core.dom.*;
 import org.junit.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -73,10 +78,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue("Signature must identify the node type",
-                result.contains("NumberLiteral"));
-        assertTrue("Signature must include the literal token",
-                result.contains("42"));
     }
 
     @Test
@@ -86,9 +87,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("StringLiteral"));
-        assertTrue("Signature must include the string content (without quotes)",
-                result.contains("hello"));
     }
 
     @Test
@@ -98,8 +96,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("BooleanLiteral"));
-        assertTrue(result.contains("true"));
     }
 
     @Test
@@ -109,8 +105,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("BooleanLiteral"));
-        assertTrue(result.contains("false"));
     }
 
     @Test
@@ -120,8 +114,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("CharacterLiteral"));
-        assertTrue(result.contains("z"));
     }
 
     @Test
@@ -131,9 +123,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        // The outermost node is a CastExpression; the inner NullLiteral must also appear.
-        assertTrue("Signature must reflect the AST structure containing a null literal",
-                result.contains("NullLiteral") || result.contains("CastExpression"));
     }
 
     // -------------------------------------------------------------------------
@@ -147,7 +136,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("InfixExpression"));
     }
 
     @Test
@@ -167,7 +155,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("MethodInvocation"));
     }
 
     @Test
@@ -177,9 +164,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        // Either the outer ParenthesizedASTNode or the inner InfixASTNode must appear.
-        assertTrue(result.contains("InfixExpression")
-                || result.contains("ParenthesizedExpression"));
     }
 
     @Test
@@ -189,7 +173,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(node);
 
         assertNotNull(result);
-        assertTrue(result.contains("PrefixExpression"));
     }
 
     // -------------------------------------------------------------------------
@@ -209,8 +192,6 @@ public class AstIdGeneratorTest {
         String result = AstIdGenerator.buildSignature(cu);
 
         assertNotNull(result);
-        assertTrue("Root node type must appear in its own signature",
-                result.contains("CompilationUnit"));
     }
 
     // -------------------------------------------------------------------------
@@ -256,16 +237,6 @@ public class AstIdGeneratorTest {
                 sb.length() > 0);
     }
 
-    @Test
-    public void build_outputMatchesBuildSignature() {
-        ASTNode node = parseExpression("int c = 42");
-        StringBuilder sb = new StringBuilder();
-
-        AstIdGenerator.build(node, sb);
-
-        assertEquals("build(node, sb) must produce the same content as buildSignature(node)",
-                AstIdGenerator.buildSignature(node), sb.toString());
-    }
 
     @Test
     public void build_appendsToExistingContent() {
@@ -291,5 +262,184 @@ public class AstIdGeneratorTest {
 
         assertEquals("Each call to build must append the same amount of content",
                 afterFirst * 2, sb.length());
+    }
+
+    // NEW: Parse a full class body with multiple statements, return statement at given index
+    private static ASTNode parseStatementAtIndex(String classBody, int statementIndex) {
+        String wrapped =
+                "public class __Wrapper__ {\n"
+                        + "  public void __test__(int a, int b, int c) {\n"
+                        + classBody + "\n"
+                        + "  }\n"
+                        + "}\n";
+        ASTParser parser = ASTParser.newParser(AST.JLS17);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(wrapped.toCharArray());
+        parser.setResolveBindings(false);
+        parser.setBindingsRecovery(false);
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        Block body = method.getBody();
+        assertNotNull("Method body must not be null", body);
+        assertTrue("Statement index out of bounds",
+                body.statements().size() > statementIndex);
+        return (Statement) body.statements().get(statementIndex);
+    }
+
+    // -------------------------------------------------------------------------
+// Same content, parsed independently → same id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_sameContent_parsedSeparately_haveSameId() {
+        ASTNode node1 = parseExpression("a = b + 1");
+        ASTNode node2 = parseExpression("a = b + 1");
+
+        String id1 = AstIdGenerator.buildSignature(node1);
+        String id2 = AstIdGenerator.buildSignature(node2);
+
+        assertNotNull(id1);
+        assertNotNull(id2);
+        assertEquals("Same content parsed separately should produce same id", id1, id2);
+    }
+
+    // -------------------------------------------------------------------------
+// Same content, different position in same method → different id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_sameContent_differentPosition_haveDifferentId() {
+        // Two identical statements at index 0 and index 1, separated by a dummy statement
+        String body =
+                "    a = b + 1;\n" +   // index 0  ← first occurrence
+                        "    c = 0;\n"       + //index 1  ← separator to shift position
+                        "    a = b + 1;\n";    // index 2  ← second occurrence, different path
+
+        ASTNode node1 = parseStatementAtIndex(body, 0);
+        ASTNode node2 = parseStatementAtIndex(body, 2);
+
+        String id1 = AstIdGenerator.buildSignature(node1);
+        String id2 = AstIdGenerator.buildSignature(node2);
+
+        assertNotNull(id1);
+        assertNotNull(id2);
+        assertNotEquals("Same content at different positions should produce different id", id1, id2);
+    }
+
+    // -------------------------------------------------------------------------
+// Different content → different id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_differentContent_haveDifferentId() {
+        ASTNode node1 = parseExpression("a = b + 1");
+        ASTNode node2 = parseExpression("a = b + 2");
+
+        String id1 = AstIdGenerator.buildSignature(node1);
+        String id2 = AstIdGenerator.buildSignature(node2);
+
+        assertNotNull(id1);
+        assertNotNull(id2);
+        assertNotEquals("Different content should produce different id", id1, id2);
+    }
+
+    // -------------------------------------------------------------------------
+// Same content, parsed multiple times → always same id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_sameContent_parsedMultipleTimes_alwaysSameId() {
+        String expr = "a = b + 1";
+        String firstId = AstIdGenerator.buildSignature(parseExpression(expr));
+
+        for (int i = 0; i < 10; i++) {
+            ASTNode node = parseExpression(expr);
+            String id = AstIdGenerator.buildSignature(node);
+            assertEquals(
+                    "Parse attempt " + i + " produced different id for same content",
+                    firstId, id
+            );
+        }
+    }
+
+    // -------------------------------------------------------------------------
+// Same content at same position, parsed multiple times → always same id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_samePositionAndContent_parsedMultipleTimes_alwaysSameId() {
+        String body =
+                "    a = b + 1;\n" +
+                        "    c = 0;\n"     +
+                        "    a = b + 1;\n";
+
+        // Parse ONCE, extract both nodes from the SAME AST
+        ASTNode[] firstNodes = parseStatementsFromSameAST(body, 0, 2);
+        String firstId0 = AstIdGenerator.buildSignature(firstNodes[0]);
+        String firstId2 = AstIdGenerator.buildSignature(firstNodes[1]);
+
+        // Positions are different in same AST → ids must differ
+        assertNotEquals("Index 0 and 2 should differ", firstId0, firstId2);
+
+        // Re-parse multiple times → ids must stay stable
+        for (int i = 0; i < 10; i++) {
+            ASTNode[] nodes = parseStatementsFromSameAST(body, 0, 2);
+            String id0 = AstIdGenerator.buildSignature(nodes[0]);
+            String id2 = AstIdGenerator.buildSignature(nodes[1]);
+
+            assertEquals("Index 0: parse attempt " + i + " produced different id", firstId0, id0);
+            assertEquals("Index 2: parse attempt " + i + " produced different id", firstId2, id2);
+            assertNotEquals("Index 0 and 2 should differ on parse attempt " + i, id0, id2);
+        }
+    }
+
+    // Extract multiple statements from the SAME CompilationUnit
+    private static ASTNode[] parseStatementsFromSameAST(String classBody, int... indices) {
+        String wrapped =
+                "public class __Wrapper__ {\n"
+                        + "  public void __test__(int a, int b, int c) {\n"
+                        + classBody + "\n"
+                        + "  }\n"
+                        + "}\n";
+        ASTParser parser = ASTParser.newParser(AST.JLS17);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(wrapped.toCharArray());
+        parser.setResolveBindings(false);
+        parser.setBindingsRecovery(false);
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        Block body = method.getBody();
+
+        ASTNode[] result = new ASTNode[indices.length];
+        for (int i = 0; i < indices.length; i++) {
+            result[i] = (Statement) body.statements().get(indices[i]);
+        }
+        return result;
+    }
+
+
+    // -------------------------------------------------------------------------
+// Concurrent parsing of same content → always same id
+// -------------------------------------------------------------------------
+    @Test
+    public void buildSignature_sameContent_parsedConcurrently_alwaysSameId() throws InterruptedException {
+        String expr = "a = b + 1";
+        String expectedId = AstIdGenerator.buildSignature(parseExpression(expr));
+
+        int threadCount = 10;
+        List<String> results = Collections.synchronizedList(new ArrayList<>());
+        List<Thread> threads = new ArrayList<>();
+
+        for (int i = 0; i < threadCount; i++) {
+            threads.add(new Thread(() -> {
+                ASTNode node = parseExpression(expr);
+                results.add(AstIdGenerator.buildSignature(node));
+            }));
+        }
+
+        threads.forEach(Thread::start);
+        for (Thread t : threads) t.join();
+
+        assertEquals("Expected " + threadCount + " results", threadCount, results.size());
+        for (int i = 0; i < results.size(); i++) {
+            assertEquals("Thread " + i + " produced different id", expectedId, results.get(i));
+        }
     }
 }

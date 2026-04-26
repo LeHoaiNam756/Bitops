@@ -58,8 +58,6 @@ public class ParserForTest {
             Block body = foundBody[0];
             block.setAst(body);
             block.setContent(body.toString());
-            block.setStartPosition(body.getStartPosition());
-            block.setEndPosition(body.getStartPosition() + body.getLength());
         } else {
             // Fallback: at least preserve the raw text for debugging.
             block.setAst(cu);
