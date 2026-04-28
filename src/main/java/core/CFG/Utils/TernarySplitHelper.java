@@ -230,7 +230,7 @@ public final class TernarySplitHelper {
         if (statement instanceof Block) {
             @SuppressWarnings("unchecked")
             List<Statement> statements = ((Block) statement).statements();
-            return statements.isEmpty() ? null : statements.get(0);
+            return statements.size() == 1 ? statements.get(0) : null;
         }
         return statement;
     }
