@@ -1,19 +1,29 @@
 package core.CFG.Utils;
 
 import org.eclipse.jdt.core.dom.*;
+import core.utils.AstIdGenerator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TernaryOperatorsConverter {
+    private static final Map<Integer, Integer> ternaryIdMap = new HashMap<>();
+
+    public static Map<Integer, Integer> getTernaryIdMap() {
+        return ternaryIdMap;
+    }
+
     static ASTNode convertTernaryToIfThenElse(ASTNode statement) {
         AST ast = statement.getAST();
+        ASTNode converted = null;
         if (statement instanceof ReturnStatement) {
             @SuppressWarnings("PatternVariableCanBeUsed")
             ReturnStatement returnStatement = (ReturnStatement) statement;
             Expression expression = returnStatement.getExpression();
 
             if (expression instanceof ConditionalExpression) {
-                return convertConditionalExpr((returnStatement));
+                converted = convertConditionalExpr((returnStatement));
             }
 
         } else if (statement instanceof ExpressionStatement) {
@@ -22,7 +32,7 @@ public class TernaryOperatorsConverter {
                 @SuppressWarnings("PatternVariableCanBeUsed")
                 Assignment assignment = (Assignment) expressionStatement;
                 if (assignment.getRightHandSide() instanceof ConditionalExpression) {
-                    return convertConditionalExpr(assignment);
+                    converted = convertConditionalExpr(assignment);
                 }
             }
         } else if (statement instanceof VariableDeclarationStatement) {
@@ -77,18 +87,25 @@ public class TernaryOperatorsConverter {
                     //noinspection unchecked
                     resultBlock.statements().add(ifStatement);
 
-                    return resultBlock;
-
+                    converted = resultBlock;
+                    break;
                 } else {
                     // Cannot split: keep declaration as-is with its initializer
-                    return createSingleFragmentDeclaration(
+                    converted = createSingleFragmentDeclaration(
                             variableDeclarationStatement,
                             fragment,
                             true);
+                    break;
                 }
             }
         }
+        
+        if (converted != null) {
+            ternaryIdMap.put(AstIdGenerator.generateId(statement), AstIdGenerator.generateId(converted));
+            return converted;
+        }
         return statement;
+
     }
 
     static ASTNode convertConditionalExpr(ReturnStatement returnStatement) {

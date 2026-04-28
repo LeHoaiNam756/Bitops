@@ -16,6 +16,10 @@ public class AstIdGenerator {
         return toHash(sb.toString());
     }
 
+    public static Integer generateId(ASTNode node) {
+        return buildSignature(node).hashCode();
+    }
+
 
     private static String toHash(String input) {
         try {
