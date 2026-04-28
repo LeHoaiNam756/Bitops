@@ -227,12 +227,19 @@ public final class TernarySplitHelper {
     }
 
     private static Statement extractSingleStatement(Statement statement) {
-        if (statement instanceof Block) {
-            @SuppressWarnings("unchecked")
-            List<Statement> statements = ((Block) statement).statements();
-            return statements.size() == 1 ? statements.get(0) : null;
+        if (!(statement instanceof Block)) {
+            return statement;
         }
-        return statement;
+        Block block = (Block) statement;
+        @SuppressWarnings("unchecked")
+        List<Statement> statements = block.statements();
+        if (statements.isEmpty()) {
+            return null;
+        }
+        if (statements.size() == 1) {
+            return statements.get(0);
+        }
+        return block;
     }
 
     private static List<Statement> extractPrefixStatements(ASTNode normalized, IfStatement ifStatement) {
