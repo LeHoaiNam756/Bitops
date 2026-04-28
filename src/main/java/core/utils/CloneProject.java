@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.Utils.ASTHelper;
+import core.CFG.Utils.TernarySplitHelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -359,9 +360,9 @@ public final class CloneProject {
             return "";
         }
 
-        ASTNode converted = core.CFG.Utils.TernaryOperatorsConverter.convertTernaryToIfThenElse(statement);
-        if (converted != statement) {
-            return generateCodeForOneStatement(converted, markMethodSeparator, coverage);
+        Optional<TernarySplitHelper.TernarySplitResult> ternarySplit = TernarySplitHelper.split(statement);
+        if (ternarySplit.isPresent()) {
+            return generateCodeForTernarySplit(ternarySplit.get(), coverage);
         }
 
         if (statement instanceof Block) {
@@ -488,10 +489,25 @@ public final class CloneProject {
         return result.toString();
     }
 
+    private static String generateCodeForNormalStatement(ASTNode statement,
+            String markMethodSeparator,
+            String idOverride) {
+        StringBuilder result = new StringBuilder();
+        result.append(generateCodeForMarkMethod(statement, markMethodSeparator, idOverride));
+        result.append(statement);
+        return result.toString();
+    }
+
     /**
      * Generates code for the markOneStatement method call.
      */
     private static String generateCodeForMarkMethod(ASTNode statement, String markMethodSeparator) {
+        return generateCodeForMarkMethod(statement, markMethodSeparator, null);
+    }
+
+    private static String generateCodeForMarkMethod(ASTNode statement,
+            String markMethodSeparator,
+            String idOverride) {
         StringBuilder result = new StringBuilder();
 
         String stringStatement = statement.toString();
@@ -518,13 +534,54 @@ public final class CloneProject {
         }
 
 
-        String id = AstIdGenerator.buildSignature(statement);
+        String id = idOverride != null ? idOverride : AstIdGenerator.buildSignature(statement);
         result.append("markOneStatement(\"").append(newStatement)
                 .append("\", false, false, ").append("\"").append(id).append("\"").append(')')
                 .append(markMethodSeparator).append("\n");
         totalFunctionStatement++;
         totalClassStatement++;
 
+        return result.toString();
+    }
+
+    private static String generateCodeForTernarySplit(TernarySplitHelper.TernarySplitResult split,
+            ASTHelper.Coverage coverage) {
+        StringBuilder result = new StringBuilder();
+
+        for (Statement prefix : split.getPrefixStatements()) {
+            result.append(prefix).append("\n");
+        }
+
+        IfStatement ifStatement = split.getConvertedIfStatement();
+        result.append("if (")
+                .append(generateCodeForCondition(ifStatement.getExpression(), coverage))
+                .append(")\n");
+        result.append("{\n");
+
+        Statement thenStatement = split.getConvertedThenStatement();
+        if (TernarySplitHelper.split(thenStatement).isPresent()) {
+            result.append(generateCodeForOneStatement(thenStatement, ";", coverage));
+        } else {
+            result.append(generateCodeForNormalStatement(
+                    thenStatement,
+                    ";",
+                    split.getConvertedIdForOriginalThen()));
+        }
+
+        result.append("}\n");
+        result.append("else {\n");
+
+        Statement elseStatement = split.getConvertedElseStatement();
+        if (TernarySplitHelper.split(elseStatement).isPresent()) {
+            result.append(generateCodeForOneStatement(elseStatement, ";", coverage));
+        } else {
+            result.append(generateCodeForNormalStatement(
+                    elseStatement,
+                    ";",
+                    split.getConvertedIdForOriginalElse()));
+        }
+
+        result.append("}\n");
         return result.toString();
     }
 

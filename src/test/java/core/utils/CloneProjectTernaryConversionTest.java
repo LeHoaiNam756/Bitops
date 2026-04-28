@@ -1,6 +1,8 @@
 package core.utils;
 
 import core.CFG.Utils.ASTHelper;
+import core.CFG.Utils.TernarySplitHelper;
+import core.utils.AstIdGenerator;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -14,6 +16,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CloneProjectTernaryConversionTest {
@@ -144,6 +147,17 @@ public class CloneProjectTernaryConversionTest {
     }
 
     @Test
+    public void generateCodeForOneStatement_variableDeclarationTernary_doesNotMarkDeclaration() throws Exception {
+        ASTNode stmt = parseFirstStatement("int x = cond ? 1 : 2;");
+        String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
+
+        assertContainsNormalized(generated, "if (");
+        assertContainsNormalized(generated, "x = 1;");
+        assertContainsNormalized(generated, "x = 2;");
+        assertFalse(normalize(generated).contains(normalize("markOneStatement(\"int x")));
+    }
+
+    @Test
     public void generateCodeForOneStatement_returnTernaryWithParentheses_convertsToIfElse() throws Exception {
         ASTNode stmt = parseFirstStatement("return (cond ? a : b);");
         String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
@@ -151,6 +165,27 @@ public class CloneProjectTernaryConversionTest {
         assertContainsNormalized(generated, "if (");
         assertContainsNormalized(generated, "return a;");
         assertContainsNormalized(generated, "return b;");
+    }
+
+    @Test
+    public void generateCodeForOneStatement_returnTernary_usesConvertedIds() throws Exception {
+        ASTNode stmt = parseFirstStatement("return cond ? a : b;");
+        TernarySplitHelper.TernarySplitResult split = TernarySplitHelper.split(stmt).get();
+
+        ConditionalExpression original = extractConditionalExpression(stmt);
+        String condKey = AstIdGenerator.buildSignature(original.getExpression());
+        String thenKey = AstIdGenerator.buildSignature(original.getThenExpression());
+        String elseKey = AstIdGenerator.buildSignature(original.getElseExpression());
+
+        String condId = split.getOriginalPartIdToConvertedPartId().get(condKey);
+        String thenId = split.getOriginalPartIdToConvertedPartId().get(thenKey);
+        String elseId = split.getOriginalPartIdToConvertedPartId().get(elseKey);
+
+        String generated = invokeGenerateCodeForOneStatement(stmt, ASTHelper.Coverage.BRANCH);
+
+        assertTrue(generated.contains("\"" + condId + "\""));
+        assertTrue(generated.contains("\"" + thenId + "\""));
+        assertTrue(generated.contains("\"" + elseId + "\""));
     }
 
     @Test
@@ -218,5 +253,37 @@ public class CloneProjectTernaryConversionTest {
         assertContainsNormalized(generated, "v = 1;");
         assertContainsNormalized(generated, "v = 2;");
         assertContainsNormalized(generated, "v = 3;");
+    }
+
+    private ConditionalExpression extractConditionalExpression(ASTNode stmt) {
+        if (stmt instanceof ReturnStatement) {
+            return getConditionalExpression(((ReturnStatement) stmt).getExpression());
+        }
+        if (stmt instanceof ExpressionStatement) {
+            Expression expression = ((ExpressionStatement) stmt).getExpression();
+            if (expression instanceof Assignment) {
+                return getConditionalExpression(((Assignment) expression).getRightHandSide());
+            }
+        }
+        if (stmt instanceof VariableDeclarationStatement) {
+            @SuppressWarnings("unchecked")
+            List<VariableDeclarationFragment> fragments =
+                    ((VariableDeclarationStatement) stmt).fragments();
+            for (VariableDeclarationFragment fragment : fragments) {
+                ConditionalExpression ce = getConditionalExpression(fragment.getInitializer());
+                if (ce != null) {
+                    return ce;
+                }
+            }
+        }
+        return null;
+    }
+
+    private ConditionalExpression getConditionalExpression(Expression expression) {
+        Expression current = expression;
+        while (current instanceof ParenthesizedExpression) {
+            current = ((ParenthesizedExpression) current).getExpression();
+        }
+        return current instanceof ConditionalExpression ? (ConditionalExpression) current : null;
     }
 }
