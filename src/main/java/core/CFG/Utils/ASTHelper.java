@@ -5,8 +5,10 @@ import lombok.Setter;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.*;
 import core.TestGeneration.path.MarkedStatement;
+import core.CFG.Utils.TernarySplitHelper;
 
 import java.util.*;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -121,7 +123,10 @@ public class ASTHelper {
     private static CfgNode createStatementNode(ASTNode statement, CfgNode beforeStatementNode,
                                                CfgNode afterStatementNode) {
         CfgNode currentNode = null;
-        statement = TernaryOperatorsConverter.convertTernaryToIfThenElse(statement);
+        Optional<TernarySplitHelper.TernarySplitResult> split = TernarySplitHelper.split(statement);
+        if (split.isPresent()) {
+            statement = split.get().getNormalizedStatement();
+        }
 
         if (statement instanceof SwitchStatement) {
             currentNode = new CfgSwitchStatementNode();
