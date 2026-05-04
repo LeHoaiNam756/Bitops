@@ -62,11 +62,86 @@ public class PostfixExpressionNode extends OperationExpressionNode{
     public static Expr<?> convertPostfixExpressionToZ3Expr(PostfixExpressionNode postfixExpressionNode, Context ctx,
                                                            MemoryModel memoryModel) {
         AstNode operand = postfixExpressionNode.operand;
+        PostfixExpression.Operator operator = postfixExpressionNode.operator;
 
-        // For postfix expressions (e.g., a++), the expression evaluates to the original value
-        // The increment/decrement is a side effect that happens after the value is returned
-        // So we convert the operand to Z3 expression and return it directly
-        return ExpressionNode.convertAstNodeToZ3Expr(operand, ctx, memoryModel);
+        Expr<?> operandExpr = ExpressionNode.convertAstNodeToZ3Expr(operand, ctx, memoryModel);
+        TypedExpr typedExpr = TypedExpr.getInstance();
+        TypedExpr.JavaType operandType = typedExpr.getType(operandExpr);
+
+        return analyzePostfixZ3Expr(operandExpr, operator, operandType, ctx);
+    }
+
+    private static Expr<?> analyzePostfixZ3Expr(Expr<?> operandExpr,
+                                                 PostfixExpression.Operator operator,
+                                                 TypedExpr.JavaType operandType,
+                                                 Context ctx) {
+        TypedExpr typedExpr = TypedExpr.getInstance();
+        Expr<?> result;
+        TypedExpr.JavaType resultType;
+
+        boolean isFP = operandExpr instanceof FPExpr;
+        if (isFP) {
+            FPExpr fpVal = (FPExpr) operandExpr;
+            FPRMExpr rm = ctx.mkFPRoundNearestTiesToEven();
+
+            if (operator == PostfixExpression.Operator.INCREMENT) {
+                FPExpr one = ctx.mkFP(1.0, fpVal.getSort());
+                result = ctx.mkFPAdd(rm, fpVal, one);
+                resultType = operandType;
+            } else if (operator == PostfixExpression.Operator.DECREMENT) {
+                FPExpr one = ctx.mkFP(1.0, fpVal.getSort());
+                result = ctx.mkFPSub(rm, fpVal, one);
+                resultType = operandType;
+            } else {
+                throw new RuntimeException("Invalid operator for floating-point operand: " + operator);
+            }
+            typedExpr.put(result, resultType);
+            return result;
+        }
+
+        if (!(operandExpr instanceof BitVecExpr)) {
+            throw new RuntimeException("Unsupported postfix operand type: " + operandExpr.getSort());
+        }
+
+        @SuppressWarnings("PatternVariableCanBeUsed")
+        BitVecExpr bvVal = (BitVecExpr) operandExpr;
+        int size = bvVal.getSortSize();
+
+        if (operator == PostfixExpression.Operator.INCREMENT || operator == PostfixExpression.Operator.DECREMENT) {
+            if (operandType == TypedExpr.JavaType.BYTE
+                    || operandType == TypedExpr.JavaType.CHAR
+                    || operandType == TypedExpr.JavaType.SHORT) {
+                BitVecExpr promoted;
+                if (operandType == TypedExpr.JavaType.CHAR) {
+                    promoted = ctx.mkZeroExt(32 - size, bvVal);
+                } else {
+                    promoted = ctx.mkSignExt(32 - size, bvVal);
+                }
+                BitVecExpr one = ctx.mkBV(1, 32);
+
+                if (operator == PostfixExpression.Operator.INCREMENT) {
+                    result = ctx.mkBVAdd(promoted, one);
+                } else {
+                    result = ctx.mkBVSub(promoted, one);
+                }
+
+                result = ctx.mkExtract(size - 1, 0, (BitVecExpr) result);
+                resultType = operandType;
+            } else {
+                BitVecExpr one = ctx.mkBV(1, size);
+                if (operator == PostfixExpression.Operator.INCREMENT) {
+                    result = ctx.mkBVAdd(bvVal, one);
+                } else {
+                    result = ctx.mkBVSub(bvVal, one);
+                }
+                resultType = operandType;
+            }
+        } else {
+            throw new RuntimeException("Unsupported postfix operator: " + operator);
+        }
+
+        typedExpr.put(result, resultType);
+        return result;
     }
 
     @Override
