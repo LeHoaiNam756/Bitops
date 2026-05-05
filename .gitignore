@@ -43,3 +43,4 @@ docs/*
 AGENTS.md
 .worktrees/*
 ?/*
+/TASK.md
