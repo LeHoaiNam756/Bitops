@@ -1,5 +1,6 @@
 package test;
 
+import core.SymbolicExecution.AstNode.AstNode;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;

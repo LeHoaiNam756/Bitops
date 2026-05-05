@@ -7,6 +7,7 @@ import core.utils.Setup;
 import java.util.*;
 
 public class FindPath {
+    static LinkedList<LinkedList<PathNode>> paths = new LinkedList<>();
 
     static class TestPath {
         public final LinkedList<PathNode> path;
@@ -75,7 +76,53 @@ public class FindPath {
         return uncoveredNodes.iterator().next();
     }
 
-    public static LinkedList<PathNode> findPathThrough(CfgNode start, CfgNode mid, CfgNode end) {
+    public static void findPathsThrough(CfgNode start, CfgNode mid, CfgNode end) {
+        FindPath finder = new FindPath();
+        List<BackEdge> backEdges = findBackEdges(start);
+        paths.clear();
+
+        // Try k=0,1,2,... for each back-edge until we find a path that covers mid
+        // If no cycles needed, k=0 with no back-edge constraint also tried
+        int maxCycles = Setup.nodeVisitLimit;
+
+        // Collect all (backEdge, k) candidates to try, starting with the no-loop case
+        List<int[]> candidates = new ArrayList<>(); // [backEdgeIndex, k]
+        candidates.add(new int[]{-1, 0}); // no back-edge, k=0
+        for (int i = 0; i < backEdges.size(); i++) {
+            for (int k = 1; k <= maxCycles; k++) {
+                candidates.add(new int[]{i, k});
+            }
+        }
+
+        for (int[] candidate : candidates) {
+            int backEdgeIdx = candidate[0];
+            int k = candidate[1];
+
+            BackEdge be = (backEdgeIdx >= 0) ? backEdges.get(backEdgeIdx) : null;
+            CfgNode beFrom = (be != null) ? be.tail() : null;
+            CfgNode beTo   = (be != null) ? be.head() : null;
+
+            TestPath res1 = finder.bfs(start, mid, new HashMap<>(), beFrom, beTo, k);
+            if (res1 == null) continue;
+
+            TestPath res2 = finder.bfs(mid, end, res1.finalCounts, null, null, 0);
+            if (res2 == null) continue;
+
+            LinkedList<PathNode> totalPath = res1.path;
+            if (!totalPath.isEmpty()) totalPath.removeLast();
+            totalPath.addAll(res2.path);
+            paths.addLast(totalPath);
+        }
+    }
+
+    public static LinkedList<PathNode> findNextPath(int nextPath) {
+        if (nextPath >= paths.size()) {
+            return null;
+        }
+        return paths.get(nextPath);
+    }
+
+    public static LinkedList<PathNode> findNextPath(CfgNode start, CfgNode mid, CfgNode end) {
         FindPath finder = new FindPath();
 
         // 1. Discover all back-edges in this CFG

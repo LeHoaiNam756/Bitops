@@ -73,7 +73,7 @@ public class TestData {
         for (ParameterData parameterData : parameterDataList) {
             result.append(parameterData.toString()).append("; ");
         }
-        result.append(" | Output: ").append(output);
+        result.append(" | Output: ").append(ParameterData.formatValue(output));
         result.append(" | Coverage: ").append(unitCoverage);
         return result.toString();
     }

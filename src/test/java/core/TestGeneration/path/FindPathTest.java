@@ -20,7 +20,7 @@ public class FindPathTest {
     }
 
     @Test
-    public void testFindPathThrough_simpleLinearPath() {
+    public void testFindPathThrough_simpleLinearNextPath() {
         CfgNode start = new CfgNode();
         start.setBeginCfgNode(true);
 
@@ -33,7 +33,7 @@ public class FindPathTest {
         start.setAfterNode(middle);
         middle.setAfterNode(end);
 
-        LinkedList<FindPath.PathNode> path = FindPath.findPathThrough(start, middle, end);
+        LinkedList<FindPath.PathNode> path = FindPath.findNextPath(start, middle, end);
 
         assertNotNull(path);
         assertFalse(path.isEmpty());
@@ -49,7 +49,7 @@ public class FindPathTest {
     }
 
     @Test
-    public void testFindPathThrough_nullWhenNoPath() {
+    public void testFindPathThrough_nullWhenNoNextPath() {
         CfgNode start = new CfgNode();
         start.setBeginCfgNode(true);
 
@@ -62,13 +62,13 @@ public class FindPathTest {
         start.setAfterNode(null);
         middle.setAfterNode(null);
 
-        LinkedList<FindPath.PathNode> path = FindPath.findPathThrough(start, middle, end);
+        LinkedList<FindPath.PathNode> path = FindPath.findNextPath(start, middle, end);
 
         assertNull(path);
     }
 
     @Test
-    public void testFindPathThrough_withBranching() {
+    public void testFindNextPath_withBranching() {
         CfgNode start = new CfgNode();
         start.setBeginCfgNode(true);
 
@@ -94,7 +94,7 @@ public class FindPathTest {
         falseBranch.setAfterNode(merge);
         merge.setAfterNode(end);
 
-        LinkedList<FindPath.PathNode> path = FindPath.findPathThrough(start, merge, end);
+        LinkedList<FindPath.PathNode> path = FindPath.findNextPath(start, merge, end);
 
         assertNotNull(path);
         assertFalse(path.isEmpty());
@@ -110,7 +110,7 @@ public class FindPathTest {
     }
 
     @Test
-    public void testFindPathThrough_withLoop() {
+    public void testFindNextPath_withLoop() {
         CfgNode start = new CfgNode();
         start.setBeginCfgNode(true);
 
@@ -133,7 +133,7 @@ public class FindPathTest {
         loopBody.setAfterNode(loopCondition);
         afterLoop.setAfterNode(end);
 
-        LinkedList<FindPath.PathNode> path = FindPath.findPathThrough(start, afterLoop, end);
+        LinkedList<FindPath.PathNode> path = FindPath.findNextPath(start, afterLoop, end);
 
         assertNotNull(path);
         assertFalse(path.isEmpty());
@@ -149,12 +149,12 @@ public class FindPathTest {
     }
 
     @Test
-    public void testFindPathThrough_startEqualsEnd() {
+    public void testFindNextPath_startEqualsEnd() {
         CfgNode node = new CfgNode();
         node.setBeginCfgNode(true);
         node.setEndCfgNode(true);
 
-        LinkedList<FindPath.PathNode> path = FindPath.findPathThrough(node, node, node);
+        LinkedList<FindPath.PathNode> path = FindPath.findNextPath(node, node, node);
 
         assertNotNull(path);
     }

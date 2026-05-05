@@ -91,7 +91,7 @@ public class ToolView {
                     return new SimpleStringProperty("");
                 }
                 String inputs = data.getParameterDataList().stream()
-                        .map(p -> p.getName() + ":" + String.valueOf(p.getValue()))
+                        .map(p -> p.getName() + ":" + ParameterData.formatValue(p.getValue()))
                         .collect(Collectors.joining(", "));
                 return new SimpleStringProperty(inputs);
             });
@@ -107,7 +107,7 @@ public class ToolView {
             testOutputsColumn.setCellValueFactory(cd -> {
                 TestData data = cd.getValue();
                 Object output = data != null ? data.getOutput() : null;
-                return new SimpleStringProperty(output == null ? "null" : output.toString());
+                return new SimpleStringProperty(output == null ? "null" : ParameterData.formatValue(output));
             });
         }
 

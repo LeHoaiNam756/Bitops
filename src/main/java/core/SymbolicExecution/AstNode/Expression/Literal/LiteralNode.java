@@ -518,4 +518,142 @@ public class LiteralNode extends ExpressionNode {
         }
         return result;
     }
+
+    // Add to LiteralNode class
+
+    public static LiteralNode analyzeCastLiteral(LiteralNode literal, Type targetType) {
+        if (!targetType.isPrimitiveType()) {
+            throw new RuntimeException("Unsupported cast target type: " + targetType);
+        }
+
+        PrimitiveType primitiveType = (PrimitiveType) targetType;
+        PrimitiveType.Code code = primitiveType.getPrimitiveTypeCode();
+
+        if (code == PrimitiveType.BOOLEAN) {
+            return castToBoolean(literal);
+        } else if (code == PrimitiveType.CHAR) {
+            return castToChar(literal);
+        } else if (code == PrimitiveType.BYTE) {
+            return castToByte(literal);
+        } else if (code == PrimitiveType.SHORT) {
+            return castToShort(literal);
+        } else if (code == PrimitiveType.INT) {
+            return castToInt(literal);
+        } else if (code == PrimitiveType.LONG) {
+            return castToLong(literal);
+        } else if (code == PrimitiveType.FLOAT) {
+            return castToFloat(literal);
+        } else if (code == PrimitiveType.DOUBLE) {
+            return castToDouble(literal);
+        } else {
+            throw new RuntimeException("Unknown primitive type code: " + code);
+        }
+    }
+
+// ── cast targets ──────────────────────────────────────────────────────────
+
+    private static LiteralNode castToBoolean(LiteralNode literal) {
+        if (literal instanceof LiteralBooleanNode) {
+            return literal;
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to boolean");
+    }
+
+    private static LiteralNode castToChar(LiteralNode literal) {
+        if (literal instanceof LiteralCharacterNode) {
+            return literal;
+        } else if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralCharacterNode.of((char) (int) number.getIntegerValue());
+            } else {
+                return LiteralCharacterNode.of((char) (int) number.getDoubleValue());
+            }
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to char");
+    }
+
+    private static LiteralNode castToByte(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of((long) (byte) number.getIntegerValue());
+            } else {
+                return LiteralNumberNode.of((long) (byte) (long) number.getDoubleValue());
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((long) (byte) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to byte");
+    }
+
+    private static LiteralNode castToShort(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of((long) (short) number.getIntegerValue());
+            } else {
+                return LiteralNumberNode.of((long) (short) (long) number.getDoubleValue());
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((long) (short) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to short");
+    }
+
+    private static LiteralNode castToInt(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of((long) (int) number.getIntegerValue());
+            } else {
+                return LiteralNumberNode.of((long) (int) number.getDoubleValue());
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((long) (int) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to int");
+    }
+
+    private static LiteralNode castToLong(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of(number.getIntegerValue());  // already long
+            } else {
+                return LiteralNumberNode.of((long) number.getDoubleValue());
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((long) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to long");
+    }
+
+    private static LiteralNode castToFloat(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of((double) (float) number.getIntegerValue());
+            } else {
+                return LiteralNumberNode.of((double) (float) number.getDoubleValue());
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((double) (float) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to float");
+    }
+
+    private static LiteralNode castToDouble(LiteralNode literal) {
+        if (literal instanceof LiteralNumberNode) {
+            LiteralNumberNode number = (LiteralNumberNode) literal;
+            if (number.isInteger()) {
+                return LiteralNumberNode.of((double) number.getIntegerValue());
+            } else {
+                return literal;  // already double
+            }
+        } else if (literal instanceof LiteralCharacterNode) {
+            return LiteralNumberNode.of((double) ((LiteralCharacterNode) literal).getValue());
+        }
+        throw new RuntimeException("Cannot cast " + literal.getClass().getSimpleName() + " to double");
+    }
 }

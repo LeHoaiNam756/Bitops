@@ -19,7 +19,6 @@ import core.utils.FilePath;
 import core.utils.ProjectParser;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -78,16 +77,25 @@ public class ConcolicTesting {
 
         CfgNode uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
         CfgNode prevUncoveredNode = null;
+        int nextIndex = 0;
         while (uncoveredNode != null) {
+            List<FindPath.PathNode> testPath;
             if (uncoveredNode.equals(prevUncoveredNode)) {
-                uncoveredNode.setFakeVisited(true);
+                testPath = FindPath.findNextPath(nextIndex);
+                nextIndex++;
+            } else {
+                prevUncoveredNode = uncoveredNode;
+                MarkedPath.resetMarkStatements();
+                FindPath.findPathsThrough(rootCfgNode, uncoveredNode, finalEndCfgNode);
+                testPath = FindPath.findNextPath(nextIndex);
+                nextIndex++;
             }
-            prevUncoveredNode = uncoveredNode;
-            MarkedPath.resetMarkStatements();
-            List<FindPath.PathNode> testPath = FindPath.findPathThrough(rootCfgNode, uncoveredNode, finalEndCfgNode);
+
+
             if (testPath == null) {
                 uncoveredNode.setFakeVisited(true);
                 uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
+                nextIndex = 0;
                 continue;
             }
 

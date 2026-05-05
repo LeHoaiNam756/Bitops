@@ -585,6 +585,8 @@ public final class CloneProject {
         return result.toString();
     }
 
+
+
     /**
      * Generates code for a condition with instrumentation based on coverage type.
      */

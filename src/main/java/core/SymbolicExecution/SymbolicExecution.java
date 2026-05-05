@@ -1,8 +1,11 @@
 package core.SymbolicExecution;
 
 import com.microsoft.z3.*;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.PrefixExpression;
+import core.SymbolicExecution.AstNode.Expression.Array.ArrayNode;
+import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
+import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNumberNode;
+import core.SymbolicExecution.Variable.PrimitiveVariable;
+import org.eclipse.jdt.core.dom.*;
 import core.CFG.CfgBoolExprNode;
 import core.CFG.CfgNode;
 import core.SymbolicExecution.AstNode.AstNode;
@@ -10,10 +13,11 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralBooleanNode;
 import core.SymbolicExecution.AstNode.Expression.Name.SimpleNameNode;
 import core.SymbolicExecution.AstNode.Expression.Operation.OperationExpressionNode;
 import core.SymbolicExecution.AstNode.Expression.Operation.PrefixExpressionNode;
+import core.SymbolicExecution.Variable.ArrayVariable;
 import core.SymbolicExecution.Variable.Variable;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import core.TestGeneration.path.FindPath.PathNode;
 import core.utils.Setup;
+import org.eclipse.jdt.core.dom.AST;
 
 import java.util.*;
 
@@ -89,6 +93,7 @@ public class SymbolicExecution {
         }
 
         model = createModel(ctx, finalZ3Expression);
+        System.out.println(finalZ3Expression);
     }
 
     private Model createModel(Context ctx, BoolExpr f) {
@@ -120,13 +125,27 @@ public class SymbolicExecution {
             if (astNode instanceof SingleVariableDeclaration) {
                 SingleVariableDeclaration svd = (SingleVariableDeclaration) astNode;
                 String paramName = svd.getName().getIdentifier();
-                
-                SimpleNameNode simpleNameNode = SimpleNameNode.of(paramName);
-                memoryModel.assignVariable(paramName, simpleNameNode);
+                Type paramType = svd.getType();
+                if (paramType instanceof PrimitiveType) {
+                    SimpleNameNode simpleNameNode = SimpleNameNode.of(paramName);
+                    memoryModel.assignVariable(paramName, simpleNameNode);
+                } else if (paramType instanceof ArrayType) {
+                    ArrayNode arrayNode = new ArrayNode(paramName);
+                    memoryModel.assignVariable(paramName, arrayNode);
+                }
                 
                 Variable variable = memoryModel.getVariable(paramName);
                 if (variable != null) {
                     Expr<?> paramExpr = variable.createZ3Expr(ctx);
+                    if (variable instanceof ArrayVariable) {
+                        AST ast = astNode.getAST();
+                        PrimitiveType intType = ast.newPrimitiveType(PrimitiveType.INT);
+                        PrimitiveVariable arrLenVar = new PrimitiveVariable(intType, paramName + "_len");
+                        Expr<?> arrLenExpr = arrLenVar.createZ3Expr(ctx);
+                        SimpleNameNode arrLenSimpleNameNode = SimpleNameNode.of(paramName + "_len");
+                        memoryModel.declareVariable(arrLenVar, arrLenSimpleNameNode);
+                        arrLenVar.setParameter(true);
+                    }
                     variable.setParameter(true);
                     // paramZ3ExprList is no longer used to determine ordering, but we keep it
                     // populated for potential diagnostic or backward-compat uses.
@@ -190,12 +209,64 @@ public class SymbolicExecution {
             }
 
             Expr<?> paramExpr = variable.createZ3Expr(ctx);
-            Expr<?> evaluatedResult = model.evaluate(paramExpr, true);
-            result[index] = convertEvaluatedResultToJavaType(evaluatedResult, parameterClasses[index]);
+
+            if (variable instanceof ArrayVariable) {
+                result[index] = extractArrayFromModel(paramExpr, paramName, parameterClasses[index]);
+            } else {
+                Expr<?> evaluatedResult = model.evaluate(paramExpr, true);
+                result[index] = convertEvaluatedResultToJavaType(evaluatedResult, parameterClasses[index]);
+            }
             index++;
         }
 
         return result;
+    }
+
+    private Object extractArrayFromModel(Expr<?> paramExpr, String paramName, Class<?> paramClass) {
+        AstNode value = memoryModel.accessVariable(paramName);
+        if (!(value instanceof ArrayNode)) {
+            throw new IllegalStateException("Expected ArraySymbolicRepresent for array variable: " + paramName);
+        }
+        ArrayNode arrRep = (ArrayNode) value;
+
+        int length;
+        AstNode lengthNode = arrRep.getLength();
+        if (lengthNode != null) {
+            Expr<?> lengthExpr = ExpressionNode.convertAstNodeToZ3Expr(lengthNode, ctx, memoryModel);
+            Expr<?> evalLen = model.evaluate(lengthExpr, true);
+            if (evalLen instanceof BitVecNum) {
+                length = ((BitVecNum) evalLen).getBigInteger().intValue();
+            } else {
+                throw new RuntimeException("Cannot evaluate array length to concrete value: " + evalLen);
+            }
+        } else {
+            length = arrRep.getElements().size();
+        }
+
+        if (length < 0) {
+           //TODO: handle for length < 0
+           length = 1;
+        }
+
+        Expr<?> arrayConst = variableFromName(paramName);
+        Sort elementSort = getArrayElementSort(paramExpr.getSort());
+
+        return ArrayZ3Parser.parseArrayFromModel(ctx, model, arrayConst, length, elementSort);
+    }
+
+    private Expr<?> variableFromName(String paramName) {
+        Variable variable = memoryModel.getVariable(paramName);
+        if (variable == null) {
+            throw new IllegalStateException("Variable not found: " + paramName);
+        }
+        return variable.createZ3Expr(ctx);
+    }
+
+    private static Sort getArrayElementSort(Sort sort) {
+        if (sort instanceof ArraySort) {
+            return ((ArraySort<?, ?>) sort).getRange();
+        }
+        throw new RuntimeException("Expected ArraySort, got: " + sort.getClass());
     }
 
     private static Object convertEvaluatedResultToJavaType(Expr evaluatedResult, Class<?> parameterClass) {
@@ -227,6 +298,10 @@ public class SymbolicExecution {
                 } else if (fpNum.isInf()) {
                     return fpNum.isNegative() ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
                 } else {
+                    if (fpNum.toString().contains("/")) {
+                        String[] parts = fpNum.toString().split("/");
+                        return Float.parseFloat(parts[0]) / Float.parseFloat(parts[1]);
+                    }
                     return Float.parseFloat(fpNum.toString());
                 }
             } else if ("double".equals(className)) {
@@ -269,14 +344,32 @@ public class SymbolicExecution {
         if (parameterClass.isPrimitive()) {
             return createRandomPrimitiveVariableData(parameterClass);
         } else if (parameterClass.isArray()) {
-            throw new RuntimeException("Array type not yet implemented: " + parameterClass.getName());
+            return createRandomArrayVariableData(parameterClass);
         }
         throw new RuntimeException("Unsupported type: " + parameterClass.getName());
     }
 
-    private static Object createRandomArrayVariableData(Class<?> parameterClass) {
-        return null;
+
+    private static Object createRandomArrayVariableData(Class<?> arrayClass) {
+        Random random = new Random();
+        // Default random length between 1 and 5
+        int length = 1 + random.nextInt(5);
+        Class<?> component = arrayClass.getComponentType();
+        Object array = java.lang.reflect.Array.newInstance(component, length);
+        for (int i = 0; i < length; i++) {
+            Object elem;
+            if (component.isArray()) {
+                elem = createRandomArrayVariableData(component);
+            } else if (component.isPrimitive()) {
+                elem = createRandomPrimitiveVariableData(component);
+            } else {
+                throw new RuntimeException("Unsupported array component type: " + component.getName());
+            }
+            java.lang.reflect.Array.set(array, i, elem);
+        }
+        return array;
     }
+
 
     private static Object createRandomPrimitiveVariableData(Class<?> parameterClass) {
         String className = parameterClass.getName();

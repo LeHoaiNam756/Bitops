@@ -58,4 +58,13 @@ public class MemoryModel {
         }
         return null;
     }
+
+    public Variable getVariableByValue(AstNode value) {
+        for (Map.Entry<Variable, AstNode> entry : S.entrySet()) {
+            if (entry.getValue() == value) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

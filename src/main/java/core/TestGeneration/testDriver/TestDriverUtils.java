@@ -31,8 +31,62 @@ public final class TestDriverUtils {
         if (type instanceof PrimitiveType) {
             PrimitiveType.Code primitiveTypeCode = (((PrimitiveType) type).getPrimitiveTypeCode());
             return getPrimitiveClass(primitiveTypeCode);
+        } else if (type instanceof ArrayType) {
+            ArrayType arrayType = (ArrayType) type;
+            Class<?> componentClass = getTypeClass(arrayType.getElementType());
+            return getArrayClass(componentClass, arrayType.getDimensions());
+        } else if (type instanceof SimpleType) {
+            String typeName = ((SimpleType) type).getName().getFullyQualifiedName();
+            return getSimpleClass(typeName);
         } else {
             throw new RuntimeException("Unsupported parameter type: " + type.getClass());
+        }
+    }
+
+    private static Class<?> getArrayClass(Class<?> componentClass, int dimensions) {
+        try {
+            if (dimensions == 1) {
+                return java.lang.reflect.Array.newInstance(componentClass, 0).getClass();
+            }
+            // For multi-dimensional arrays, build recursively
+            return java.lang.reflect.Array.newInstance(
+                    getArrayClass(componentClass, dimensions - 1), 0).getClass();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to resolve array class for component: " + componentClass, e);
+        }
+    }
+
+    private static Class<?> getSimpleClass(String typeName) {
+        switch (typeName) {
+            case "String":
+            case "java.lang.String":
+                return String.class;
+            case "Integer":
+            case "java.lang.Integer":
+                return Integer.class;
+            case "Boolean":
+            case "java.lang.Boolean":
+                return Boolean.class;
+            case "Byte":
+            case "java.lang.Byte":
+                return Byte.class;
+            case "Short":
+            case "java.lang.Short":
+                return Short.class;
+            case "Character":
+            case "java.lang.Character":
+                return Character.class;
+            case "Long":
+            case "java.lang.Long":
+                return Long.class;
+            case "Float":
+            case "java.lang.Float":
+                return Float.class;
+            case "Double":
+            case "java.lang.Double":
+                return Double.class;
+            default:
+                throw new RuntimeException("Unsupported simple type: " + typeName);
         }
     }
 

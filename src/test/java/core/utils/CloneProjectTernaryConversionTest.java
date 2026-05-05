@@ -3,19 +3,13 @@ package core.utils;
 import core.CFG.Utils.ASTHelper;
 import core.CFG.Utils.TernarySplitHelper;
 import core.utils.AstIdGenerator;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.*;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static core.CFG.Utils.TernarySplitHelper.extractConditionalExpression;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -253,37 +247,5 @@ public class CloneProjectTernaryConversionTest {
         assertContainsNormalized(generated, "v = 1;");
         assertContainsNormalized(generated, "v = 2;");
         assertContainsNormalized(generated, "v = 3;");
-    }
-
-    private ConditionalExpression extractConditionalExpression(ASTNode stmt) {
-        if (stmt instanceof ReturnStatement) {
-            return getConditionalExpression(((ReturnStatement) stmt).getExpression());
-        }
-        if (stmt instanceof ExpressionStatement) {
-            Expression expression = ((ExpressionStatement) stmt).getExpression();
-            if (expression instanceof Assignment) {
-                return getConditionalExpression(((Assignment) expression).getRightHandSide());
-            }
-        }
-        if (stmt instanceof VariableDeclarationStatement) {
-            @SuppressWarnings("unchecked")
-            List<VariableDeclarationFragment> fragments =
-                    ((VariableDeclarationStatement) stmt).fragments();
-            for (VariableDeclarationFragment fragment : fragments) {
-                ConditionalExpression ce = getConditionalExpression(fragment.getInitializer());
-                if (ce != null) {
-                    return ce;
-                }
-            }
-        }
-        return null;
-    }
-
-    private ConditionalExpression getConditionalExpression(Expression expression) {
-        Expression current = expression;
-        while (current instanceof ParenthesizedExpression) {
-            current = ((ParenthesizedExpression) current).getExpression();
-        }
-        return current instanceof ConditionalExpression ? (ConditionalExpression) current : null;
     }
 }

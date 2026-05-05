@@ -3,6 +3,9 @@ package core.SymbolicExecution.AstNode.Expression.Name;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import core.SymbolicExecution.AstNode.Expression.Literal.LiteralBooleanNode;
+import core.SymbolicExecution.AstNode.Expression.Literal.LiteralCharacterNode;
+import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNumberNode;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -36,6 +39,10 @@ public class SimpleNameNode extends NameNode {
         if (variable.isParameter()) {
             SymbolicExecution.isRelatedToParameter = true;
         }
+        AstNode value = memoryModel.accessVariable(name);
+        if (value != null && isSymbolicValue(value)) {
+            SymbolicExecution.isRelatedToParameter = true;
+        }
         return memoryModel.accessVariable(name);
     }
 
@@ -46,6 +53,11 @@ public class SimpleNameNode extends NameNode {
             throw new RuntimeException("Variable not found in memory model: " + varName);
         }
         return variable.createZ3Expr(ctx);
+    }
+    private static boolean isSymbolicValue(AstNode value) {
+        return !(value instanceof LiteralNumberNode)
+                && !(value instanceof LiteralBooleanNode)
+                && !(value instanceof LiteralCharacterNode);
     }
 
     @Override

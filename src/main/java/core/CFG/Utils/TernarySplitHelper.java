@@ -178,7 +178,7 @@ public final class TernarySplitHelper {
                 idMap));
     }
 
-    private static ConditionalExpression extractConditionalExpression(ASTNode statement) {
+    public static ConditionalExpression extractConditionalExpression(ASTNode statement) {
         if (statement instanceof ReturnStatement) {
             return getConditionalExpression(((ReturnStatement) statement).getExpression());
         }

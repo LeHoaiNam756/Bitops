@@ -17,7 +17,7 @@ public class TestDriverGenerator {
      * This allows the test driver to be compiled once and reused with different inputs.
      */
     public static void generateTestDriver(MethodDeclaration testUnit, Class<?>[] parameterClasses,
-                                            String fullyClonedClassName, String simpleClassName) {
+                                          String fullyClonedClassName, String simpleClassName) {
         if (testUnit == null) {
             throw new IllegalArgumentException("testUnit cannot be null");
         }
@@ -27,7 +27,7 @@ public class TestDriverGenerator {
         if (simpleClassName == null || simpleClassName.isEmpty()) {
             throw new IllegalArgumentException("simpleClassName cannot be null or empty");
         }
-        
+
         StringBuilder result = new StringBuilder();
 
         result.append("package ").append(FilePath.TEST_DRIVER_FILE_PACKAGE_LOCATION).append(";\n\n");
@@ -51,7 +51,7 @@ public class TestDriverGenerator {
      */
     @Deprecated
     public static void generateTestDriver(MethodDeclaration testUnit, Object[] testInputs, String fullyClonedClassName,
-                                            String simpleClassName) {
+                                          String simpleClassName) {
         if (testUnit == null) {
             throw new IllegalArgumentException("testUnit cannot be null");
         }
@@ -61,7 +61,7 @@ public class TestDriverGenerator {
         if (simpleClassName == null || simpleClassName.isEmpty()) {
             throw new IllegalArgumentException("simpleClassName cannot be empty");
         }
-        
+
         // Extract parameter classes from testInputs
         Class<?>[] parameterClasses = new Class<?>[testInputs.length];
         for (int i = 0; i < testInputs.length; i++) {
@@ -78,26 +78,26 @@ public class TestDriverGenerator {
                 parameterClasses[i] = testInputs[i].getClass();
             }
         }
-        
+
         generateTestDriver(testUnit, parameterClasses, fullyClonedClassName, simpleClassName);
     }
 
     public static String generateTestRunner(MethodDeclaration testUnit, Class<?>[] parameterClasses,
-                                          String simpleClassName) {
+                                            String simpleClassName) {
         StringBuilder result = new StringBuilder();
         result.append("    public static void main(String[] args) {\n");
         result.append("        List<Object> outputs = RamStorage.getOutputs();\n");
         result.append("        if (args.length != ").append(parameterClasses.length).append(") {\n");
         result.append("            throw new IllegalArgumentException(\"Expected ").append(parameterClasses.length)
-              .append(" arguments, got \" + args.length);\n");
+                .append(" arguments, got \" + args.length);\n");
         result.append("        }\n");
-        
+
         // Parse arguments based on parameter types
         for (int i = 0; i < parameterClasses.length; i++) {
             result.append("        ").append(getTypeName(parameterClasses[i])).append(" arg").append(i)
-                  .append(" = parseArg").append(i).append("(args[").append(i).append("]);\n");
+                    .append(" = parseArg").append(i).append("(args[").append(i).append("]);\n");
         }
-        
+
         boolean isStatic = isStaticMethod(testUnit);
         if (isStatic) {
             result.append("        Object output = ").append(simpleClassName).append(".");
@@ -114,16 +114,16 @@ public class TestDriverGenerator {
         result.append(");\n");
         result.append("        outputs.add(output);\n");
         result.append("    }\n");
-        
+
         // Generate parse methods for each parameter
         for (int i = 0; i < parameterClasses.length; i++) {
             result.append(generateParseMethod(i, parameterClasses[i]));
         }
-        
+
         // Add unescape utility methods if needed
         boolean needsUnescape = false;
         for (Class<?> paramType : parameterClasses) {
-            if (paramType == String.class || paramType == char.class || paramType == Character.class) {
+            if (requiresUnescape(paramType)) {
                 needsUnescape = true;
                 break;
             }
@@ -131,16 +131,19 @@ public class TestDriverGenerator {
         if (needsUnescape) {
             result.append(generateUnescapeMethods());
         }
-        
+
         return result.toString();
     }
-    
+
     private static String generateParseMethod(int index, Class<?> paramType) {
         StringBuilder result = new StringBuilder();
         result.append("    private static ").append(getTypeName(paramType)).append(" parseArg").append(index)
-              .append("(String arg) {\n");
-        
-        if (paramType == String.class) {
+                .append("(String arg) {\n");
+
+        if (paramType.isArray()) {
+            // Delegate to a named helper method so the main method stays clean
+            result.append("        return parse").append(getArrayHelperName(paramType)).append("Array(arg);\n");
+        } else if (paramType == String.class) {
             result.append("        if (\"null\".equals(arg)) return null;\n");
             result.append("        return unescapeString(arg);\n");
         } else if (paramType == int.class || paramType == Integer.class) {
@@ -163,11 +166,91 @@ public class TestDriverGenerator {
         } else {
             throw new RuntimeException("Unsupported parameter type: " + paramType);
         }
-        
+
         result.append("    }\n");
+
+        // Append the shared array-parsing helper when needed
+        if (paramType.isArray()) {
+            result.append(generateArrayParseHelper(paramType));
+        }
+
         return result.toString();
     }
-    
+
+    /**
+     * Produces a stable method-name segment for a given array type, e.g.
+     * int[]   -> "Int"
+     * long[]  -> "Long"
+     * int[][] -> "IntArray"  (component is itself an array)
+     */
+    private static String getArrayHelperName(Class<?> arrayType) {
+        Class<?> component = arrayType.getComponentType();
+        if (component.isArray()) {
+            return getArrayHelperName(component) + "Array";
+        }
+        // Capitalise the first letter of the component type name
+        String name = getTypeName(component);
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    /**
+     * Generates a private static helper method that parses a bracket-encoded
+     * string like "[1,2,3]" into the correct Java array type.
+     * Serialisation format: "[elem0,elem1,...]"  — empty array: "[]"
+     */
+    private static String generateArrayParseHelper(Class<?> arrayType) {
+        Class<?> component = arrayType.getComponentType();
+        String helperName = "parse" + getArrayHelperName(arrayType) + "Array";
+        String typeName   = getTypeName(arrayType);          // e.g. "int[]"
+        String compName   = getTypeName(component);          // e.g. "int"
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("    private static ").append(typeName).append(" ").append(helperName)
+                .append("(String arg) {\n");
+        sb.append("        if (\"null\".equals(arg)) return null;\n");
+        sb.append("        arg = arg.trim();\n");
+        sb.append("        if (!arg.startsWith(\"[\") || !arg.endsWith(\"]\"))\n");
+        sb.append("            throw new IllegalArgumentException(\"Invalid array format: \" + arg);\n");
+        sb.append("        String inner = arg.substring(1, arg.length() - 1).trim();\n");
+        sb.append("        if (inner.isEmpty()) return new ").append(compName).append("[0];\n");
+        sb.append("        String[] parts = inner.split(\",\", -1);\n");
+        sb.append("        ").append(typeName).append(" result = new ").append(compName)
+                .append("[parts.length];\n");
+        sb.append("        for (int i = 0; i < parts.length; i++) {\n");
+        sb.append("            String elem = parts[i].trim();\n");
+
+        if (component.isArray()) {
+            // Nested array: recurse into the component helper
+            sb.append("            result[i] = ").append("parse").append(getArrayHelperName(component))
+                    .append("Array(elem);\n");
+        } else if (component == int.class || component == Integer.class) {
+            sb.append("            result[i] = Integer.parseInt(elem);\n");
+        } else if (component == boolean.class || component == Boolean.class) {
+            sb.append("            result[i] = Boolean.parseBoolean(elem);\n");
+        } else if (component == byte.class || component == Byte.class) {
+            sb.append("            result[i] = Byte.parseByte(elem);\n");
+        } else if (component == short.class || component == Short.class) {
+            sb.append("            result[i] = Short.parseShort(elem);\n");
+        } else if (component == char.class || component == Character.class) {
+            sb.append("            result[i] = elem.isEmpty() ? (char)0 : unescapeChar(elem);\n");
+        } else if (component == long.class || component == Long.class) {
+            sb.append("            result[i] = Long.parseLong(elem);\n");
+        } else if (component == float.class || component == Float.class) {
+            sb.append("            result[i] = Float.parseFloat(elem);\n");
+        } else if (component == double.class || component == Double.class) {
+            sb.append("            result[i] = Double.parseDouble(elem);\n");
+        } else if (component == String.class) {
+            sb.append("            result[i] = \"null\".equals(elem) ? null : unescapeString(elem);\n");
+        } else {
+            throw new RuntimeException("Unsupported array component type: " + component);
+        }
+
+        sb.append("        }\n");
+        sb.append("        return result;\n");
+        sb.append("    }\n");
+        return sb.toString();
+    }
+
     private static String getTypeName(Class<?> type) {
         if (type == int.class) return "int";
         if (type == boolean.class) return "boolean";
@@ -178,9 +261,13 @@ public class TestDriverGenerator {
         if (type == float.class) return "float";
         if (type == double.class) return "double";
         if (type == void.class) return "void";
+        if (type.isArray()) {
+            // Recursively build the correct Java array declaration, e.g. "int[]", "int[][]"
+            return getTypeName(type.getComponentType()) + "[]";
+        }
         return type.getSimpleName();
     }
-    
+
     private static String generateUnescapeMethods() {
         StringBuilder result = new StringBuilder();
         result.append("    private static String unescapeString(String s) {\n");
@@ -214,7 +301,7 @@ public class TestDriverGenerator {
         result.append("        }\n");
         result.append("        return sb.toString();\n");
         result.append("    }\n");
-        
+
         result.append("    private static char unescapeChar(String s) {\n");
         result.append("        if (s.length() == 1) return s.charAt(0);\n");
         result.append("        if (s.startsWith(\"\\\\u\") && s.length() == 6) {\n");
@@ -234,16 +321,16 @@ public class TestDriverGenerator {
         result.append("        }\n");
         result.append("        return s.charAt(0);\n");
         result.append("    }\n");
-        
+
         return result.toString();
     }
-    
+
     private static boolean isStaticMethod(MethodDeclaration method) {
         @SuppressWarnings("unchecked")
         List<Modifier> modifiers = method.modifiers();
         for (Modifier modifier : modifiers) {
-            if (modifier.getKeyword() != null && 
-                modifier.getKeyword().toFlagValue() == Modifier.ModifierKeyword.STATIC_KEYWORD.toFlagValue()) {
+            if (modifier.getKeyword() != null &&
+                    modifier.getKeyword().toFlagValue() == Modifier.ModifierKeyword.STATIC_KEYWORD.toFlagValue()) {
                 return true;
             }
         }
@@ -255,7 +342,7 @@ public class TestDriverGenerator {
         Files.createDirectories(testDriverPath.getParent());
         Files.write(testDriverPath, content.getBytes());
     }
-    
+
     /**
      * Serializes test inputs to command-line arguments that can be parsed by the generated test driver.
      */
@@ -269,10 +356,22 @@ public class TestDriverGenerator {
         }
         return args;
     }
-    
+
+    /**
+     * Returns true when the type (or its array component) needs the unescape helpers in the
+     * generated test driver.
+     */
+    private static boolean requiresUnescape(Class<?> type) {
+        if (type == String.class || type == char.class || type == Character.class) return true;
+        if (type.isArray()) return requiresUnescape(type.getComponentType());
+        return false;
+    }
+
     private static String serializeValue(Object value) {
         if (value == null) {
             return "null";
+        } else if (value.getClass().isArray()) {
+            return serializeArray(value);
         } else if (value instanceof String) {
             return escapeString((String) value);
         } else if (value instanceof Character) {
@@ -281,7 +380,36 @@ public class TestDriverGenerator {
             return value.toString();
         }
     }
-    
+
+    /**
+     * Serialises any primitive or String array (including multi-dimensional) to the
+     * bracket format "[e0,e1,e2]" consumed by the generated parseXxxArray helpers.
+     */
+    private static String serializeArray(Object array) {
+        if (array == null) return "null";
+        int length = java.lang.reflect.Array.getLength(array);
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < length; i++) {
+            if (i > 0) sb.append(",");
+            Object elem = java.lang.reflect.Array.get(array, i);
+            if (elem == null) {
+                sb.append("null");
+            } else if (elem.getClass().isArray()) {
+                sb.append(serializeArray(elem));   // nested arrays
+            } else if (elem instanceof Character) {
+                sb.append(escapeChar((Character) elem));
+            } else if (elem instanceof String) {
+                sb.append(escapeString((String) elem));
+            } else {
+                sb.append(elem);
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+
+
     private static String escapeString(String s) {
         if (s == null) {
             return "null";
@@ -319,7 +447,7 @@ public class TestDriverGenerator {
         }
         return sb.toString();
     }
-    
+
     private static String escapeChar(char c) {
         if (c == '\'') {
             return "\\'";
@@ -336,7 +464,8 @@ public class TestDriverGenerator {
         if (value == null) {
             result.append("null");
         } else if (value.getClass().isArray()) {
-            throw new RuntimeException("Array type is not supported in test driver generation");
+            // Produce a Java array initialiser literal, e.g. new int[]{1,2,3}
+            result.append(buildArrayLiteral(value));
         } else if (value instanceof Float) {
             result.append(value).append("f");
         } else if (value instanceof Double) {
@@ -357,7 +486,7 @@ public class TestDriverGenerator {
             result.append(value);
         }
     }
-    
+
     private static void formatCharacter(StringBuilder result, char value) {
         if (value == '\'') {
             result.append("'\\''");
@@ -370,7 +499,7 @@ public class TestDriverGenerator {
             result.append("'").append(value).append("'");
         }
     }
-    
+
     private static void formatString(StringBuilder result, String value) {
         result.append("\"");
         for (int i = 0; i < value.length(); i++) {
@@ -407,5 +536,30 @@ public class TestDriverGenerator {
             }
         }
         result.append("\"");
+    }
+
+    /** such as {@code new int[]{1,2,3}} for use
+     * in the legacy (hardcoded) test driver path.
+     */
+    private static String buildArrayLiteral(Object array) {
+        if (array == null) return "null";
+        Class<?> componentType = array.getClass().getComponentType();
+        int length = java.lang.reflect.Array.getLength(array);
+        StringBuilder sb = new StringBuilder("new ").append(getTypeName(componentType)).append("[]{");
+        for (int i = 0; i < length; i++) {
+            if (i > 0) sb.append(", ");
+            Object elem = java.lang.reflect.Array.get(array, i);
+            if (elem == null) {
+                sb.append("null");
+            } else if (elem.getClass().isArray()) {
+                sb.append(buildArrayLiteral(elem));
+            } else {
+                StringBuilder tmp = new StringBuilder();
+                formatValue(tmp, elem);
+                sb.append(tmp);
+            }
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }
