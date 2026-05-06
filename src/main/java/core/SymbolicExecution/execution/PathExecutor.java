@@ -5,7 +5,7 @@ import core.SymbolicExecution.dispatch.AstDispatcher;
 import core.SymbolicExecution.model.SymbolicStore;
 import core.TestGeneration.path.PathStep;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PathExecutor {
@@ -20,9 +20,13 @@ public class PathExecutor {
     }
 
     public List<BoolExpr> execute(List<PathStep> path) {
+        List<BoolExpr> constraints = new ArrayList<>();
         if (path == null || path.isEmpty()) {
-            return Collections.emptyList();
+            return constraints;
         }
-        return Collections.emptyList();
+        for (PathStep step : path) {
+            // TODO: resolve AST for nodeId (will be done via ConcolicTesting lookup)
+        }
+        return constraints;
     }
 }

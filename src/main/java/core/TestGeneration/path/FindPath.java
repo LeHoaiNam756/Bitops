@@ -141,7 +141,7 @@ public class FindPath {
             }
         }
 
-        // 3. Run cycle-aware BFS from start → mid
+        // 3. Run cycle-aware BFS from start -> mid
         TestPath res1 = (relevantEdge == null)
                 ? finder.bfs(start, mid, new HashMap<>(), null, null, 0)
                 : finder.bfs(start, mid, new HashMap<>(),
@@ -149,7 +149,7 @@ public class FindPath {
 
         if (res1 == null) return null;
 
-        // 4. From mid → end, no additional cycles needed (just find exit)
+        // 4. From mid -> end, no additional cycles needed (just find exit)
         TestPath res2 = finder.bfs(mid, end, res1.finalCounts, null, null, 0);
         if (res2 == null) return null;
 
@@ -224,7 +224,7 @@ public class FindPath {
 
     /**
      * DFS over the CFG from 'start', collecting all back-edges.
-     * A back-edge is any edge (u → v) where v is an ancestor of u
+     * A back-edge is any edge (u -> v) where v is an ancestor of u
      * in the DFS tree (i.e. v is already on the current DFS stack).
      */
     public static List<BackEdge> findBackEdges(CfgNode start) {
@@ -245,7 +245,7 @@ public class FindPath {
         List<CfgNode> successors = getSuccessors(node);
         for (CfgNode succ : successors) {
             if (onStack.contains(succ)) {
-                // succ is an ancestor → this is a back-edge
+                // succ is an ancestor -> this is a back-edge
                 backEdges.add(new BackEdge(succ, node));
             } else {
                 dfs(succ, onStack, visited, backEdges);
@@ -311,5 +311,18 @@ public class FindPath {
             }
         }
         return false;
+    }
+
+    public static Set<Integer> toNodeIds(Set<CfgNode> nodes) {
+        Set<Integer> ids = new HashSet<>();
+        if (nodes == null) {
+            return ids;
+        }
+        for (CfgNode node : nodes) {
+            if (node != null) {
+                ids.add(node.getStartPosition());
+            }
+        }
+        return ids;
     }
 }

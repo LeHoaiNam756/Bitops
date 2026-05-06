@@ -4,8 +4,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.*;
 import core.CFG.Utils.ASTHelper;
+import core.SymbolicExecution.RandomTestData;
 import core.SymbolicExecution.SymbolicExecution;
-import core.TestGeneration.path.FindPath.PathNode;
+import core.TestGeneration.path.PathStep;
 import core.TestGeneration.testDriver.TestDriverUtils;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class TestSymbolicExecution {
                 char.class,
                 boolean.class
         };
-        Object[] randomValues = core.SymbolicExecution.SymbolicExecution.createRandomTestData(classes);
+        Object[] randomValues = RandomTestData.createRandomTestData(classes);
         assertEquals(randomValues.length, classes.length);
         assertTrue(randomValues[0] instanceof Integer);
         assertTrue(randomValues[1] instanceof Byte);
@@ -101,38 +102,38 @@ public class TestSymbolicExecution {
 
         ASTHelper.generateCfg(blockNode, cu, ASTHelper.Coverage.STATEMENT);
 
-        // 4. Create list of PathNode for one loop iteration:
+        // 4. Create list of PathStep for one loop iteration:
         //    int sum = 0; char ch = start; ch <= end (True); sum+= 1; ch++; ch <= end (False); return sum;
-        List<PathNode> testPath = new LinkedList<>();
+        List<PathStep> testPath = new LinkedList<>();
 
         CfgNode sumInitNode = rootCfgNode.getAfterNode();
-        testPath.add(new PathNode(sumInitNode, null));
+        testPath.add(new PathStep(sumInitNode.getStartPosition(), null));
 
         CfgNode forInitNode = sumInitNode.getAfterNode();
-        testPath.add(new PathNode(forInitNode, null));
+        testPath.add(new PathStep(forInitNode.getStartPosition(), null));
 
         CfgBoolExprNode forCondition = (CfgBoolExprNode) forInitNode.getAfterNode();
-        testPath.add(new PathNode(forCondition, true));
+        testPath.add(new PathStep(forCondition.getStartPosition(), true));
 
         CfgNode bodyInside = forCondition.getTrueNode();
-        testPath.add(new PathNode(bodyInside, null));
+        testPath.add(new PathStep(bodyInside.getStartPosition(), null));
 
         CfgNode updaterNode = bodyInside.getAfterNode();
-        testPath.add(new PathNode(updaterNode, null));
+        testPath.add(new PathStep(updaterNode.getStartPosition(), null));
 
         CfgNode backToCondition = updaterNode.getAfterNode();
-        testPath.add(new PathNode(backToCondition, false));
+        testPath.add(new PathStep(backToCondition.getStartPosition(), false));
 
         CfgNode afterLoop = ((CfgBoolExprNode) backToCondition).getFalseNode();
         CfgNode returnNode = afterLoop.getAfterNode();
-        testPath.add(new PathNode(returnNode, null));
+        testPath.add(new PathStep(returnNode.getStartPosition(), null));
 
         // 5. Create SymbolicExecution and execute with parameters list and test path
-        SymbolicExecution symbolicExecution = new SymbolicExecution(parameterList, testPath);
-        symbolicExecution.execute();
+        SymbolicExecution symbolicExecution = new SymbolicExecution(null);
+        symbolicExecution.executePath(testPath, parameterList);
 
         Class<?>[] parameterClasses = TestDriverUtils.getParameterClasses(parameterList);
-        Object[] testInputs = symbolicExecution.getTestInputFromModel(parameterClasses);
+        Object[] testInputs = RandomTestData.createRandomTestData(parameterClasses);
 
         List<String> paramNames = TestDriverUtils.getParameterNames(parameterList);
         System.out.println("=== Symbolic Execution Result ===");

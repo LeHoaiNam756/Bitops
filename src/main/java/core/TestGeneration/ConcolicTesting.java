@@ -5,9 +5,15 @@ import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
 import core.CFG.CfgNode;
 import core.CFG.Utils.ASTHelper;
+import core.CFG.graph.CfgGraph;
+import core.SymbolicExecution.RandomTestData;
 import core.SymbolicExecution.SymbolicExecution;
+import core.SymbolicExecution.dispatch.AstDispatcher;
+import core.SymbolicExecution.dispatch.DefaultAstHandlers;
 import core.TestGeneration.path.FindPath;
 import core.TestGeneration.path.MarkedPath;
+import core.TestGeneration.path.PathFinder;
+import core.TestGeneration.path.PathStep;
 import core.TestGeneration.result.RamStorage;
 import core.TestGeneration.result.TestData;
 import core.TestGeneration.result.TestResult;
@@ -72,37 +78,18 @@ public class ConcolicTesting {
                 fullyClonedClassName, simpleClassName);
         TestDriverRunner.reset();
 
-        Object[] testInputs = SymbolicExecution.createRandomTestData(this.parameterClasses);
+        Object[] testInputs = RandomTestData.createRandomTestData(this.parameterClasses);
         executeTestAndRecord(testInputs, testResult, coverage);
 
+        CfgGraph graph = ASTHelper.generateCfg((MethodDeclaration) testUnit);
+        PathFinder finder = new PathFinder();
+        AstDispatcher dispatcher = DefaultAstHandlers.defaultDispatcher();
+        SymbolicExecution symbolicExecution = new SymbolicExecution(dispatcher);
         CfgNode uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
-        CfgNode prevUncoveredNode = null;
-        int nextIndex = 0;
         while (uncoveredNode != null) {
-            List<FindPath.PathNode> testPath;
-            if (uncoveredNode.equals(prevUncoveredNode)) {
-                testPath = FindPath.findNextPath(nextIndex);
-                nextIndex++;
-            } else {
-                prevUncoveredNode = uncoveredNode;
-                MarkedPath.resetMarkStatements();
-                FindPath.findPathsThrough(rootCfgNode, uncoveredNode, finalEndCfgNode);
-                testPath = FindPath.findNextPath(nextIndex);
-                nextIndex++;
-            }
-
-
-            if (testPath == null) {
-                uncoveredNode.setFakeVisited(true);
-                uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
-                nextIndex = 0;
-                continue;
-            }
-
-
-            SymbolicExecution symbolicExecution = new SymbolicExecution(parameterList, testPath);
+            List<PathStep> pipelinePath = finder.findPathThrough(graph, 1, 1, graph.nodeCount());
             try {
-                symbolicExecution.execute();
+                symbolicExecution.executePath(pipelinePath, parameterList);
             } catch (RuntimeException e) {
                 System.err.println("Test fail due to UNSATISFIABLE constraint to cover node at " +
                         uncoveredNode.getStartPosition() + ": " + uncoveredNode.getContent() + " - "
@@ -130,7 +117,7 @@ public class ConcolicTesting {
                 TestDriverRunner.reset();
             }
 
-            Object[] newTestInputs = symbolicExecution.getTestInputFromModel(parameterClasses);
+            Object[] newTestInputs = RandomTestData.createRandomTestData(this.parameterClasses);
             executeTestAndRecord(newTestInputs, testResult, coverage);
 
             uncoveredNode = FindPath.getUncoveredNode(totalCfgNodes, MarkedPath.getVisitedNodes());
@@ -408,4 +395,3 @@ public class ConcolicTesting {
     }
 
 }
-
