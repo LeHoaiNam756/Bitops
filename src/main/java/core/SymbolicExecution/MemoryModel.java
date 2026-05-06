@@ -6,6 +6,7 @@ import core.SymbolicExecution.Variable.Variable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class MemoryModel {
     private final HashMap<Variable, AstNode> S = new HashMap<>();
 
