@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.MemoryModel;
 import core.SymbolicExecution.SymbolicExecution;
-import core.SymbolicExecution.Variable.Variable;
+import core.SymbolicExecution.model.SymbolicValue;
 
 @Getter
 @Setter
@@ -33,14 +33,14 @@ public class SimpleNameNode extends NameNode {
 
     public static AstNode executeSimpleNameNode(SimpleNameNode simpleNameNode, MemoryModel memoryModel) {
         String name = simpleNameNode.getIdentifier();
-        Variable variable = memoryModel.getVariable(name);
+        SymbolicValue value = memoryModel.getVariable(name);
         // TODO: This is a hack to track whether the variable is related to a parameter.
         //  We should find a better way to do this.
-        if (variable.isParameter()) {
+        if (value != null && value.isParameter()) {
             SymbolicExecution.isRelatedToParameter = true;
         }
-        AstNode value = memoryModel.accessVariable(name);
-        if (value != null && isSymbolicValue(value)) {
+        AstNode nodeValue = memoryModel.accessVariable(name);
+        if (nodeValue != null && isSymbolicValue(nodeValue)) {
             SymbolicExecution.isRelatedToParameter = true;
         }
         return memoryModel.accessVariable(name);
@@ -48,12 +48,13 @@ public class SimpleNameNode extends NameNode {
 
     public static Expr<?> convertSimpleNameToZ3Expr(SimpleNameNode astNode, Context ctx, MemoryModel memoryModel) {
         String varName = astNode.getIdentifier();
-        Variable variable = memoryModel.getVariable(varName);
-        if (variable == null) {
+        SymbolicValue value = memoryModel.getVariable(varName);
+        if (value == null) {
             throw new RuntimeException("Variable not found in memory model: " + varName);
         }
-        return variable.createZ3Expr(ctx);
+        return MemoryModel.createZ3ExprFromType(varName, value.getType(), ctx);
     }
+
     private static boolean isSymbolicValue(AstNode value) {
         return !(value instanceof LiteralNumberNode)
                 && !(value instanceof LiteralBooleanNode)

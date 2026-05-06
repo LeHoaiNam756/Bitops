@@ -23,7 +23,7 @@ ConcolicTesting.java          ← main entry point
 Algorithm:
 1. Parse source with `ProjectParser.loadFile()`
 2. Build CFG via `ASTHelper.generateCfg()`
-3. Seed with `SymbolicExecution.createRandomTestData()`
+3. Seed with `core.SymbolicExecution.RandomTestData.createRandomTestData()`
 4. Loop while uncovered nodes remain:
    - `FindPath.findPathThrough(start, uncoveredNode, exit)` → `List<PathNode>`
    - `new SymbolicExecution(parameterList, testPath).execute()`

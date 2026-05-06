@@ -8,7 +8,8 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralBooleanNode;
 import core.SymbolicExecution.AstNode.Expression.Literal.LiteralCharacterNode;
 import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNumberNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.Variable.PrimitiveVariable;
+import core.SymbolicExecution.TypedExpr;
+import core.SymbolicExecution.model.SymbolicValue;
 
 import java.util.List;
 
@@ -59,12 +60,9 @@ public class TestVariableDeclaration {
         assertNull(memoryModel.accessVariable("y"));
         assertNull(memoryModel.accessVariable("z"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -87,12 +85,9 @@ public class TestVariableDeclaration {
         assertEquals(10, ((LiteralNumberNode) memoryModel.accessVariable("y")).getIntValue());
         assertEquals(15, ((LiteralNumberNode) memoryModel.accessVariable("z")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -113,12 +108,9 @@ public class TestVariableDeclaration {
         assertEquals(5, ((LiteralNumberNode) memoryModel.accessVariable("x")).getIntValue());
         assertEquals(10, ((LiteralNumberNode) memoryModel.accessVariable("z")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -133,8 +125,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("b")).isInteger());
         assertEquals(1, ((LiteralNumberNode) memoryModel.accessVariable("b")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("b") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BYTE, ((PrimitiveVariable) memoryModel.getVariable("b")).getCode());
+        assertEquals(TypedExpr.JavaType.BYTE, memoryModel.getVariable("b").getType());
     }
 
     @Test
@@ -149,8 +140,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("s")).isInteger());
         assertEquals(2, ((LiteralNumberNode) memoryModel.accessVariable("s")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("s") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.SHORT, ((PrimitiveVariable) memoryModel.getVariable("s")).getCode());
+        assertEquals(TypedExpr.JavaType.SHORT, memoryModel.getVariable("s").getType());
     }
 
     @Test
@@ -165,8 +155,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("l")).isInteger());
         assertEquals(100, ((LiteralNumberNode) memoryModel.accessVariable("l")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("l") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.LONG, ((PrimitiveVariable) memoryModel.getVariable("l")).getCode());
+        assertEquals(TypedExpr.JavaType.LONG, memoryModel.getVariable("l").getType());
     }
 
     @Test
@@ -182,8 +171,7 @@ public class TestVariableDeclaration {
         assertEquals(3.14, ((LiteralNumberNode) memoryModel.accessVariable("f")).getDoubleValue(),
                 0.001);
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("f") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.FLOAT, ((PrimitiveVariable) memoryModel.getVariable("f")).getCode());
+        assertEquals(TypedExpr.JavaType.FLOAT, memoryModel.getVariable("f").getType());
     }
 
     @Test
@@ -198,8 +186,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("d")).isDouble());
         assertEquals(3.14, ((LiteralNumberNode) memoryModel.accessVariable("d")).getDoubleValue(), 0.001);
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("d") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.DOUBLE, ((PrimitiveVariable) memoryModel.getVariable("d")).getCode());
+        assertEquals(TypedExpr.JavaType.DOUBLE, memoryModel.getVariable("d").getType());
     }
 
     @Test
@@ -213,8 +200,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.accessVariable("c") instanceof LiteralCharacterNode);
         assertEquals('a', ((LiteralCharacterNode) memoryModel.accessVariable("c")).getValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("c") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.CHAR, ((PrimitiveVariable) memoryModel.getVariable("c")).getCode());
+        assertEquals(TypedExpr.JavaType.CHAR, memoryModel.getVariable("c").getType());
     }
 
     @Test
@@ -228,8 +214,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.accessVariable("flag") instanceof LiteralBooleanNode);
         assertTrue(((LiteralBooleanNode) memoryModel.accessVariable("flag")).isValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("flag") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BOOLEAN, ((PrimitiveVariable) memoryModel.getVariable("flag")).getCode());
+        assertEquals(TypedExpr.JavaType.BOOLEAN, memoryModel.getVariable("flag").getType());
     }
 
     @Ignore
@@ -307,12 +292,9 @@ public class TestVariableDeclaration {
         assertNull(memoryModel.accessVariable("y"));
         assertNull(memoryModel.accessVariable("z"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -335,12 +317,9 @@ public class TestVariableDeclaration {
         assertEquals(10, ((LiteralNumberNode) memoryModel.accessVariable("y")).getIntValue());
         assertEquals(15, ((LiteralNumberNode) memoryModel.accessVariable("z")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -361,12 +340,9 @@ public class TestVariableDeclaration {
         assertEquals(5, ((LiteralNumberNode) memoryModel.accessVariable("x")).getIntValue());
         assertEquals(10, ((LiteralNumberNode) memoryModel.accessVariable("z")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("y") instanceof PrimitiveVariable);
-        assertTrue(memoryModel.getVariable("z") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("y")).getCode());
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("z")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("y").getType());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("z").getType());
     }
 
     @Test
@@ -381,8 +357,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("b")).isInteger());
         assertEquals(1, ((LiteralNumberNode) memoryModel.accessVariable("b")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("b") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BYTE, ((PrimitiveVariable) memoryModel.getVariable("b")).getCode());
+        assertEquals(TypedExpr.JavaType.BYTE, memoryModel.getVariable("b").getType());
     }
 
     @Test
@@ -397,8 +372,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("s")).isInteger());
         assertEquals(2, ((LiteralNumberNode) memoryModel.accessVariable("s")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("s") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.SHORT, ((PrimitiveVariable) memoryModel.getVariable("s")).getCode());
+        assertEquals(TypedExpr.JavaType.SHORT, memoryModel.getVariable("s").getType());
     }
 
     @Test
@@ -413,8 +387,7 @@ public class TestVariableDeclaration {
         assertTrue(((LiteralNumberNode) memoryModel.accessVariable("l")).isInteger());
         assertEquals(100, ((LiteralNumberNode) memoryModel.accessVariable("l")).getIntValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("l") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.LONG, ((PrimitiveVariable) memoryModel.getVariable("l")).getCode());
+        assertEquals(TypedExpr.JavaType.LONG, memoryModel.getVariable("l").getType());
     }
 
     @Test
@@ -430,8 +403,7 @@ public class TestVariableDeclaration {
         assertEquals(3.14, ((LiteralNumberNode) memoryModel.accessVariable("f")).getDoubleValue(),
                 0.001);
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("f") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.FLOAT, ((PrimitiveVariable) memoryModel.getVariable("f")).getCode());
+        assertEquals(TypedExpr.JavaType.FLOAT, memoryModel.getVariable("f").getType());
     }
 
     @Test
@@ -447,8 +419,7 @@ public class TestVariableDeclaration {
         assertEquals(3.14, ((LiteralNumberNode) memoryModel.accessVariable("d")).getDoubleValue(),
                 0.001);
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("d") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.DOUBLE, ((PrimitiveVariable) memoryModel.getVariable("d")).getCode());
+        assertEquals(TypedExpr.JavaType.DOUBLE, memoryModel.getVariable("d").getType());
     }
 
     @Test
@@ -462,8 +433,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.accessVariable("c") instanceof LiteralCharacterNode);
         assertEquals('a', ((LiteralCharacterNode) memoryModel.accessVariable("c")).getValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("c") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.CHAR, ((PrimitiveVariable) memoryModel.getVariable("c")).getCode());
+        assertEquals(TypedExpr.JavaType.CHAR, memoryModel.getVariable("c").getType());
     }
 
     @Test
@@ -477,8 +447,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.accessVariable("flag") instanceof LiteralBooleanNode);
         assertTrue(((LiteralBooleanNode) memoryModel.accessVariable("flag")).isValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("flag") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BOOLEAN, ((PrimitiveVariable) memoryModel.getVariable("flag")).getCode());
+        assertEquals(TypedExpr.JavaType.BOOLEAN, memoryModel.getVariable("flag").getType());
     }
 
     @Test
@@ -492,8 +461,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.accessVariable("flag") instanceof LiteralBooleanNode);
         assertFalse(((LiteralBooleanNode) memoryModel.accessVariable("flag")).isValue());
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("flag") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BOOLEAN, ((PrimitiveVariable) memoryModel.getVariable("flag")).getCode());
+        assertEquals(TypedExpr.JavaType.BOOLEAN, memoryModel.getVariable("flag").getType());
     }
 
     @Ignore
@@ -540,8 +508,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("x"));
         assertNull(memoryModel.accessVariable("x"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
     }
 
     @Test
@@ -554,8 +521,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("b"));
         assertNull(memoryModel.accessVariable("b"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("b") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BYTE, ((PrimitiveVariable) memoryModel.getVariable("b")).getCode());
+        assertEquals(TypedExpr.JavaType.BYTE, memoryModel.getVariable("b").getType());
     }
 
     @Test
@@ -568,8 +534,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("s"));
         assertNull(memoryModel.accessVariable("s"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("s") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.SHORT, ((PrimitiveVariable) memoryModel.getVariable("s")).getCode());
+        assertEquals(TypedExpr.JavaType.SHORT, memoryModel.getVariable("s").getType());
     }
 
     @Test
@@ -582,8 +547,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("l"));
         assertNull(memoryModel.accessVariable("l"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("l") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.LONG, ((PrimitiveVariable) memoryModel.getVariable("l")).getCode());
+        assertEquals(TypedExpr.JavaType.LONG, memoryModel.getVariable("l").getType());
     }
 
     @Test
@@ -596,8 +560,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("f"));
         assertNull(memoryModel.accessVariable("f"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("f") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.FLOAT, ((PrimitiveVariable) memoryModel.getVariable("f")).getCode());
+        assertEquals(TypedExpr.JavaType.FLOAT, memoryModel.getVariable("f").getType());
     }
 
     @Test
@@ -610,8 +573,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("d"));
         assertNull(memoryModel.accessVariable("d"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("d") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.DOUBLE, ((PrimitiveVariable) memoryModel.getVariable("d")).getCode());
+        assertEquals(TypedExpr.JavaType.DOUBLE, memoryModel.getVariable("d").getType());
     }
 
     @Test
@@ -624,8 +586,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("c"));
         assertNull(memoryModel.accessVariable("c"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("c") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.CHAR, ((PrimitiveVariable) memoryModel.getVariable("c")).getCode());
+        assertEquals(TypedExpr.JavaType.CHAR, memoryModel.getVariable("c").getType());
     }
 
     @Test
@@ -638,8 +599,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("flag"));
         assertNull(memoryModel.accessVariable("flag"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("flag") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BOOLEAN, ((PrimitiveVariable) memoryModel.getVariable("flag")).getCode());
+        assertEquals(TypedExpr.JavaType.BOOLEAN, memoryModel.getVariable("flag").getType());
     }
 
     @Ignore
@@ -653,8 +613,7 @@ public class TestVariableDeclaration {
         assertTrue(memoryModel.containsVariable("x"));
         assertNull(memoryModel.accessVariable("x"));
         assertNull(astNode);
-        assertTrue(memoryModel.getVariable("x") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.INT, ((PrimitiveVariable) memoryModel.getVariable("x")).getCode());
+        assertEquals(TypedExpr.JavaType.INT, memoryModel.getVariable("x").getType());
         
         // Verify modifier
         @SuppressWarnings("unchecked")

@@ -1,13 +1,15 @@
 package core.SymbolicExecution.AstNode;
 
+import com.microsoft.z3.Expr;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayCreationNode;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayInitializerNode;
 import core.SymbolicExecution.SymbolicExecution;
-import core.SymbolicExecution.Variable.ArrayVariable;
+import core.SymbolicExecution.TypedExpr;
 import org.eclipse.jdt.core.dom.*;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.Variable.PrimitiveVariable;
+import core.SymbolicExecution.model.ArraySymbolicValue;
+import core.SymbolicExecution.model.SymbolicValue;
 
 import java.util.List;
 
@@ -69,7 +71,11 @@ public class VariableDeclarationNode extends ExpressionNode {
                                              String name,
                                              Expression initializer,
                                              MemoryModel memoryModel) {
-        ArrayVariable arrayVariable = new ArrayVariable((ArrayType) arrayType, name);
+        ArrayType arrType = (ArrayType) arrayType;
+        TypedExpr.JavaType elementType = MemoryModel.mapPrimitiveType((PrimitiveType) arrType.getElementType());
+        Expr<?> arrayExpr = createArrayZ3Expr(name, arrType, memoryModel.getContext());
+        ArraySymbolicValue arrayValue = ArraySymbolicValue.of(name, elementType, arrayExpr,
+                SymbolicExecution.isRelatedToParameter, arrType.getDimensions());
         AstNode initValue = null;
 
         if (initializer != null) {
@@ -85,12 +91,46 @@ public class VariableDeclarationNode extends ExpressionNode {
             } else {
                 initValue = ExpressionNode.executeExpression(initializer, memoryModel);
             }
-            arrayVariable.setParameter(SymbolicExecution.isRelatedToParameter);
         }
 
-        memoryModel.declareVariable(arrayVariable, initValue);
+        memoryModel.declareVariable(arrayValue, initValue);
     }
 
+    private static com.microsoft.z3.Expr<?> createArrayZ3Expr(String name, ArrayType arrayType, com.microsoft.z3.Context ctx) {
+        com.microsoft.z3.Sort domain = ctx.mkBitVecSort(32);
+        com.microsoft.z3.Sort currentSort = getBaseSort(arrayType.getElementType(), ctx);
+
+        for (int i = 0; i < arrayType.getDimensions(); i++) {
+            currentSort = ctx.mkArraySort(domain, currentSort);
+        }
+
+        return ctx.mkConst(name, currentSort);
+    }
+
+    private static com.microsoft.z3.Sort getBaseSort(Type elementType, com.microsoft.z3.Context ctx) {
+        if (elementType.isPrimitiveType()) {
+            PrimitiveType pt = (PrimitiveType) elementType;
+            PrimitiveType.Code code = pt.getPrimitiveTypeCode();
+            if (code.equals(PrimitiveType.BYTE)) {
+                return ctx.mkBitVecSort(8);
+            } else if (code.equals(PrimitiveType.CHAR)) {
+                return ctx.mkBitVecSort(16);
+            } else if (code.equals(PrimitiveType.SHORT)) {
+                return ctx.mkBitVecSort(16);
+            } else if (code.equals(PrimitiveType.INT)) {
+                return ctx.mkBitVecSort(32);
+            } else if (code.equals(PrimitiveType.LONG)) {
+                return ctx.mkBitVecSort(64);
+            } else if (code.equals(PrimitiveType.FLOAT)) {
+                return ctx.mkFPSort32();
+            } else if (code.equals(PrimitiveType.DOUBLE)) {
+                return ctx.mkFPSort64();
+            } else if (code.equals(PrimitiveType.BOOLEAN)) {
+                return ctx.mkBoolSort();
+            }
+        }
+        throw new IllegalArgumentException("Unsupported array element type: " + elementType);
+    }
 
     private static void executeArrayDeclarationFragment(VariableDeclarationFragment fragment,
                                                         ArrayType arrayType,
@@ -99,19 +139,22 @@ public class VariableDeclarationNode extends ExpressionNode {
         Expression init = fragment.getInitializer();
         declareArrayVariable(arrayType, name, init, memoryModel);
     }
+
     public static void declarePrimitiveVariable(Type baseType,
                                                 String name,
                                                 Expression initializer,
                                                 MemoryModel memoryModel) {
-        PrimitiveVariable variable = new PrimitiveVariable((PrimitiveType) baseType, name);
+        PrimitiveType primitiveType = (PrimitiveType) baseType;
+        TypedExpr.JavaType javaType = MemoryModel.mapPrimitiveType(primitiveType);
+        Expr<?> expr = MemoryModel.createZ3ExprFromType(name, javaType, memoryModel.getContext());
+        SymbolicValue value = SymbolicValue.of(name, javaType, expr, SymbolicExecution.isRelatedToParameter);
         AstNode initValue = null;
 
         if (initializer != null) {
             initValue = ExpressionNode.executeExpression(initializer, memoryModel);
-            variable.setParameter(SymbolicExecution.isRelatedToParameter);
         }
 
-        memoryModel.declareVariable(variable, initValue);
+        memoryModel.declareVariable(value, initValue);
     }
 
     private static void executeVariableDeclarationFragment(VariableDeclarationFragment fragment,

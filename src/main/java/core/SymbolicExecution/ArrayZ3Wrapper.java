@@ -5,7 +5,7 @@ import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayAccessNode;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayNode;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
-import core.SymbolicExecution.Variable.Variable;
+import core.SymbolicExecution.model.SymbolicValue;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public class ArrayZ3Wrapper {
 
     public static Expr<?> convertArrayAccessToZ3(ArrayAccessNode node, Context ctx, MemoryModel memoryModel) {
         ArrayNode arrRep = node.getArrayRepresent();
-        Variable variable = memoryModel.getVariableByValue(arrRep);
-        if (variable == null) {
+        SymbolicValue value = memoryModel.getVariableByValue(arrRep);
+        if (value == null) {
             throw new RuntimeException("No variable found for array symbolic represent in memory model");
         }
 
-        Expr<?> arrayConst = variable.createZ3Expr(ctx);
+        Expr<?> arrayConst = MemoryModel.createZ3ExprFromType(value.getName(), value.getType(), ctx);
         Expr<?> indexExpr = ExpressionNode.convertAstNodeToZ3Expr(node.getIndex(), ctx, memoryModel);
 
         if (!(indexExpr instanceof BitVecExpr)) {
@@ -30,11 +30,11 @@ public class ArrayZ3Wrapper {
     }
 
     public static Expr<?> resolveInitialElements(ArrayNode arrRep, Context ctx, MemoryModel memoryModel) {
-        Variable variable = memoryModel.getVariableByValue(arrRep);
-        if (variable == null) {
+        SymbolicValue value = memoryModel.getVariableByValue(arrRep);
+        if (value == null) {
             throw new RuntimeException("No variable found for array symbolic represent in memory model");
         }
-        Expr<?> arrayConst = variable.createZ3Expr(ctx);
+        Expr<?> arrayConst = MemoryModel.createZ3ExprFromType(value.getName(), value.getType(), ctx);
         return resolveInitialElements(arrRep, arrayConst, ctx, memoryModel);
     }
 
@@ -43,7 +43,7 @@ public class ArrayZ3Wrapper {
         Expr<?> current = arrayConst;
         List<AstNode> elements = arrRep.getElements();
 
-        // To avoid mismatched index sizes, extract the domain bit‑width from the array’s sort
+        // To avoid mismatched index sizes, extract the domain bit‑width from the array's sort
         int idxBits = 32; // default fallback
         if (arrayConst instanceof ArrayExpr) {
             Sort domain = ((ArraySort) arrayConst.getSort()).getDomain();
@@ -64,4 +64,3 @@ public class ArrayZ3Wrapper {
         return current;
     }
 }
-

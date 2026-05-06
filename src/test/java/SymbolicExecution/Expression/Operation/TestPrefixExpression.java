@@ -12,7 +12,7 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNumberNode;
 import core.SymbolicExecution.AstNode.Expression.Name.SimpleNameNode;
 import core.SymbolicExecution.AstNode.Expression.Operation.PrefixExpressionNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.Variable.Variable;
+import core.SymbolicExecution.model.SymbolicValue;
 import test.ParserForTest;
 
 import java.util.HashMap;
@@ -135,7 +135,7 @@ public class TestPrefixExpression {
         AstNode aValue = memoryModel.accessVariable("a");
         assertTrue(aValue instanceof PrefixExpressionNode);
         PrefixExpressionNode prefixNode = (PrefixExpressionNode) aValue;
-        Variable nVar = memoryModel.getVariable("n");
+        SymbolicValue nVar = memoryModel.getVariable("n");
         assertNotNull(nVar);
         Expr<?> z3Expr = PrefixExpressionNode.convertPrefixExpressionToZ3Expr(
             prefixNode,

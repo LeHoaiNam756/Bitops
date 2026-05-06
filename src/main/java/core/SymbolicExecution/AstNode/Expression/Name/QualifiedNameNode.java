@@ -10,7 +10,7 @@ import core.SymbolicExecution.AstNode.Expression.Array.ArrayNode;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
 import core.SymbolicExecution.MemoryModel;
 import core.SymbolicExecution.SymbolicExecution;
-import core.SymbolicExecution.Variable.Variable;
+import core.SymbolicExecution.model.SymbolicValue;
 
 @Getter
 public class QualifiedNameNode extends NameNode {
@@ -35,14 +35,17 @@ public class QualifiedNameNode extends NameNode {
     }
 
     public static AstNode executeQualifiedNameNode(QualifiedNameNode node, MemoryModel memoryModel) {
-        Variable variable = memoryModel.getVariableByValue(node.qualifier);
-        if (variable != null) {
-            SymbolicExecution.isRelatedToParameter = variable.isParameter();
+        SymbolicValue value = memoryModel.getVariableByValue(node.qualifier);
+        if (value != null) {
+            SymbolicExecution.isRelatedToParameter = value.isParameter();
         }
 
         if ("length".equals(node.name)) {
-            AstNode qualifierValue = memoryModel.accessVariable(
-                    memoryModel.getVariableByValue(node.qualifier).getName());
+            SymbolicValue qualifierVar = memoryModel.getVariableByValue(node.qualifier);
+            if (qualifierVar == null) {
+                throw new RuntimeException("No variable found for qualifier in memory model: " + node.qualifier);
+            }
+            AstNode qualifierValue = memoryModel.accessVariable(qualifierVar.getName());
             if (qualifierValue instanceof ArrayNode) {
                 ArrayNode arrRep = (ArrayNode) qualifierValue;
                 return arrRep.getLength();
@@ -56,11 +59,11 @@ public class QualifiedNameNode extends NameNode {
     public static Expr<?> convertQualifiedNameToZ3Expr(QualifiedNameNode astNode, Context ctx,
                                                         MemoryModel memoryModel) {
         if ("length".equals(astNode.name)) {
-            Variable variable = memoryModel.getVariableByValue(astNode.qualifier);
-            if (variable == null) {
+            SymbolicValue value = memoryModel.getVariableByValue(astNode.qualifier);
+            if (value == null) {
                 throw new RuntimeException("No variable found for qualifier in memory model: " + astNode.qualifier);
             }
-            AstNode qualifierValue = memoryModel.accessVariable(variable.getName());
+            AstNode qualifierValue = memoryModel.accessVariable(value.getName());
             if (qualifierValue instanceof ArrayNode) {
                 ArrayNode arrRep = (ArrayNode) qualifierValue;
                 return ExpressionNode.convertAstNodeToZ3Expr(arrRep.getLength(), ctx, memoryModel);

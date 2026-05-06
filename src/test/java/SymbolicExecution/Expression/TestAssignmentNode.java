@@ -10,7 +10,8 @@ import core.SymbolicExecution.AstNode.Expression.Literal.LiteralNumberNode;
 import core.SymbolicExecution.AstNode.Expression.Name.SimpleNameNode;
 import core.SymbolicExecution.AstNode.Expression.Operation.InfixExpressionNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.Variable.PrimitiveVariable;
+import core.SymbolicExecution.TypedExpr;
+import core.SymbolicExecution.model.SymbolicValue;
 import test.ParserForTest;
 
 import java.util.List;
@@ -111,8 +112,7 @@ public class TestAssignmentNode {
         assertTrue(initialValue instanceof LiteralNumberNode);
         assertTrue(((LiteralNumberNode) initialValue).isInteger());
         assertEquals(1, ((LiteralNumberNode) initialValue).getIntValue());
-        assertTrue(memoryModel.getVariable("b") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BYTE, ((PrimitiveVariable) memoryModel.getVariable("b")).getCode());
+        assertEquals(TypedExpr.JavaType.BYTE, memoryModel.getVariable("b").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -148,8 +148,7 @@ public class TestAssignmentNode {
         assertTrue(initialValue instanceof LiteralNumberNode);
         assertTrue(((LiteralNumberNode) initialValue).isInteger());
         assertEquals(10, ((LiteralNumberNode) initialValue).getIntValue());
-        assertTrue(memoryModel.getVariable("s") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.SHORT, ((PrimitiveVariable) memoryModel.getVariable("s")).getCode());
+        assertEquals(TypedExpr.JavaType.SHORT, memoryModel.getVariable("s").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -185,8 +184,7 @@ public class TestAssignmentNode {
         assertTrue(initialValue instanceof LiteralNumberNode);
         assertTrue(((LiteralNumberNode) initialValue).isInteger());
         assertEquals(100, ((LiteralNumberNode) initialValue).getIntValue());
-        assertTrue(memoryModel.getVariable("l") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.LONG, ((PrimitiveVariable) memoryModel.getVariable("l")).getCode());
+        assertEquals(TypedExpr.JavaType.LONG, memoryModel.getVariable("l").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -222,8 +220,7 @@ public class TestAssignmentNode {
         assertTrue(initialValue instanceof LiteralNumberNode);
         assertTrue(((LiteralNumberNode) initialValue).isDouble());
         assertEquals(3.14, ((LiteralNumberNode) initialValue).getDoubleValue(), 0.001);
-        assertTrue(memoryModel.getVariable("f") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.FLOAT, ((PrimitiveVariable) memoryModel.getVariable("f")).getCode());
+        assertEquals(TypedExpr.JavaType.FLOAT, memoryModel.getVariable("f").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -259,8 +256,7 @@ public class TestAssignmentNode {
         assertTrue(initialValue instanceof LiteralNumberNode);
         assertTrue(((LiteralNumberNode) initialValue).isDouble());
         assertEquals(3.14, ((LiteralNumberNode) initialValue).getDoubleValue(), 0.001);
-        assertTrue(memoryModel.getVariable("d") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.DOUBLE, ((PrimitiveVariable) memoryModel.getVariable("d")).getCode());
+        assertEquals(TypedExpr.JavaType.DOUBLE, memoryModel.getVariable("d").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -295,8 +291,7 @@ public class TestAssignmentNode {
         assertNotNull(initialValue);
         assertTrue(initialValue instanceof LiteralCharacterNode);
         assertEquals('a', ((LiteralCharacterNode) initialValue).getValue());
-        assertTrue(memoryModel.getVariable("c") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.CHAR, ((PrimitiveVariable) memoryModel.getVariable("c")).getCode());
+        assertEquals(TypedExpr.JavaType.CHAR, memoryModel.getVariable("c").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
@@ -330,8 +325,7 @@ public class TestAssignmentNode {
         assertNotNull(initialValue);
         assertTrue(initialValue instanceof LiteralBooleanNode);
         assertTrue(((LiteralBooleanNode) initialValue).isValue());
-        assertTrue(memoryModel.getVariable("flag") instanceof PrimitiveVariable);
-        assertSame(PrimitiveType.BOOLEAN, ((PrimitiveVariable) memoryModel.getVariable("flag")).getCode());
+        assertEquals(TypedExpr.JavaType.BOOLEAN, memoryModel.getVariable("flag").getType());
 
         ExpressionStatement exprStmt = (ExpressionStatement) eclipseAstNodes.get(1);
         assertTrue(exprStmt.getExpression() instanceof Assignment);
