@@ -27,23 +27,25 @@ public class PathFinder {
     }
 
     private List<PathStep> bfs(CfgGraph graph, int start, int goal) {
-        Map<Integer, PathStep> prev = new HashMap<>();
+        Map<Integer, Integer> parents = new HashMap<>();
+        Map<Integer, Boolean> decisions = new HashMap<>();
         Queue<Integer> queue = new ArrayDeque<>();
         queue.add(start);
-        prev.put(start, new PathStep(start, null));
+        parents.put(start, null);
 
         while (!queue.isEmpty()) {
             int current = queue.poll();
             if (current == goal) {
-                return buildPath(prev, goal);
+                return buildPath(parents, decisions, goal);
             }
             for (CfgGraph.Edge edge : graph.outgoing(current)) {
                 int next = edge.getTo();
-                if (!prev.containsKey(next)) {
+                if (!parents.containsKey(next)) {
                     Boolean decision = edge.getKind() == CfgEdgeKind.TRUE
                             ? Boolean.TRUE
                             : edge.getKind() == CfgEdgeKind.FALSE ? Boolean.FALSE : null;
-                    prev.put(next, new PathStep(next, decision));
+                    parents.put(next, current);
+                    decisions.put(next, decision);
                     queue.add(next);
                 }
             }
@@ -51,25 +53,21 @@ public class PathFinder {
         return Collections.emptyList();
     }
 
-    private List<PathStep> buildPath(Map<Integer, PathStep> prev, int goal) {
-        List<PathStep> path = new ArrayList<>();
-        PathStep step = prev.get(goal);
-        while (step != null) {
-            path.add(step);
-            int nodeId = step.getNodeId();
-            PathStep parent = null;
-            for (PathStep candidate : prev.values()) {
-                if (candidate.getNodeId() == nodeId) {
-                    parent = candidate;
-                    break;
-                }
-            }
-            if (parent == step) {
-                break;
-            }
-            step = parent;
+    private List<PathStep> buildPath(Map<Integer, Integer> parents,
+                                     Map<Integer, Boolean> decisions,
+                                     int goal) {
+        List<Integer> nodeIds = new ArrayList<>();
+        Integer current = goal;
+        while (current != null) {
+            nodeIds.add(current);
+            current = parents.get(current);
         }
-        Collections.reverse(path);
+        Collections.reverse(nodeIds);
+
+        List<PathStep> path = new ArrayList<>(nodeIds.size());
+        for (Integer nodeId : nodeIds) {
+            path.add(new PathStep(nodeId, decisions.get(nodeId)));
+        }
         return path;
     }
 }
