@@ -35,15 +35,7 @@ public class ASTHelper {
     }
 
     public static CfgNode generateCfgNode(MethodDeclaration method) {
-        if (method == null) {
-            throw new IllegalArgumentException("method must not be null");
-        }
-
         Block unitBody = method.getBody();
-        if (unitBody == null) {
-            throw new IllegalArgumentException("method body must not be null");
-        }
-
         CfgNode rootCfgNode = new CfgNode();
         CfgNode finalEndCfgNode = new CfgNode();
         rootCfgNode.setBeginCfgNode(true);
