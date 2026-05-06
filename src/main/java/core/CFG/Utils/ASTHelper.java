@@ -29,6 +29,36 @@ public class ASTHelper {
     private static Coverage coverage;
     private static CompilationUnit compilationUnit = null;
 
+    public static core.CFG.graph.CfgGraph generateCfg(MethodDeclaration method) {
+        CfgNode legacy = generateCfgNode(method);
+        return core.CFG.graph.CfgGraphBuilder.fromLegacy(legacy);
+    }
+
+    public static CfgNode generateCfgNode(MethodDeclaration method) {
+        if (method == null) {
+            throw new IllegalArgumentException("method must not be null");
+        }
+
+        Block unitBody = method.getBody();
+        if (unitBody == null) {
+            throw new IllegalArgumentException("method body must not be null");
+        }
+
+        CfgNode rootCfgNode = new CfgNode();
+        CfgNode finalEndCfgNode = new CfgNode();
+        rootCfgNode.setBeginCfgNode(true);
+        finalEndCfgNode.setEndCfgNode(true);
+
+        CfgNode block = new CfgBlockNode();
+        block.setAst(unitBody);
+        block.setBeforeNode(rootCfgNode);
+        block.setAfterNode(finalEndCfgNode);
+        rootCfgNode.setAfterNode(block);
+        finalEndCfgNode.setBeforeNode(block);
+
+        return generateCfg(block, (CompilationUnit) method.getRoot(), Coverage.BRANCH);
+    }
+
     public static CfgNode generateCfg(CfgNode block, CompilationUnit unit, Coverage coverageType) {
         endNodeStack.clear();
         conditionNodeStack.clear();
