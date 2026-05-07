@@ -1,6 +1,6 @@
 # CT4J — Concolic Testing for Java
 
-A concolic (concrete + symbolic) test generation engine for Java. Given a method, it builds a CFG, explores uncovered paths, generates Z3 constraints, and produces concrete test inputs.
+A concolic (concrete + symbolic) utils generation engine for Java. Given a method, it builds a CFG, explores uncovered paths, generates Z3 constraints, and produces concrete utils inputs.
 
 ---
 
@@ -11,7 +11,7 @@ ConcolicTesting.java          ← main entry point
 ├── ProjectParser             ← wraps Eclipse JDT; parses .java source to AST
 ├── ASTHelper.generateCfg()   ← builds CFG from method body
 ├── FindPath.findPathThrough() ← BFS to find path through uncovered node
-└── SymbolicExecution         ← runs symbolic execution on a path → Z3 model → test inputs
+└── SymbolicExecution         ← runs symbolic execution on a path → Z3 model → utils inputs
 ```
 
 ---
@@ -28,7 +28,7 @@ Algorithm:
    - `FindPath.findPathThrough(start, uncoveredNode, exit)` → `List<PathNode>`
    - `new SymbolicExecution(parameterList, testPath).execute()`
    - If UNSAT → mark node fake-visited, continue
-   - `getTestInputFromModel(parameterClasses)` → run test, record coverage
+   - `getTestInputFromModel(parameterClasses)` → run utils, record coverage
 5. Return `TestResult` with coverage %
 
 ---

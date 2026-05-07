@@ -1,4 +1,4 @@
-package core.CFG.graph;
+package core.cfg;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
@@ -14,14 +14,12 @@ public class CfgGraph {
         private final CfgNodeKind kind;
         private final ASTNode ast;
         private final String content;
-        private final int startPosition;
 
-        public Node(int id, CfgNodeKind kind, ASTNode ast, String content, int startPosition) {
+        public Node(int id, CfgNodeKind kind, ASTNode ast, String content) {
             this.id = id;
             this.kind = kind;
             this.ast = ast;
             this.content = content;
-            this.startPosition = startPosition;
         }
 
         public int getId() {
@@ -39,23 +37,17 @@ public class CfgGraph {
         public String getContent() {
             return content;
         }
-
-        public int getStartPosition() {
-            return startPosition;
-        }
     }
 
     public static final class Edge {
         private final int from;
         private final int to;
         private final CfgEdgeKind kind;
-        private final ASTNode conditionAst;
 
-        public Edge(int from, int to, CfgEdgeKind kind, ASTNode conditionAst) {
+        public Edge(int from, int to, CfgEdgeKind kind) {
             this.from = from;
             this.to = to;
             this.kind = kind;
-            this.conditionAst = conditionAst;
         }
 
         public int getFrom() {
@@ -69,26 +61,25 @@ public class CfgGraph {
         public CfgEdgeKind getKind() {
             return kind;
         }
-
-        public ASTNode getConditionAst() {
-            return conditionAst;
-        }
     }
 
     private final Map<Integer, Node> nodes = new HashMap<>();
     private final Map<Integer, List<Edge>> outgoing = new HashMap<>();
+    private final Map<Integer, List<Edge>> incoming = new HashMap<>();
     private int nextId = 1;
 
-    public int addNode(CfgNodeKind kind, ASTNode ast, String content, int startPosition) {
+    public int addNode(CfgNodeKind kind, ASTNode ast, String content) {
         int id = nextId++;
-        nodes.put(id, new Node(id, kind, ast, content, startPosition));
+        nodes.put(id, new Node(id, kind, ast, content));
         outgoing.putIfAbsent(id, new ArrayList<>());
+        incoming.putIfAbsent(id, new ArrayList<>());
         return id;
     }
 
-    public void addEdge(int from, int to, CfgEdgeKind kind, ASTNode conditionAst) {
-        outgoing.computeIfAbsent(from, key -> new ArrayList<>())
-                .add(new Edge(from, to, kind, conditionAst));
+    public void addEdge(int from, int to, CfgEdgeKind kind) {
+        Edge edge = new Edge(from, to, kind);
+        outgoing.computeIfAbsent(from, k -> new ArrayList<>()).add(edge);
+        incoming.computeIfAbsent(to, k -> new ArrayList<>()).add(edge);
     }
 
     public Node getNode(int id) {
@@ -99,15 +90,11 @@ public class CfgGraph {
         return outgoing.getOrDefault(id, Collections.emptyList());
     }
 
-    public int nodeCount() {
-        return nodes.size();
+    public List<Edge> incoming(int id) {
+        return incoming.getOrDefault(id, Collections.emptyList());
     }
 
-    public int edgeCount() {
-        int total = 0;
-        for (List<Edge> edges : outgoing.values()) {
-            total += edges.size();
-        }
-        return total;
+    public int nodeCount() {
+        return nodes.size();
     }
 }

@@ -1,11 +1,12 @@
 package core.CFG.Utils;
 
+import core.cfg.CfgGraph;
+import core.cfg.CfgGraphBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jdt.core.dom.*;
 import core.CFG.*;
 import core.TestGeneration.path.MarkedStatement;
-import core.CFG.Utils.TernarySplitHelper;
 
 import java.util.*;
 import java.util.Optional;
@@ -29,9 +30,9 @@ public class ASTHelper {
     private static Coverage coverage;
     private static CompilationUnit compilationUnit = null;
 
-    public static core.CFG.graph.CfgGraph generateCfg(MethodDeclaration method) {
+    public static CfgGraph generateCfg(MethodDeclaration method) {
         CfgNode legacy = generateCfgNode(method);
-        return core.CFG.graph.CfgGraphBuilder.fromLegacy(legacy);
+        return null;
     }
 
     public static CfgNode generateCfgNode(MethodDeclaration method) {

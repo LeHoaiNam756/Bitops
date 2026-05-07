@@ -5,7 +5,7 @@ import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
 import core.CFG.CfgNode;
 import core.CFG.Utils.ASTHelper;
-import core.CFG.graph.CfgGraph;
+import core.cfg.CfgGraph;
 import core.SymbolicExecution.RandomTestData;
 import core.SymbolicExecution.SymbolicExecution;
 import core.SymbolicExecution.dispatch.AstDispatcher;

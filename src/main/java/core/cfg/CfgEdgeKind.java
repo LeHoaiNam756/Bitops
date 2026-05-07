@@ -1,4 +1,4 @@
-package core.CFG.graph;
+package core.cfg;
 
 public enum CfgEdgeKind {
     NORMAL,

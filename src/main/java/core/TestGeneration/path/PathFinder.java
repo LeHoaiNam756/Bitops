@@ -1,7 +1,7 @@
 package core.TestGeneration.path;
 
-import core.CFG.graph.CfgEdgeKind;
-import core.CFG.graph.CfgGraph;
+import core.cfg.CfgEdgeKind;
+import core.cfg.CfgGraph;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

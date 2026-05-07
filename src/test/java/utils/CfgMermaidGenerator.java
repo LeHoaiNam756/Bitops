@@ -1,4 +1,4 @@
-package test;
+package utils;
 
 import core.CFG.CfgBoolExprNode;
 import core.CFG.CfgEndBlockNode;
