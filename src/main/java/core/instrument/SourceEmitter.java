@@ -58,9 +58,11 @@ public final class SourceEmitter {
 
         // Index plan by AST start-position so the walk can look up probes
         // without carrying the full plan through every recursive call.
-        Map<Integer, List<TracePoint>> nodeProbesByAnchorPos = plan.points().stream()
-                .filter(tp -> tp.kind() == TraceKind.NODE)
-                .collect(Collectors.groupingBy(tp -> markerAnchor(tp.astNode()).getStartPosition()));
+        Map<Integer, List<TracePoint>> nodeProbesByAnchorPos = coverage == Coverage.STATEMENT
+                ? plan.points().stream()
+                        .filter(tp -> tp.kind() == TraceKind.NODE)
+                        .collect(Collectors.groupingBy(tp -> markerAnchor(tp.astNode()).getStartPosition()))
+                : Map.of();
 
         Map<Long, TracePoint> branchProbesByPosAndKind = plan.points().stream()
                 .filter(tp -> tp.kind() != TraceKind.NODE)
