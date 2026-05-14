@@ -22,7 +22,7 @@ public class CoverageTracker {
     }
 
     public void markCovered(int node) {
-        if (uncovered.remove(node)) {
+        if (uncovered.remove(node) || skipped.remove(node)) {
             covered.add(node);
         }
     }
