@@ -48,6 +48,14 @@ public class AllPathsFinder implements PathFinder {
 
     @Override
     public List<List<ControlFlowGraph.Edge>> findPath(ControlFlowGraph cfg, int target) {
+        return findPath(cfg, target, null);
+    }
+
+    @Override
+    public List<List<ControlFlowGraph.Edge>> findPath(
+            ControlFlowGraph cfg,
+            int target,
+            core.cfg.CfgEdgeKind requiredExit) {
 
         int entryId = findNodeByKind(cfg, CfgNodeKind.ENTRY);
         int exitId  = findNodeByKind(cfg, CfgNodeKind.EXIT);
@@ -56,7 +64,9 @@ public class AllPathsFinder implements PathFinder {
         }
 
         // Phase 1 — single BFS path: target → EXIT
-        List<ControlFlowGraph.Edge> targetToExit = bfsPath(cfg, target, exitId);
+        List<ControlFlowGraph.Edge> targetToExit = requiredExit == null
+                ? bfsPath(cfg, target, exitId)
+                : pathViaRequiredExit(cfg, target, exitId, requiredExit);
         if (targetToExit == null) {
             return Collections.emptyList(); // target can never reach EXIT
         }
@@ -74,6 +84,24 @@ public class AllPathsFinder implements PathFinder {
             results.add(Collections.unmodifiableList(full));
         }
         return Collections.unmodifiableList(results);
+    }
+
+    private List<ControlFlowGraph.Edge> pathViaRequiredExit(
+            ControlFlowGraph cfg,
+            int target,
+            int exitId,
+            core.cfg.CfgEdgeKind requiredExit) {
+        for (ControlFlowGraph.Edge edge : cfg.outgoing(target)) {
+            if (edge.getKind() == requiredExit) {
+                List<ControlFlowGraph.Edge> rest = bfsPath(cfg, edge.getTo(), exitId);
+                if (rest == null) continue;
+                List<ControlFlowGraph.Edge> path = new ArrayList<>(rest.size() + 1);
+                path.add(edge);
+                path.addAll(rest);
+                return path;
+            }
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------
