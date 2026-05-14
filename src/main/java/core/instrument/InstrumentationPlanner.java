@@ -81,7 +81,9 @@ public final class InstrumentationPlanner {
                 int falseId = nodeId * 2 + 1;
                 points.add(new TracePoint(trueId,  ast, TraceKind.COND_T));
                 points.add(new TracePoint(falseId, ast, TraceKind.COND_F));
-            } else {
+            }
+
+            if (!isBranchNode(kind) && coverage == Coverage.STATEMENT) {
                 points.add(new TracePoint(nodeId, ast, TraceKind.NODE));
             }
         }
