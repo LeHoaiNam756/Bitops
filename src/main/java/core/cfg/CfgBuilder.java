@@ -1,11 +1,10 @@
 package core.cfg;
 
-import core.CFG.CfgNode;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
 
-public class CfgGraphBuilder {
+public class CfgBuilder {
     // Pending exits from a sub-graph fragment
     record Fragment(int entry, List<PendingExit> exits) {}
     record PendingExit(int fromNode, CfgEdgeKind kind) {}
@@ -17,22 +16,22 @@ public class CfgGraphBuilder {
     //Result of building a boolean condition chain
     record ConditionChain(int entry, List<PendingExit> trueExits, List<PendingExit> falseExits) {}
 
-    private final CfgGraph graph = new CfgGraph();
+    private final ControlFlowGraph graph = new ControlFlowGraph();
     private final Deque<LoopContext> loopStack = new ArrayDeque<>();
     private int returnSink = -1;
 
 
     private final boolean splitBooleanExpression;
 
-    public CfgGraphBuilder() {
+    public CfgBuilder() {
         this(false);
     }
 
-    public CfgGraphBuilder(boolean splitBooleanExpression) {
+    public CfgBuilder(boolean splitBooleanExpression) {
         this.splitBooleanExpression = splitBooleanExpression;
     }
 
-    public CfgGraph build(MethodDeclaration method) {
+    public ControlFlowGraph build(MethodDeclaration method) {
         int entry = graph.addNode(CfgNodeKind.ENTRY, null, "entry");
         returnSink = graph.addNode(CfgNodeKind.EXIT,  null, "exit");
 
@@ -74,126 +73,106 @@ public class CfgGraphBuilder {
     }
 
     private Fragment buildIf(IfStatement stmt) {
-        int condNode = graph.addNode(CfgNodeKind.BRANCH, stmt.getExpression(),
-                stmt.getExpression().toString());
+        ConditionChain cond = buildCondition(stmt.getExpression());
 
         Fragment thenFrag = buildStatement(stmt.getThenStatement());
-        graph.addEdge(condNode, thenFrag.entry(), CfgEdgeKind.TRUE);
+        wire(cond.trueExits(), thenFrag.entry());
 
         List<PendingExit> exits = new ArrayList<>(thenFrag.exits());
 
         if (stmt.getElseStatement() != null) {
             Fragment elseFrag = buildStatement(stmt.getElseStatement());
-            graph.addEdge(condNode, elseFrag.entry(), CfgEdgeKind.FALSE);
+            wire(cond.falseExits(), elseFrag.entry());
             exits.addAll(elseFrag.exits());
         } else {
-            exits.add(new PendingExit(condNode, CfgEdgeKind.FALSE));
+            exits.addAll(asFalseExits(cond.falseExits()));
         }
-        return new Fragment(condNode, exits);
+        return new Fragment(cond.entry, exits);
     }
 
     private Fragment buildWhile(WhileStatement stmt) {
-        int condNode = graph.addNode(CfgNodeKind.LOOP, stmt.getExpression(),
-                stmt.getExpression().toString());
+        ConditionChain cond = buildLoopCondition(stmt.getExpression());
 
-        LoopContext ctx = new LoopContext(condNode, new ArrayList<>());
+
+        LoopContext ctx = new LoopContext(cond.entry(), new ArrayList<>());
         loopStack.push(ctx);
         Fragment body = buildStatement(stmt.getBody());
         loopStack.pop();
 
-        graph.addEdge(condNode, body.entry(), CfgEdgeKind.TRUE);
-        wire(body.exits(), condNode);   // back edges
+        wire(cond.trueExits(), body.entry());
+        wire(body.exits(), cond.entry());   // back edges
 
-        List<PendingExit> exits = new ArrayList<>();
-        exits.add(new PendingExit(condNode, CfgEdgeKind.FALSE));
+        List<PendingExit> exits = new ArrayList<>(asFalseExits(cond.falseExits()));
         exits.addAll(ctx.breakExits());    // break jumps out
-        return new Fragment(condNode, exits);
+        return new Fragment(cond.entry(), exits);
     }
 
     private Fragment buildFor(ForStatement stmt) {
-        // 1. INIT — may be empty
+        // 1. INIT
         Fragment initFrag = null;
         if (!stmt.initializers().isEmpty()) {
-            // For has potentially multiple init expressions: for(int i=0, j=0; ...)
-            // Build each init as a plain statement node and chain them
             List<PendingExit> currentExits = null;
             int firstEntry = -1;
-
             for (Object initObj : stmt.initializers()) {
                 Expression init = (Expression) initObj;
                 int initNode = graph.addNode(CfgNodeKind.STMT, init, init.toString());
-                if (firstEntry == -1) {
-                    firstEntry = initNode;
-                }
-                if (currentExits != null) {
-                    wire(currentExits, initNode);
-                }
+                if (firstEntry == -1) firstEntry = initNode;
+                if (currentExits != null) wire(currentExits, initNode);
                 currentExits = List.of(new PendingExit(initNode, CfgEdgeKind.NORMAL));
             }
             initFrag = new Fragment(firstEntry, currentExits);
         }
 
-        // 2. BRANCH — may be empty (for(;;) is infinite loop)
-        int condNode = -1;
+        // 2. CONDITION (may be absent → infinite loop)
+        ConditionChain cond;
         if (stmt.getExpression() != null) {
-            Expression compare = stmt.getExpression();
-            condNode = graph.addNode(CfgNodeKind.BRANCH, compare, compare.toString());
+            cond = buildLoopCondition(stmt.getExpression());
         } else {
-            // No condition = always true, add a synthetic node to anchor edges
-            condNode = graph.addNode(CfgNodeKind.BRANCH, null, "true");
+            // No condition — synthetic "true" node, always takes true branch
+            int synthNode = graph.addNode(CfgNodeKind.LOOP, null, "true");
+            cond = new ConditionChain(
+                    synthNode,
+                    List.of(new PendingExit(synthNode, CfgEdgeKind.TRUE)),
+                    List.of()   // never false
+            );
         }
 
-        // Wire init → cond
-        if (initFrag != null) {
-            wire(initFrag.exits(), condNode);
-        }
+        // Wire init → cond entry
+        if (initFrag != null) wire(initFrag.exits(), cond.entry());
 
-        // 3. BODY — push loop context before building so break/continue resolve correctly
-        LoopContext ctx = new LoopContext(condNode, new ArrayList<>());
+        // 3. BODY
+        LoopContext ctx = new LoopContext(cond.entry(), new ArrayList<>());
         loopStack.push(ctx);
         Fragment bodyFrag = buildStatement(stmt.getBody());
         loopStack.pop();
 
-        // Wire cond →[TRUE]→ body
-        graph.addEdge(condNode, bodyFrag.entry(), CfgEdgeKind.TRUE);
+        wire(cond.trueExits(), bodyFrag.entry());
 
-        // 4. UPDATE — may be empty, may be multiple expressions: for(...; i++, j--)
+        // 4. UPDATE
         if (!stmt.updaters().isEmpty()) {
             int firstUpdateEntry = -1;
             List<PendingExit> currentExits = null;
-
             for (Object updateObj : stmt.updaters()) {
                 Expression update = (Expression) updateObj;
                 int updateNode = graph.addNode(CfgNodeKind.STMT, update, update.toString());
-                if (firstUpdateEntry == -1) {
-                    firstUpdateEntry = updateNode;
-                }
-                if (currentExits != null) {
-                    wire(currentExits, updateNode);
-                }
+                if (firstUpdateEntry == -1) firstUpdateEntry = updateNode;
+                if (currentExits != null) wire(currentExits, updateNode);
                 currentExits = List.of(new PendingExit(updateNode, CfgEdgeKind.NORMAL));
             }
-
-            // Wire body → first update node
             wire(bodyFrag.exits(), firstUpdateEntry);
-            // Wire last update →[BACK]→ cond
-            wire(currentExits, condNode);
+            wire(currentExits, cond.entry());
         } else {
-            // No update: body exits loop directly back to cond
-            wire(bodyFrag.exits(), condNode);
+            wire(bodyFrag.exits(), cond.entry());
         }
 
-        // 5. COLLECT exits: FALSE branch off cond + any break statements
-        List<PendingExit> exits = new ArrayList<>();
-        if (stmt.getExpression() != null) {
-            // Only add FALSE exit if there's an actual condition
-            exits.add(new PendingExit(condNode, CfgEdgeKind.FALSE));
-        }
+        // 5. Exits: false side of condition + break statements
+        List<PendingExit> exits = new ArrayList<>(asFalseExits(cond.falseExits()));
         exits.addAll(ctx.breakExits());
 
-        int fragmentEntry = (initFrag != null) ? initFrag.entry() : condNode;
+        int fragmentEntry = (initFrag != null) ? initFrag.entry() : cond.entry();
         return new Fragment(fragmentEntry, exits);
     }
+
 
     private Fragment buildDoWhile(DoStatement stmt) {
         // 1. BODY — build first, since do-while executes body before checking condition
@@ -203,23 +182,20 @@ public class CfgGraphBuilder {
         //    Solution: create condNode first, then build body.
 
         // 2. CONDITION node (created before body so continue can reference it)
-        int condNode = graph.addNode(CfgNodeKind.LOOP, stmt.getExpression(),
-                stmt.getExpression().toString());
+        ConditionChain cond = buildLoopCondition(stmt.getExpression());
 
-        LoopContext ctx = new LoopContext(condNode, new ArrayList<>());
+        LoopContext ctx = new LoopContext(cond.entry(), new ArrayList<>());
         loopStack.push(ctx);
         Fragment bodyFrag = buildStatement(stmt.getBody());
         loopStack.pop();
 
         // 3. Wire: body exits → condition (normal fall-through)
-        wire(bodyFrag.exits(), condNode);
+        wire(bodyFrag.exits(), cond.entry());
 
         // 4. TRUE branch: loop back to body entry
-        graph.addEdge(condNode, bodyFrag.entry(), CfgEdgeKind.TRUE);
-
+        wire(cond.trueExits(), bodyFrag.entry());
         // 5. Collect exits: FALSE off condition + any break statements
-        List<PendingExit> exits = new ArrayList<>();
-        exits.add(new PendingExit(condNode, CfgEdgeKind.FALSE));
+        List<PendingExit> exits = new ArrayList<>(asFalseExits(cond.falseExits()));
         exits.addAll(ctx.breakExits());
 
         // Entry is the body (not the condition), since body runs first
@@ -255,7 +231,6 @@ public class CfgGraphBuilder {
         }
     }
 
-
     private ConditionChain buildCondition(Expression expr) {
         if (splitBooleanExpression && expr instanceof InfixExpression infix) {
             InfixExpression.Operator op = infix.getOperator();
@@ -275,6 +250,15 @@ public class CfgGraphBuilder {
                 List.of(new PendingExit(node, CfgEdgeKind.TRUE)),
                 List.of(new PendingExit(node, CfgEdgeKind.FALSE))
         );
+    }
+
+    private ConditionChain buildLoopCondition(Expression expr) {
+        ConditionChain cond = buildCondition(expr);
+        ControlFlowGraph.Node branchNode = graph.getNode(cond.entry());
+        ControlFlowGraph.Node loopNode = new ControlFlowGraph.Node(branchNode.getId(), CfgNodeKind.LOOP,
+                branchNode.getAst(), branchNode.getContent());
+        graph.replaceNode(cond.entry(), loopNode);
+        return new ConditionChain(loopNode.getId(), cond.trueExits(), cond.falseExits());
     }
 
 
@@ -332,6 +316,14 @@ public class CfgGraphBuilder {
         result.add(infix.getLeftOperand());
         result.add(infix.getRightOperand());
         result.addAll(infix.extendedOperands());
+        return result;
+    }
+
+    private List<PendingExit> asFalseExits(List<PendingExit> falseExits) {
+        List<PendingExit> result = new ArrayList<>(falseExits.size());
+        for (PendingExit e : falseExits) {
+            result.add(new PendingExit(e.fromNode(), CfgEdgeKind.FALSE));
+        }
         return result;
     }
 }

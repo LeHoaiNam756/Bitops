@@ -2,13 +2,9 @@ package core.cfg;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class CfgGraph {
+public class ControlFlowGraph {
     public static final class Node {
         private final int id;
         private final CfgNodeKind kind;
@@ -96,5 +92,13 @@ public class CfgGraph {
 
     public int nodeCount() {
         return nodes.size();
+    }
+
+    public void replaceNode(int id, Node newNode) {
+        nodes.put(id, newNode);
+    }
+
+    public Set<Integer> getNodes() {
+        return Collections.unmodifiableSet(nodes.keySet());
     }
 }

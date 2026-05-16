@@ -8,12 +8,12 @@ import utils.Parser;
 import java.util.List;
 import static org.junit.Assert.*;
 
-public class CfgGraphBuilderTest {
+public class ControlFlowGraphBuilderTest {
     @Test
     public void buildsGraphFromMethod() throws Exception {
        String src = "void foo() {}";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
         assertEquals(3, cfg.nodeCount());
     }
 
@@ -25,42 +25,42 @@ public class CfgGraphBuilderTest {
             }
             """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         assertEquals(4, cfg.nodeCount());
 
-        CfgGraph.Node entry = null, branch = null, stmt = null, exit = null;
+        ControlFlowGraph.Node entry = null, loop = null, stmt = null, exit = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             switch (n.getKind()) {
                 case ENTRY: entry = n; break;
-                case BRANCH: branch = n; break;
+                case LOOP: loop = n; break;
                 case STMT: stmt = n; break;
                 case EXIT: exit = n; break;
             }
         }
         assertNotNull(entry);
-        assertNotNull(branch);
+        assertNotNull(loop);
         assertNotNull(stmt);
         assertNotNull(exit);
 
-        assertEquals("true", branch.getContent());
+        assertEquals("true", loop.getContent());
 
-        List<CfgGraph.Edge> branchOut = cfg.outgoing(branch.getId());
+        List<ControlFlowGraph.Edge> branchOut = cfg.outgoing(loop.getId());
         assertEquals(1, branchOut.size());
         assertEquals(CfgEdgeKind.TRUE, branchOut.get(0).getKind());
         assertEquals(stmt.getId(), branchOut.get(0).getTo());
 
-        for (CfgGraph.Edge e : branchOut) {
+        for (ControlFlowGraph.Edge e : branchOut) {
             assertNotEquals(CfgEdgeKind.FALSE, e.getKind());
         }
 
-        List<CfgGraph.Edge> stmtOut = cfg.outgoing(stmt.getId());
+        List<ControlFlowGraph.Edge> stmtOut = cfg.outgoing(stmt.getId());
         assertEquals(1, stmtOut.size());
         assertEquals(CfgEdgeKind.NORMAL, stmtOut.get(0).getKind());
-        assertEquals(branch.getId(), stmtOut.get(0).getTo());
+        assertEquals(loop.getId(), stmtOut.get(0).getTo());
 
-        List<CfgGraph.Edge> exitIn = cfg.incoming(exit.getId());
+        List<ControlFlowGraph.Edge> exitIn = cfg.incoming(exit.getId());
         assertEquals(0, exitIn.size());
     }
 
@@ -79,11 +79,11 @@ public class CfgGraphBuilderTest {
             }
             """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node breakNode = null, yPlusPlusNode = null;
+        ControlFlowGraph.Node breakNode = null, yPlusPlusNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String content = n.getContent();
             if (content != null && content.contains("break")) {
                 breakNode = n;
@@ -95,17 +95,17 @@ public class CfgGraphBuilderTest {
         assertNotNull("break node should exist", breakNode);
         assertNotNull("y++ node should exist", yPlusPlusNode);
 
-        List<CfgGraph.Edge> breakOut = cfg.outgoing(breakNode.getId());
+        List<ControlFlowGraph.Edge> breakOut = cfg.outgoing(breakNode.getId());
         assertFalse("break should have outgoing edges", breakOut.isEmpty());
         boolean breakReachesY = false;
-        for (CfgGraph.Edge e : breakOut) {
+        for (ControlFlowGraph.Edge e : breakOut) {
             if (e.getTo() == yPlusPlusNode.getId()) {
                 breakReachesY = true;
             }
         }
         assertTrue("break should exit to y++ (after while), not skip it", breakReachesY);
 
-        CfgGraph.Node exit = null;
+        ControlFlowGraph.Node exit = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
             if (cfg.getNode(i).getKind() == CfgNodeKind.EXIT) {
                 exit = cfg.getNode(i);
@@ -124,13 +124,13 @@ public class CfgGraphBuilderTest {
             }
             """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         assertEquals(5, cfg.nodeCount());
 
-        CfgGraph.Node entry = null, returnNode = null, y2Node = null, exit = null;
+        ControlFlowGraph.Node entry = null, returnNode = null, y2Node = null, exit = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             switch (n.getKind()) {
                 case ENTRY: entry = n; break;
                 case EXIT: exit = n; break;
@@ -146,20 +146,20 @@ public class CfgGraphBuilderTest {
         assertNotNull(y2Node);
         assertNotNull(exit);
 
-        List<CfgGraph.Edge> returnOut = cfg.outgoing(returnNode.getId());
+        List<ControlFlowGraph.Edge> returnOut = cfg.outgoing(returnNode.getId());
         assertEquals(1, returnOut.size());
         assertEquals(CfgEdgeKind.NORMAL, returnOut.get(0).getKind());
         assertEquals(exit.getId(), returnOut.get(0).getTo());
 
-        List<CfgGraph.Edge> y2In = cfg.incoming(y2Node.getId());
+        List<ControlFlowGraph.Edge> y2In = cfg.incoming(y2Node.getId());
         assertEquals("y=2 should have no incoming edges (unreachable)", 0, y2In.size());
 
         int reachableEdges = 0;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getKind() == CfgNodeKind.EXIT) continue;
-            for (CfgGraph.Edge e : cfg.outgoing(i)) {
-                CfgGraph.Node target = cfg.getNode(e.getTo());
+            for (ControlFlowGraph.Edge e : cfg.outgoing(i)) {
+                ControlFlowGraph.Node target = cfg.getNode(e.getTo());
                 if (target.getKind() != CfgNodeKind.ENTRY) {
                     String content = target.getContent();
                     if (content == null || !content.strip().contains("y=2")) {
@@ -179,11 +179,11 @@ public class CfgGraphBuilderTest {
             }
             """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node branch = null, returnNode = null, y1Node = null, exit = null;
+        ControlFlowGraph.Node branch = null, returnNode = null, y1Node = null, exit = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             switch (n.getKind()) {
                 case BRANCH: branch = n; break;
                 case EXIT: exit = n; break;
@@ -199,9 +199,9 @@ public class CfgGraphBuilderTest {
         assertNotNull(y1Node);
         assertNotNull(exit);
 
-        List<CfgGraph.Edge> branchOut = cfg.outgoing(branch.getId());
-        CfgGraph.Edge trueEdge = null, falseEdge = null;
-        for (CfgGraph.Edge e : branchOut) {
+        List<ControlFlowGraph.Edge> branchOut = cfg.outgoing(branch.getId());
+        ControlFlowGraph.Edge trueEdge = null, falseEdge = null;
+        for (ControlFlowGraph.Edge e : branchOut) {
             if (e.getKind() == CfgEdgeKind.TRUE) trueEdge = e;
             if (e.getKind() == CfgEdgeKind.FALSE) falseEdge = e;
         }
@@ -210,15 +210,15 @@ public class CfgGraphBuilderTest {
         assertEquals(returnNode.getId(), trueEdge.getTo());
         assertEquals(y1Node.getId(), falseEdge.getTo());
 
-        List<CfgGraph.Edge> returnOut = cfg.outgoing(returnNode.getId());
+        List<ControlFlowGraph.Edge> returnOut = cfg.outgoing(returnNode.getId());
         assertEquals(1, returnOut.size());
         assertEquals(exit.getId(), returnOut.get(0).getTo());
 
-        List<CfgGraph.Edge> y1Out = cfg.outgoing(y1Node.getId());
+        List<ControlFlowGraph.Edge> y1Out = cfg.outgoing(y1Node.getId());
         assertEquals(1, y1Out.size());
         assertEquals(exit.getId(), y1Out.get(0).getTo());
 
-        List<CfgGraph.Edge> exitIn = cfg.incoming(exit.getId());
+        List<ControlFlowGraph.Edge> exitIn = cfg.incoming(exit.getId());
         assertEquals(2, exitIn.size());
     }
 
@@ -237,11 +237,11 @@ public class CfgGraphBuilderTest {
             }
             """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node y2Node = null;
+        ControlFlowGraph.Node y2Node = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (c != null && c.strip().contains("y=2")) {
                 y2Node = n;
@@ -250,12 +250,12 @@ public class CfgGraphBuilderTest {
         }
         assertNotNull("y=2 node should exist", y2Node);
 
-        List<CfgGraph.Edge> y2In = cfg.incoming(y2Node.getId());
+        List<ControlFlowGraph.Edge> y2In = cfg.incoming(y2Node.getId());
         assertEquals("y=2 should have 3 incoming edges (3 paths)", 3, y2In.size());
 
         int fromOuterBranch = 0, fromInnerBranch = 0, fromX1Stmt = 0;
-        for (CfgGraph.Edge e : y2In) {
-            CfgGraph.Node src2 = cfg.getNode(e.getFrom());
+        for (ControlFlowGraph.Edge e : y2In) {
+            ControlFlowGraph.Node src2 = cfg.getNode(e.getFrom());
             if (src2.getKind() == CfgNodeKind.BRANCH) {
                 if (e.getKind() == CfgEdgeKind.FALSE) {
                     String content = src2.getContent();
@@ -279,13 +279,13 @@ public class CfgGraphBuilderTest {
     public void testWhileLoop() throws Exception {
         String src = "class T { void foo() { while (x > 0) { x--; } } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         assertEquals(4, cfg.nodeCount());
 
-        CfgGraph.Node loopNode = null, stmtNode = null, exitNode = null, entryNode = null;
+        ControlFlowGraph.Node loopNode = null, stmtNode = null, exitNode = null, entryNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String content = n.getContent();
             if (n.getKind() == CfgNodeKind.ENTRY) entryNode = n;
             else if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
@@ -298,22 +298,22 @@ public class CfgGraphBuilderTest {
         assertEquals(CfgNodeKind.LOOP, loopNode.getKind());
         assertEquals(CfgNodeKind.STMT, stmtNode.getKind());
 
-        List<CfgGraph.Edge> loopOut = cfg.outgoing(loopNode.getId());
+        List<ControlFlowGraph.Edge> loopOut = cfg.outgoing(loopNode.getId());
         assertEquals(2, loopOut.size());
         boolean foundTrueToStmt = false, foundFalseToExit = false;
-        for (CfgGraph.Edge e : loopOut) {
+        for (ControlFlowGraph.Edge e : loopOut) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == stmtNode.getId()) foundTrueToStmt = true;
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) foundFalseToExit = true;
         }
         assertTrue("LOOP should have TRUE edge to STMT", foundTrueToStmt);
         assertTrue("LOOP should have FALSE edge to EXIT", foundFalseToExit);
 
-        List<CfgGraph.Edge> stmtOut = cfg.outgoing(stmtNode.getId());
+        List<ControlFlowGraph.Edge> stmtOut = cfg.outgoing(stmtNode.getId());
         assertEquals(1, stmtOut.size());
         assertEquals(CfgEdgeKind.NORMAL, stmtOut.get(0).getKind());
         assertEquals(loopNode.getId(), stmtOut.get(0).getTo());
 
-        List<CfgGraph.Edge> exitIn = cfg.incoming(exitNode.getId());
+        List<ControlFlowGraph.Edge> exitIn = cfg.incoming(exitNode.getId());
         assertEquals(1, exitIn.size());
         assertEquals(loopNode.getId(), exitIn.get(0).getFrom());
         assertEquals(CfgEdgeKind.FALSE, exitIn.get(0).getKind());
@@ -323,11 +323,11 @@ public class CfgGraphBuilderTest {
     public void testWhileWithBreak() throws Exception {
         String src = "class T { void foo() { while (true) { if (x == 0) break; x--; } } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node breakNode = null, stmtDecr = null, exitNode = null, condNode = null;
+        ControlFlowGraph.Node breakNode = null, stmtDecr = null, exitNode = null, condNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (c.contains("break")) breakNode = n;
@@ -338,7 +338,7 @@ public class CfgGraphBuilderTest {
         assertNotNull(exitNode);
 
         boolean breakGoesToExit = false, breakGoesToCond = false;
-        for (CfgGraph.Edge e : cfg.outgoing(breakNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(breakNode.getId())) {
             if (e.getTo() == exitNode.getId()) breakGoesToExit = true;
             if (condNode != null && e.getTo() == condNode.getId()) breakGoesToCond = true;
         }
@@ -347,13 +347,13 @@ public class CfgGraphBuilderTest {
 
         if (stmtDecr != null && condNode != null) {
             boolean decrGoesToCond = false;
-            for (CfgGraph.Edge e : cfg.outgoing(stmtDecr.getId())) {
+            for (ControlFlowGraph.Edge e : cfg.outgoing(stmtDecr.getId())) {
                 if (e.getTo() == condNode.getId()) decrGoesToCond = true;
             }
             assertTrue("x-- should route back to loop cond", decrGoesToCond);
         }
 
-        CfgGraph.Node entryNode = null;
+        ControlFlowGraph.Node entryNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
             if (cfg.getNode(i).getKind() == CfgNodeKind.ENTRY) { entryNode = cfg.getNode(i); break; }
         }
@@ -366,7 +366,7 @@ public class CfgGraphBuilderTest {
         while (!queue.isEmpty()) {
             int cur = queue.poll();
             if (cur == exitNode.getId()) { pathExists = true; break; }
-            for (CfgGraph.Edge e : cfg.outgoing(cur)) {
+            for (ControlFlowGraph.Edge e : cfg.outgoing(cur)) {
                 if (visited.add(e.getTo())) queue.add(e.getTo());
             }
         }
@@ -377,11 +377,11 @@ public class CfgGraphBuilderTest {
     public void testWhileWithContinue() throws Exception {
         String src = "class T { void foo() { while (x > 0) { if (x == 5) continue; x--; } } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node continueNode = null, stmtDecr = null, exitNode = null, loopCond = null;
+        ControlFlowGraph.Node continueNode = null, stmtDecr = null, exitNode = null, loopCond = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (c.contains("continue")) continueNode = n;
@@ -392,21 +392,21 @@ public class CfgGraphBuilderTest {
         assertNotNull(loopCond);
         assertNotNull(exitNode);
 
-        List<CfgGraph.Edge> contOut = cfg.outgoing(continueNode.getId());
+        List<ControlFlowGraph.Edge> contOut = cfg.outgoing(continueNode.getId());
         assertEquals(1, contOut.size());
         assertEquals(CfgEdgeKind.NORMAL, contOut.get(0).getKind());
         assertEquals(loopCond.getId(), contOut.get(0).getTo());
 
         if (stmtDecr != null) {
             boolean decrToCond = false;
-            for (CfgGraph.Edge e : cfg.outgoing(stmtDecr.getId())) {
+            for (ControlFlowGraph.Edge e : cfg.outgoing(stmtDecr.getId())) {
                 if (e.getTo() == loopCond.getId()) decrToCond = true;
             }
             assertTrue("x-- should route back to loop cond", decrToCond);
         }
 
         int falseEdgesToExit = 0;
-        for (CfgGraph.Edge e : cfg.outgoing(loopCond.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopCond.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) falseEdgesToExit++;
         }
         assertEquals(1, falseEdgesToExit);
@@ -416,13 +416,13 @@ public class CfgGraphBuilderTest {
     public void testForLoopStandard() throws Exception {
         String src = "class T { void foo() { for (int i = 0; i < 10; i++) { sum += i; } } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         assertEquals(6, cfg.nodeCount());
 
-        CfgGraph.Node initNode = null, condNode = null, bodyNode = null, updateNode = null, exitNode = null;
+        ControlFlowGraph.Node initNode = null, condNode = null, bodyNode = null, updateNode = null, exitNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (c.contains("i=0") || c.contains("i = 0")) initNode = n;
@@ -437,24 +437,24 @@ public class CfgGraphBuilderTest {
         assertNotNull(exitNode);
 
         assertEquals(CfgNodeKind.STMT, initNode.getKind());
-        assertEquals(CfgNodeKind.BRANCH, condNode.getKind());
+        assertEquals(CfgNodeKind.LOOP, condNode.getKind());
         assertEquals(CfgNodeKind.STMT, bodyNode.getKind());
         assertEquals(CfgNodeKind.STMT, updateNode.getKind());
 
         boolean updateToCond = false;
-        for (CfgGraph.Edge e : cfg.outgoing(updateNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(updateNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == condNode.getId()) updateToCond = true;
         }
         assertTrue("update i++ should have NORMAL edge back to cond", updateToCond);
 
         boolean condFalseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(condNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(condNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) condFalseToExit = true;
         }
         assertTrue("cond should have FALSE edge to EXIT", condFalseToExit);
 
         boolean condTrueToBody = false;
-        for (CfgGraph.Edge e : cfg.outgoing(condNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(condNode.getId())) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == bodyNode.getId()) condTrueToBody = true;
         }
         assertTrue("cond should have TRUE edge to body", condTrueToBody);
@@ -464,33 +464,33 @@ public class CfgGraphBuilderTest {
     public void testForLoopNoInitNoUpdate() throws Exception {
         String src = "class T { void foo() { for (; x < 10;) { x++; } } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         assertEquals(4, cfg.nodeCount());
 
-        CfgGraph.Node condNode = null, bodyNode = null, exitNode = null;
-        int stmtCount = 0, branchCount = 0;
+        ControlFlowGraph.Node condNode = null, bodyNode = null, exitNode = null;
+        int stmtCount = 0, loopCount = 0;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.STMT) { stmtCount++; if (c.contains("x++")) bodyNode = n; }
-            else if (n.getKind() == CfgNodeKind.BRANCH) { branchCount++; if (c.contains("x<10") || c.contains("x < 10")) condNode = n; }
+            else if (n.getKind() == CfgNodeKind.LOOP) { loopCount++; if (c.contains("x<10") || c.contains("x < 10")) condNode = n; }
         }
-        assertEquals(1, branchCount);
+        assertEquals(1, loopCount);
         assertEquals(1, stmtCount);
         assertNotNull(condNode);
         assertNotNull(bodyNode);
         assertNotNull(exitNode);
 
         boolean bodyToCond = false;
-        for (CfgGraph.Edge e : cfg.outgoing(bodyNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(bodyNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == condNode.getId()) bodyToCond = true;
         }
         assertTrue("body x++ should have NORMAL edge back to cond", bodyToCond);
 
         boolean condFalseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(condNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(condNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) condFalseToExit = true;
         }
         assertTrue("cond should have FALSE edge to EXIT", condFalseToExit);
@@ -504,11 +504,11 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_basic_bodyExecutesBeforeCondition() throws Exception {
         String src = "class T { void foo() { int x = 0; do { x++; } while (x < 10); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node loopNode = null, stmtNode = null, exitNode = null, entryNode = null, initXNode = null;
+        ControlFlowGraph.Node loopNode = null, stmtNode = null, exitNode = null, entryNode = null, initXNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getKind() == CfgNodeKind.ENTRY) entryNode = n;
             else if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
@@ -520,20 +520,20 @@ public class CfgGraphBuilderTest {
         assertNotNull(exitNode);
 
         // fragment entry should be STMT (body), not LOOP
-        List<CfgGraph.Edge> initXOut = cfg.outgoing(initXNode.getId());
+        List<ControlFlowGraph.Edge> initXOut = cfg.outgoing(initXNode.getId());
         assertEquals(1, initXOut.size());
         assertEquals(stmtNode.getId(), initXOut.get(0).getTo());
 
         // LOOP TRUE edge back to body STMT
         boolean trueToBody = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == stmtNode.getId()) trueToBody = true;
         }
         assertTrue("LOOP TRUE should target body STMT (back edge)", trueToBody);
 
         // LOOP FALSE edge to EXIT
         boolean falseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) falseToExit = true;
         }
         assertTrue("LOOP FALSE should target EXIT", falseToExit);
@@ -543,14 +543,14 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_conditionFalseFromStart_bodyStillExecutesOnce() throws Exception {
         String src = "class T { void foo() { do { log(); } while (false); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         // Exactly 4 nodes: ENTRY, STMT(log()), LOOP(false), EXIT
         assertEquals(4, cfg.nodeCount());
 
-        CfgGraph.Node stmtNode = null, loopNode = null, exitNode = null;
+        ControlFlowGraph.Node stmtNode = null, loopNode = null, exitNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
             else if (n.getKind() == CfgNodeKind.STMT && n.getContent() != null && n.getContent().contains("log()")) stmtNode = n;
@@ -561,13 +561,13 @@ public class CfgGraphBuilderTest {
 
         // FALSE exit of LOOP wires to EXIT
         boolean falseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) falseToExit = true;
         }
         assertTrue("LOOP FALSE should wire to EXIT", falseToExit);
 
         // Body STMT is reachable from ENTRY (executes once unconditionally)
-        CfgGraph.Node entryNode = null;
+        ControlFlowGraph.Node entryNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
             if (cfg.getNode(i).getKind() == CfgNodeKind.ENTRY) { entryNode = cfg.getNode(i); break; }
         }
@@ -577,7 +577,7 @@ public class CfgGraphBuilderTest {
         reachable.add(entryNode.getId());
         while (!q.isEmpty()) {
             int cur = q.poll();
-            for (CfgGraph.Edge e : cfg.outgoing(cur)) {
+            for (ControlFlowGraph.Edge e : cfg.outgoing(cur)) {
                 if (reachable.add(e.getTo())) q.add(e.getTo());
             }
         }
@@ -588,11 +588,11 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_break_exitsLoopWithoutCheckingCondition() throws Exception {
         String src = "class T { void foo() { do { if (flag) break; process(); } while (true); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node breakNode = null, processNode = null, loopNode = null, branchNode = null, exitNode = null;
+        ControlFlowGraph.Node breakNode = null, processNode = null, loopNode = null, branchNode = null, exitNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
@@ -607,14 +607,14 @@ public class CfgGraphBuilderTest {
 
         // break has NORMAL edge that bypasses LOOP node entirely (wired to EXIT by build())
         boolean breakToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(breakNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(breakNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == exitNode.getId()) breakToExit = true;
         }
         assertTrue("break NORMAL edge should go to EXIT", breakToExit);
 
         // LOOP TRUE back-edge targets BRANCH(flag), not break or process directly
         boolean trueToBranch = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == branchNode.getId()) trueToBranch = true;
         }
         assertTrue("LOOP TRUE back-edge should target BRANCH (top of body)", trueToBranch);
@@ -624,11 +624,11 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_continue_jumpsToConditionNotBodyTop() throws Exception {
         String src = "class T { void foo() { do { if (skip) continue; work(); } while (running); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node continueNode = null, workNode = null, loopNode = null, branchNode = null, exitNode = null;
+        ControlFlowGraph.Node continueNode = null, workNode = null, loopNode = null, branchNode = null, exitNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
@@ -643,28 +643,28 @@ public class CfgGraphBuilderTest {
 
         // continue has NORMAL edge to LOOP node (condition), NOT to BRANCH
         boolean contToLoop = false;
-        for (CfgGraph.Edge e : cfg.outgoing(continueNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(continueNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == loopNode.getId()) contToLoop = true;
         }
         assertTrue("continue NORMAL edge should go to LOOP (condition)", contToLoop);
 
         // Both paths converge at LOOP node
         boolean workToLoop = false;
-        for (CfgGraph.Edge e : cfg.outgoing(workNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(workNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == loopNode.getId()) workToLoop = true;
         }
         assertTrue("work() NORMAL edge should go to LOOP", workToLoop);
 
         // LOOP TRUE back-edge targets BRANCH(skip) (top of body)
         boolean trueToBranch = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == branchNode.getId()) trueToBranch = true;
         }
         assertTrue("LOOP TRUE back-edge should target BRANCH(skip)", trueToBranch);
 
         // LOOP FALSE to EXIT
         boolean falseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) falseToExit = true;
         }
         assertTrue("LOOP FALSE should target EXIT", falseToExit);
@@ -682,14 +682,14 @@ public class CfgGraphBuilderTest {
                 }
             }""";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         // Count LOOP nodes
         int loopCount = 0;
-        CfgGraph.Node[] loopNodes = new CfgGraph.Node[2];
+        ControlFlowGraph.Node[] loopNodes = new ControlFlowGraph.Node[2];
         int li = 0;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getKind() == CfgNodeKind.LOOP) {
                 loopCount++;
                 if (li < 2) loopNodes[li++] = n;
@@ -697,18 +697,18 @@ public class CfgGraphBuilderTest {
         }
         assertEquals("should have exactly 2 LOOP nodes", 2, loopCount);
 
-        CfgGraph.Node breakNode = null;
+        ControlFlowGraph.Node breakNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getContent() != null && n.getContent().contains("break")) { breakNode = n; break; }
         }
         assertNotNull(breakNode);
         // ── Distinguish inner vs outer LOOP ──────────────────────────────────────
         // Inner LOOP's FALSE edge → outer LOOP (it exits to the outer condition)
         // Outer LOOP's FALSE edge → EXIT
-        CfgGraph.Node innerLoop = null, outerLoop = null;
-        for (CfgGraph.Node ln : loopNodes) {
-            for (CfgGraph.Edge e : cfg.outgoing(ln.getId())) {
+        ControlFlowGraph.Node innerLoop = null, outerLoop = null;
+        for (ControlFlowGraph.Node ln : loopNodes) {
+            for (ControlFlowGraph.Edge e : cfg.outgoing(ln.getId())) {
                 if (e.getKind() == CfgEdgeKind.FALSE
                         && cfg.getNode(e.getTo()).getKind() == CfgNodeKind.LOOP) {
                     innerLoop = ln;   // false-exit lands on another LOOP → this is inner
@@ -722,15 +722,15 @@ public class CfgGraphBuilderTest {
         int outerLoopId = outerLoop.getId();
 
         // break should NOT target outer loop
-        for (CfgGraph.Edge e : cfg.outgoing(breakNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(breakNode.getId())) {
             assertNotEquals("break should NOT target outer LOOP", outerLoopId, e.getTo());
         }
 
         // outer LOOP TRUE back-edge targets inner do-while entry (the inner do-while's body or inner LOOP)
         boolean outerTrueToInner = false;
-        for (CfgGraph.Edge e : cfg.outgoing(outerLoopId)) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(outerLoopId)) {
             if (e.getKind() == CfgEdgeKind.TRUE) {
-                CfgGraph.Node target = cfg.getNode(e.getTo());
+                ControlFlowGraph.Node target = cfg.getNode(e.getTo());
                 // Should target the inner do-while fragment entry (not the inner LOOP node itself)
                 if (target.getKind() != CfgNodeKind.EXIT && target.getKind() != CfgNodeKind.ENTRY) {
                     outerTrueToInner = true;
@@ -744,11 +744,11 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_returnInsideBody_wiresDirectlyToExitSink() throws Exception {
         String src = "class T { void foo() { do { if (done) return result; step(); } while (more); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
-        CfgGraph.Node returnNode = null, stepNode = null, loopNode = null, branchNode = null, exitNode = null;
+        ControlFlowGraph.Node returnNode = null, stepNode = null, loopNode = null, branchNode = null, exitNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             String c = n.getContent();
             if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
@@ -762,7 +762,7 @@ public class CfgGraphBuilderTest {
 
         // return has direct NORMAL edge to EXIT
         boolean returnToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(returnNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(returnNode.getId())) {
             if (e.getKind() == CfgEdgeKind.NORMAL && e.getTo() == exitNode.getId()) returnToExit = true;
         }
         assertTrue("return should have direct NORMAL edge to EXIT", returnToExit);
@@ -778,14 +778,14 @@ public class CfgGraphBuilderTest {
     public void testDoWhile_emptyBody_syntheticNodeStillPresent() throws Exception {
         String src = "class T { void foo() { do { } while (x > 0); } }";
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        CfgGraph cfg = new CfgGraphBuilder().build((MethodDeclaration) methods.get(0));
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
 
         // 4 nodes: ENTRY, STMT({}), LOOP(x>0), EXIT
         assertEquals(4, cfg.nodeCount());
 
-        CfgGraph.Node stmtNode = null, loopNode = null, exitNode = null, entryNode = null;
+        ControlFlowGraph.Node stmtNode = null, loopNode = null, exitNode = null, entryNode = null;
         for (int i = 1; i <= cfg.nodeCount(); i++) {
-            CfgGraph.Node n = cfg.getNode(i);
+            ControlFlowGraph.Node n = cfg.getNode(i);
             if (n.getKind() == CfgNodeKind.ENTRY) entryNode = n;
             else if (n.getKind() == CfgNodeKind.EXIT) exitNode = n;
             else if (n.getKind() == CfgNodeKind.LOOP) loopNode = n;
@@ -797,20 +797,20 @@ public class CfgGraphBuilderTest {
         assertNotNull(exitNode);
 
         // fragment entry is STMT({}), not LOOP
-        List<CfgGraph.Edge> entryOut = cfg.outgoing(entryNode.getId());
+        List<ControlFlowGraph.Edge> entryOut = cfg.outgoing(entryNode.getId());
         assertEquals(1, entryOut.size());
         assertEquals(stmtNode.getId(), entryOut.get(0).getTo());
 
         // LOOP TRUE edge targets STMT({}) (body re-entry)
         boolean trueToBody = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.TRUE && e.getTo() == stmtNode.getId()) trueToBody = true;
         }
         assertTrue("LOOP TRUE should target STMT({}) (body re-entry)", trueToBody);
 
         // LOOP FALSE to EXIT
         boolean falseToExit = false;
-        for (CfgGraph.Edge e : cfg.outgoing(loopNode.getId())) {
+        for (ControlFlowGraph.Edge e : cfg.outgoing(loopNode.getId())) {
             if (e.getKind() == CfgEdgeKind.FALSE && e.getTo() == exitNode.getId()) falseToExit = true;
         }
         assertTrue("LOOP FALSE should target EXIT", falseToExit);
