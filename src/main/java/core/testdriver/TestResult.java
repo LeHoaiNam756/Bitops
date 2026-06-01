@@ -19,9 +19,9 @@ import java.util.Objects;
  *       full {@link core.instrument.InstrumentationPlan} and updated by running
  *       <em>all</em> test cases together, representing the combined coverage of
  *       the entire test suite.</li>
- *   <li>{@link #memoryUsageBytes()} — JVM heap delta (bytes) observed during the
- *       entire generation run, measured by the caller as
- *       {@code Runtime.totalMemory() - Runtime.freeMemory()} before and after.</li>
+ *   <li>{@link #memoryUsageBytes()} — bytes allocated by the current thread during
+ *       the entire generation run, measured by the caller with
+ *       {@code com.sun.management.ThreadMXBean}.</li>
  * </ul>
  *
  * <p>Instances are immutable.  Use {@link Builder} to assemble the result
@@ -35,7 +35,7 @@ import java.util.Objects;
  * }
  *
  * // fullCoverage is the CoverageTracker fed probes from every test case combined
- * TestResult result = builder.build(fullRunTracker, heapDeltaBytes);
+ * TestResult result = builder.build(fullRunTracker, allocatedBytes);
  * }</pre>
  */
 public final class TestResult {
@@ -53,7 +53,7 @@ public final class TestResult {
      *
      * @param testDataList     all test cases (defensive copy is taken)
      * @param fullCoverage     coverage tracker updated by running all test cases
-     * @param memoryUsageBytes heap delta in bytes over the whole generation run
+     * @param memoryUsageBytes current-thread allocated bytes over the generation run
      */
     public TestResult(List<TestData> testDataList,
                       CoverageTracker fullCoverage,
@@ -86,11 +86,10 @@ public final class TestResult {
     }
 
     /**
-     * Heap memory consumed during the generation run, in bytes.
-     * Computed as the difference in
-     * {@code Runtime.totalMemory() - Runtime.freeMemory()} measured
-     * immediately before and after the run.
-     * May be negative if GC ran between measurements.
+     * Memory allocated by the current thread during the generation run, in bytes.
+     * Computed from {@code com.sun.management.ThreadMXBean} allocation counters,
+     * so concurrent thread allocations and GC heap sweeps do not produce negative
+     * deltas. Returns zero when thread allocation tracking is unavailable.
      */
     public long memoryUsageBytes() {
         return memoryUsageBytes;
@@ -143,7 +142,7 @@ public final class TestResult {
          * Finalise and return the immutable {@link TestResult}.
          *
          * @param fullCoverage     coverage tracker updated by the full test suite run
-         * @param memoryUsageBytes heap delta measured over the whole run
+         * @param memoryUsageBytes current-thread allocated bytes measured over the whole run
          */
         public TestResult build(CoverageTracker fullCoverage, long memoryUsageBytes) {
             return new TestResult(cases, fullCoverage, memoryUsageBytes);

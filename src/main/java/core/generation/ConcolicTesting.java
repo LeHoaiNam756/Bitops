@@ -69,6 +69,8 @@ public class ConcolicTesting {
     public TestResult generate(MethodDeclaration methodDeclaration,
                                CompilationUnit cu,
                                Coverage coverage) throws Exception {
+        MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
+
         // --- 1. CFG ---------------------------------------------------------
         ControlFlowGraph cfg = getCfg(methodDeclaration, coverage);
 
@@ -155,7 +157,7 @@ public class ConcolicTesting {
         }
 
         // --- 8. Assemble result ---------------------------------------------
-        return new TestResult(allTestData, tracker, 0L);
+        return new TestResult(allTestData, tracker, MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage));
     }
 
     /**
