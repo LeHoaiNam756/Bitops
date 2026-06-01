@@ -157,6 +157,7 @@ public final class ConstraintSolver implements AutoCloseable {
 
         // ── Step 4: Invoke Z3 ─────────────────────────────────────────────────
         Status status = z3Solver.check();
+        printZ3Statistics(z3Solver.getStatistics());
 
         return switch (status) {
 
@@ -194,6 +195,19 @@ public final class ConstraintSolver implements AutoCloseable {
      * Use between top-level method analyses.
      */
     public void reset() { z3Solver.reset(); }
+
+    // =========================================================================
+    // Diagnostics
+    // =========================================================================
+
+    private void printZ3Statistics(Statistics statistics) {
+        System.out.println("[ConstraintSolver] Z3 statistics:");
+        Statistics.Entry[] entries = statistics.getEntries();
+        for (int i = 0; i < entries.length; i++) {
+            Statistics.Entry entry = entries[i];
+            System.out.println("  [" + i + "] " + entry.Key + " = " + entry.getValueString());
+        }
+    }
 
     // =========================================================================
     // Lifecycle
