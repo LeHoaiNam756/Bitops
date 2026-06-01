@@ -10,6 +10,7 @@ import core.SymbolicExecution.model.types.SymTypeMap;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.z3encoder.SolverResult;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
+import core.SymbolicExecution.z3encoder.Z3StatisticsRecorder;
 import core.testdriver.TestData;
 import core.testdriver.TestDriver;
 import core.testdriver.TestResult;
@@ -69,6 +70,7 @@ public class ConcolicTesting {
     public TestResult generate(MethodDeclaration methodDeclaration,
                                CompilationUnit cu,
                                Coverage coverage) throws Exception {
+        Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
 
         // --- 1. CFG ---------------------------------------------------------
@@ -157,7 +159,12 @@ public class ConcolicTesting {
         }
 
         // --- 8. Assemble result ---------------------------------------------
-        return new TestResult(allTestData, tracker, MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage));
+        TestResult result = new TestResult(
+                allTestData,
+                tracker,
+                MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage));
+        ConcolicResultWriter.write(methodDeclaration, result, Z3StatisticsRecorder.snapshot());
+        return result;
     }
 
     /**
