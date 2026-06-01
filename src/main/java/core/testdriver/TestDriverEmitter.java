@@ -25,8 +25,8 @@ public class TestDriverEmitter {
         sb.append("import java.lang.reflect.Method;\n");
         sb.append("import java.nio.file.Path;\n");
         sb.append("import java.util.Arrays;\n\n");
-        sb.append("import static core.testpath.TraceRecorder.getTraces;\n");
-
+        sb.append("import java.nio.file.Files;\n");
+        sb.append("import java.nio.charset.StandardCharsets;\n");
         // ── Class header ─────────────────────────────────────────────────────
         sb.append("/**\n");
         sb.append(" * Auto-generated driver for {@code ")
@@ -123,7 +123,6 @@ public class TestDriverEmitter {
         sb.append("            try {\n");
         sb.append("            Object result = method.invoke(instance, methodArgs);\n");
 
-        // Write result JSON
         if ("void".equals(returnType)) {
             sb.append("            ObjectNode resultJson = mapper.createObjectNode();\n");
             sb.append("            resultJson.set(\"input\", root);\n");
@@ -134,15 +133,31 @@ public class TestDriverEmitter {
             sb.append("            ObjectNode resultJson = mapper.createObjectNode();\n");
             sb.append("            resultJson.set(\"input\", root);\n");
             sb.append("            resultJson.put(\"output\", resultToString(result));\n");
+            // ── end session FIRST so trace file is fully flushed ──
+            sb.append("            TraceRecorder.flush();\n");
+            // ── then read nodeIds from the trace file ──
+            sb.append("            Path traceFile = TraceRecorder.getTraceFile();\n");
             sb.append("            ArrayNode arrayNode = mapper.createArrayNode();\n");
-            sb.append("            getTraces().forEach(id -> arrayNode.add(id));\n");
+            sb.append("            if (traceFile != null && java.nio.file.Files.exists(traceFile)) {\n");
+            sb.append("                java.nio.file.Files.lines(traceFile, java.nio.charset.StandardCharsets.UTF_8)\n");
+            sb.append("                    .forEach(line -> {\n");
+            sb.append("                        try {\n");
+            sb.append("                            int nodeId = mapper.readTree(line).get(\"nodeId\").asInt();\n");
+            sb.append("                            arrayNode.add(nodeId);\n");
+            sb.append("                        } catch (Exception ignored) {}\n");
+            sb.append("                    });\n");
+            sb.append("            }\n");
             sb.append("            resultJson.set(\"coveredNodeIds\", arrayNode);\n");
             sb.append("            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), resultJson);\n");
         }
 
+        // ── finally block no longer needs to call endSession for non-void
+        //    but still needs it as safety net for the void case and exceptions
         sb.append("            } finally {\n");
-        sb.append("                TraceRecorder.endSession();\n");
+        sb.append("                TraceRecorder.flush();\n");
+        sb.append("                TraceRecorder.endSession();\n");  // safe: endSession() is idempotent
         sb.append("            }\n");
+
 
         sb.append("        } catch (Exception e) {\n");
         sb.append("            System.err.println(\"[DriverMain] Invocation failure: \" + e);\n");

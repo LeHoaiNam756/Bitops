@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.MemoryModel;
 import core.SymbolicExecution.SymbolicExecution;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 
 @Getter
 @Setter
@@ -33,7 +33,7 @@ public class SimpleNameNode extends NameNode {
 
     public static AstNode executeSimpleNameNode(SimpleNameNode simpleNameNode, MemoryModel memoryModel) {
         String name = simpleNameNode.getIdentifier();
-        SymbolicValue value = memoryModel.getVariable(name);
+        SymbolicValueTemp value = memoryModel.getVariable(name);
         // TODO: This is a hack to track whether the variable is related to a parameter.
         //  We should find a better way to do this.
         if (value != null && value.isParameter()) {
@@ -48,7 +48,7 @@ public class SimpleNameNode extends NameNode {
 
     public static Expr<?> convertSimpleNameToZ3Expr(SimpleNameNode astNode, Context ctx, MemoryModel memoryModel) {
         String varName = astNode.getIdentifier();
-        SymbolicValue value = memoryModel.getVariable(varName);
+        SymbolicValueTemp value = memoryModel.getVariable(varName);
         if (value == null) {
             throw new RuntimeException("Variable not found in memory model: " + varName);
         }

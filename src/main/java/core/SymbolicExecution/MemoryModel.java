@@ -5,7 +5,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.FPSort;
 import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.model.SymbolicStore;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 
 import java.util.HashMap;
@@ -38,9 +38,9 @@ public class MemoryModel {
         return values.get(name);
     }
 
-    public void declareVariable(SymbolicValue variable, AstNode node) {
-        store.declare(variable.getName(), variable);
-        values.put(variable.getName(), node);
+    public void declareVariable(SymbolicValueTemp variable, AstNode node) {
+        store.declare(variable.toString(), variable);
+        values.put(variable.toString(), node);
     }
 
     public void assignVariable(String variable, AstNode node) {
@@ -51,14 +51,14 @@ public class MemoryModel {
         return store.contains(name);
     }
 
-    public SymbolicValue getVariable(String name) {
-        return store.resolve(name);
+    public SymbolicValueTemp getVariable(String name) {
+        return null;
     }
 
-    public SymbolicValue getVariableByValue(AstNode value) {
+    public SymbolicValueTemp getVariableByValue(AstNode value) {
         for (Map.Entry<String, AstNode> entry : values.entrySet()) {
             if (entry.getValue() == value) {
-                return store.resolve(entry.getKey());
+                return null;
             }
         }
         return null;

@@ -1,7 +1,6 @@
 package core.SymbolicExecution.dispatch;
 
-import core.SymbolicExecution.execution.SymbolicContext;
-import core.SymbolicExecution.model.SymbolicStore;
+import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
 import org.eclipse.jdt.core.dom.ASTNode;
 
@@ -16,10 +15,10 @@ public class AstDispatcher {
         return this;
     }
 
-    public SymbolicValue eval(ASTNode node, SymbolicStore store, SymbolicContext ctx) {
+    public SymbolicValue eval(ASTNode node, SymbolicState state) {
         for (AstHandler handler : handlers) {
             if (handler.supports(node)) {
-                return handler.eval(node, store, ctx, this);
+                return handler.eval(node, state, this);
             }
         }
         throw new IllegalArgumentException("No handler for AST node: " + node.getClass());

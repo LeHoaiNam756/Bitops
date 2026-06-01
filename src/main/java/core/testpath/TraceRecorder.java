@@ -2,6 +2,7 @@ package core.testpath;
 
 import core.instrument.TraceKind;
 import core.utils.FilePath;
+import lombok.Getter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,28 +10,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Runtime capture point for instrumented code.
  *
- * <h3>Storage — hybrid buffer + periodic flush</h3>
+ * <h3>Storage — synchronous flush</h3>
  * <ul>
  *   <li>Events are appended to a {@link ConcurrentLinkedQueue} in-memory
  *       (lock-free, safe for multi-threaded test execution).</li>
- *   <li>A background scheduler flushes the buffer to a JSON Lines file under
- *       {@code <clonedRoot>/.ct4j-trace/} every {@value #FLUSH_INTERVAL_MS} ms
- *       <em>or</em> whenever the buffer reaches {@value #FLUSH_THRESHOLD} events,
- *       whichever comes first.</li>
+ *   <li>The buffer is flushed synchronously to a JSON Lines file under
+ *       {@code <clonedRoot>/.ct4j-trace/} whenever the buffer reaches
+ *       {@value #FLUSH_THRESHOLD} events, or when {@link #flush()} /
+ *       {@link #endSession()} is called explicitly. No background thread is used.</li>
  *   <li>If the file write fails the buffer is retained in memory; a warning is
  *       logged but no exception is propagated to the instrumented code.</li>
  * </ul>
@@ -58,23 +52,18 @@ public final class TraceRecorder {
     /** Number of events that trigger an eager flush. */
     static final int FLUSH_THRESHOLD = 500;
 
-    /** Background flush interval in milliseconds. */
-    static final long FLUSH_INTERVAL_MS = 2_000L;
-
     // -----------------------------------------------------------------------
     // State (one logical session at a time)
     // -----------------------------------------------------------------------
 
     private static volatile Path   traceDir;
     private static volatile String sessionId;
+    @Getter
     private static volatile Path   traceFile;
 
     private static final ConcurrentLinkedQueue<TraceEvent> buffer =
             new ConcurrentLinkedQueue<>();
     private static final AtomicInteger bufferSize = new AtomicInteger(0);
-
-    private static ScheduledExecutorService scheduler;
-    private static ScheduledFuture<?>       flushTask;
 
     // -----------------------------------------------------------------------
     // Public API — called by instrumented code + orchestrator
@@ -85,8 +74,7 @@ public final class TraceRecorder {
      * {@link TraceKind}.
      *
      * <p>This method is injected at every probe point by
-     * {@link core.instrument.Ct4jTraceProcessor}.  It must be as cheap as
-     * possible.
+     * {@link core.instrument.SourceEmitter}.  It must be as cheap as possible.
      *
      * @return {@code true} always — lets the method be used inline in
      *         short-circuit boolean expressions for condition probing
@@ -95,21 +83,21 @@ public final class TraceRecorder {
     public static boolean mark(int nodeId, TraceKind kind) {
         buffer.add(new TraceEvent(nodeId, kind, System.currentTimeMillis()));
         if (bufferSize.incrementAndGet() >= FLUSH_THRESHOLD) {
-            flushAsync();
+            flushSync();
         }
         return kind == TraceKind.COND_T; // lets false-branch probe always run
     }
 
     /**
      * Begin a new trace session for {@code methodSig}.
-     * Resets the buffer and starts the background flush scheduler.
+     * Resets the buffer; all flushes are synchronous — no background thread is started.
      *
      * @param methodSig human-readable method signature (used in file name)
      * @param clonedProjectRoot root directory of the cloned project
      *                          ({@link core.utils.FilePath#PATH_TO_CLONED_PROJECT})
      */
     public static synchronized void startSession(String methodSig,
-                                                  Path clonedProjectRoot) {
+                                                 Path clonedProjectRoot) {
         // Clean up any lingering previous session
         endSessionQuietly();
 
@@ -130,15 +118,11 @@ public final class TraceRecorder {
         String safeSig = methodSig.replaceAll("[^A-Za-z0-9._-]", "_");
         sessionId  = safeSig + "-" + UUID.randomUUID();
         traceFile  = traceDir.resolve(sessionId + ".trace");
-
-        scheduler  = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "ct4j-flush");
-            t.setDaemon(true);
-            return t;
-        });
-        flushTask  = scheduler.scheduleAtFixedRate(
-                TraceRecorder::flushSync,
-                FLUSH_INTERVAL_MS, FLUSH_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        try {
+            Files.createFile(traceFile);
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot create trace file: " + traceFile, e);
+        }
     }
 
     /**
@@ -160,13 +144,6 @@ public final class TraceRecorder {
     // -----------------------------------------------------------------------
     // Internal flush logic
     // -----------------------------------------------------------------------
-
-    /** Non-blocking: schedule an immediate flush on the background thread. */
-    private static void flushAsync() {
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.submit(TraceRecorder::flushSync);
-        }
-    }
 
     /**
      * Drains the buffer to {@link #traceFile}.
@@ -202,11 +179,10 @@ public final class TraceRecorder {
     }
 
     private static void endSessionQuietly() {
-        if (flushTask != null)   { flushTask.cancel(false); flushTask = null; }
-        if (scheduler != null)   { scheduler.shutdownNow();  scheduler = null; }
         traceFile = null;
         sessionId = null;
     }
+
 
     // -----------------------------------------------------------------------
     // TraceEvent value type
@@ -225,10 +201,6 @@ public final class TraceRecorder {
                     + ",\"ts\":" + timestamp
                     + "}";
         }
-    }
-
-    public static List<Integer> getTraces() {
-        return buffer.stream().map(TraceEvent::nodeId).collect(Collectors.toList());
     }
 
     private TraceRecorder() {}   // non-instantiable

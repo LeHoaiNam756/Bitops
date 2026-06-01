@@ -4,9 +4,8 @@ import com.microsoft.z3.Expr;
 import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.AstNode.Expression.Name.SimpleNameNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.SymbolicExecution;
 import core.SymbolicExecution.TypedExpr;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 import core.TestGeneration.ConcolicTesting;
 import org.eclipse.jdt.core.dom.*;
 
@@ -202,7 +201,7 @@ public class MethodInvocationNode extends ExpressionNode {
             }
             TypedExpr.JavaType javaType = MemoryModel.mapPrimitiveType((PrimitiveType) returnType);
             Expr<?> expr = MemoryModel.createZ3ExprFromType(stubName, javaType, memoryModel.getContext());
-            SymbolicValue stubValue = SymbolicValue.of(stubName, javaType, expr, true);
+            SymbolicValueTemp stubValue = SymbolicValueTemp.of(stubName, javaType, expr, true);
             memoryModel.declareVariable(stubValue, stubVariableAstNode);
             addStubVariableToParameterList(stubName, returnType);
             return stubVariableAstNode;
@@ -226,7 +225,7 @@ public class MethodInvocationNode extends ExpressionNode {
             PrimitiveType primitiveType = getPrimitiveTypeFromClass(returnTypeClass, methodInvocation.getAST());
             TypedExpr.JavaType javaType = MemoryModel.mapPrimitiveType(primitiveType);
             Expr<?> expr = MemoryModel.createZ3ExprFromType(stubName, javaType, memoryModel.getContext());
-            SymbolicValue stubValue = SymbolicValue.of(stubName, javaType, expr, true);
+            SymbolicValueTemp stubValue = SymbolicValueTemp.of(stubName, javaType, expr, true);
             memoryModel.declareVariable(stubValue, stubVariableAstNode);
             addStubVariableToParameterList(stubName, primitiveType);
             return stubVariableAstNode;

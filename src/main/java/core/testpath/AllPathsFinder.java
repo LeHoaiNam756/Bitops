@@ -2,6 +2,7 @@ package core.testpath;
 
 import core.cfg.CfgNodeKind;
 import core.cfg.ControlFlowGraph;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -31,16 +32,39 @@ public class AllPathsFinder implements PathFinder {
     // ------------------------------------------------------------------
 
     /** Number of full loop iterations to unroll (k=1 → visit each node at most twice). */
-    private static final int MAX_LOOP_ITERATIONS = 1;
+    private int MAX_LOOP_ITERATIONS = 5;
 
     /** Maximum number of distinct ENTRY→target paths to collect before stopping. */
-    private static final int MAX_PATHS = 256;
+    private int MAX_PATHS = 256;
 
     /** Maximum number of edges allowed on a single path before pruning that branch. */
-    private static final int MAX_PATH_EDGES = 512;
+    private int MAX_PATH_EDGES = 512;
 
     // Derived: a node may appear on one path at most this many times.
-    private static final int MAX_NODE_VISITS = MAX_LOOP_ITERATIONS + 1;
+    private int MAX_NODE_VISITS = MAX_LOOP_ITERATIONS + 1;
+
+
+    public void setMAX_LOOP_ITERATIONS(int MAX_LOOP_ITERATIONS) {
+        if (MAX_LOOP_ITERATIONS < 0) {
+            throw new IllegalArgumentException("MAX_LOOP_ITERATIONS must be greater than 0");
+        }
+        this.MAX_LOOP_ITERATIONS = MAX_LOOP_ITERATIONS;
+        this.MAX_NODE_VISITS = MAX_LOOP_ITERATIONS + 1;
+    }
+
+    public void setMAX_PATHS(int MAX_PATHS) {
+        if (MAX_PATHS < 1) {
+            throw new IllegalArgumentException("MAX_PATHS must be greater than 0");
+        }
+        this.MAX_PATHS = MAX_PATHS;
+    }
+
+    public void setMAX_PATH_EDGES(int MAX_PATH_EDGES) {
+        if (MAX_PATH_EDGES < 1) {
+            throw new IllegalArgumentException("MAX_PATH_EDGES must be greater than 0");
+        }
+        this.MAX_PATH_EDGES = MAX_PATH_EDGES;
+    }
 
     // ------------------------------------------------------------------
     // PathFinder entry point
@@ -83,6 +107,8 @@ public class AllPathsFinder implements PathFinder {
             full.addAll(targetToExit);
             results.add(Collections.unmodifiableList(full));
         }
+
+        results.sort(Comparator.comparingInt(List::size));
         return Collections.unmodifiableList(results);
     }
 

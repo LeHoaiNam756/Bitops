@@ -1,12 +1,13 @@
 package core.testpath;
 
+import core.cfg.CfgEdgeKind;
 import core.cfg.ControlFlowGraph;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CoverageTracker {
+public class CoverageTracker implements CoverageTrackerInterface{
     private final Set<Integer> uncovered;  // not yet covered or skipped
     private final Set<Integer> covered;
     private final Set<Integer> skipped;
@@ -48,6 +49,10 @@ public class CoverageTracker {
     public boolean isCovered(int nodeId) { return covered.contains(nodeId); }
     public boolean isSkipped(int nodeId)  { return skipped.contains(nodeId); }
     public boolean isUncovered(int nodeId){ return uncovered.contains(nodeId); }
+
+    public int pathTargetFor(int nodeId) { return nodeId; }
+
+    public CfgEdgeKind requiredExitFor(int nodeId) { return null; }
 
     public boolean isComplete() { return uncovered.isEmpty(); }
 }

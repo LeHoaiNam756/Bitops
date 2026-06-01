@@ -8,8 +8,7 @@ import core.SymbolicExecution.TypedExpr;
 import org.eclipse.jdt.core.dom.*;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
 import core.SymbolicExecution.MemoryModel;
-import core.SymbolicExecution.model.ArraySymbolicValue;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 
 import java.util.List;
 
@@ -71,29 +70,29 @@ public class VariableDeclarationNode extends ExpressionNode {
                                              String name,
                                              Expression initializer,
                                              MemoryModel memoryModel) {
-        ArrayType arrType = (ArrayType) arrayType;
-        TypedExpr.JavaType elementType = MemoryModel.mapPrimitiveType((PrimitiveType) arrType.getElementType());
-        Expr<?> arrayExpr = createArrayZ3Expr(name, arrType, memoryModel.getContext());
-        ArraySymbolicValue arrayValue = ArraySymbolicValue.of(name, elementType, arrayExpr,
-                SymbolicExecution.isRelatedToParameter, arrType.getDimensions());
-        AstNode initValue = null;
-
-        if (initializer != null) {
-            if (initializer instanceof ArrayCreation) {
-                ArrayCreationNode creationNode =
-                        ArrayCreationNode.executeArrayCreation((ArrayCreation) initializer, memoryModel);
-                initValue = creationNode.getArraySymbolicRepresent();
-
-            } else if (initializer instanceof ArrayInitializer) {
-                initValue = ArrayInitializerNode.executeArrayInitializer(
-                        (ArrayInitializer) initializer, memoryModel);
-
-            } else {
-                initValue = ExpressionNode.executeExpression(initializer, memoryModel);
-            }
-        }
-
-        memoryModel.declareVariable(arrayValue, initValue);
+//        ArrayType arrType = (ArrayType) arrayType;
+//        TypedExpr.JavaType elementType = MemoryModel.mapPrimitiveType((PrimitiveType) arrType.getElementType());
+//        Expr<?> arrayExpr = createArrayZ3Expr(name, arrType, memoryModel.getContext());
+//        ArraySymbolicValueTemp arrayValue = ArraySymbolicValueTemp.of(name, elementType, arrayExpr,
+//                SymbolicExecution.isRelatedToParameter, arrType.getDimensions());
+//        AstNode initValue = null;
+//
+//        if (initializer != null) {
+//            if (initializer instanceof ArrayCreation) {
+//                ArrayCreationNode creationNode =
+//                        ArrayCreationNode.executeArrayCreation((ArrayCreation) initializer, memoryModel);
+//                initValue = creationNode.getArraySymbolicRepresent();
+//
+//            } else if (initializer instanceof ArrayInitializer) {
+//                initValue = ArrayInitializerNode.executeArrayInitializer(
+//                        (ArrayInitializer) initializer, memoryModel);
+//
+//            } else {
+//                initValue = ExpressionNode.executeExpression(initializer, memoryModel);
+//            }
+//        }
+//
+//        memoryModel.declareVariable(arrayValue, initValue);
     }
 
     private static com.microsoft.z3.Expr<?> createArrayZ3Expr(String name, ArrayType arrayType, com.microsoft.z3.Context ctx) {
@@ -144,17 +143,17 @@ public class VariableDeclarationNode extends ExpressionNode {
                                                 String name,
                                                 Expression initializer,
                                                 MemoryModel memoryModel) {
-        PrimitiveType primitiveType = (PrimitiveType) baseType;
-        TypedExpr.JavaType javaType = MemoryModel.mapPrimitiveType(primitiveType);
-        Expr<?> expr = MemoryModel.createZ3ExprFromType(name, javaType, memoryModel.getContext());
-        SymbolicValue value = SymbolicValue.of(name, javaType, expr, SymbolicExecution.isRelatedToParameter);
-        AstNode initValue = null;
-
-        if (initializer != null) {
-            initValue = ExpressionNode.executeExpression(initializer, memoryModel);
-        }
-
-        memoryModel.declareVariable(value, initValue);
+//        PrimitiveType primitiveType = (PrimitiveType) baseType;
+//        TypedExpr.JavaType javaType = MemoryModel.mapPrimitiveType(primitiveType);
+//        Expr<?> expr = MemoryModel.createZ3ExprFromType(name, javaType, memoryModel.getContext());
+//        SymbolicValueTemp value = SymbolicValueTemp.of(name, javaType, expr, SymbolicExecution.isRelatedToParameter);
+//        AstNode initValue = null;
+//
+//        if (initializer != null) {
+//            initValue = ExpressionNode.executeExpression(initializer, memoryModel);
+//        }
+//
+//        memoryModel.declareVariable(value, initValue);
     }
 
     private static void executeVariableDeclarationFragment(VariableDeclarationFragment fragment,

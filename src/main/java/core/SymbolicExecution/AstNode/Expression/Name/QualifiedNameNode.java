@@ -10,7 +10,7 @@ import core.SymbolicExecution.AstNode.Expression.Array.ArrayNode;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
 import core.SymbolicExecution.MemoryModel;
 import core.SymbolicExecution.SymbolicExecution;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 
 @Getter
 public class QualifiedNameNode extends NameNode {
@@ -35,13 +35,13 @@ public class QualifiedNameNode extends NameNode {
     }
 
     public static AstNode executeQualifiedNameNode(QualifiedNameNode node, MemoryModel memoryModel) {
-        SymbolicValue value = memoryModel.getVariableByValue(node.qualifier);
+        SymbolicValueTemp value = memoryModel.getVariableByValue(node.qualifier);
         if (value != null) {
             SymbolicExecution.isRelatedToParameter = value.isParameter();
         }
 
         if ("length".equals(node.name)) {
-            SymbolicValue qualifierVar = memoryModel.getVariableByValue(node.qualifier);
+            SymbolicValueTemp qualifierVar = memoryModel.getVariableByValue(node.qualifier);
             if (qualifierVar == null) {
                 throw new RuntimeException("No variable found for qualifier in memory model: " + node.qualifier);
             }
@@ -59,7 +59,7 @@ public class QualifiedNameNode extends NameNode {
     public static Expr<?> convertQualifiedNameToZ3Expr(QualifiedNameNode astNode, Context ctx,
                                                         MemoryModel memoryModel) {
         if ("length".equals(astNode.name)) {
-            SymbolicValue value = memoryModel.getVariableByValue(astNode.qualifier);
+            SymbolicValueTemp value = memoryModel.getVariableByValue(astNode.qualifier);
             if (value == null) {
                 throw new RuntimeException("No variable found for qualifier in memory model: " + astNode.qualifier);
             }

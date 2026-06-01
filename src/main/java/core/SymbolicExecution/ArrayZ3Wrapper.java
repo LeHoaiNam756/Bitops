@@ -5,7 +5,7 @@ import core.SymbolicExecution.AstNode.AstNode;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayAccessNode;
 import core.SymbolicExecution.AstNode.Expression.Array.ArrayNode;
 import core.SymbolicExecution.AstNode.Expression.ExpressionNode;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.SymbolicValueTemp;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class ArrayZ3Wrapper {
 
     public static Expr<?> convertArrayAccessToZ3(ArrayAccessNode node, Context ctx, MemoryModel memoryModel) {
         ArrayNode arrRep = node.getArrayRepresent();
-        SymbolicValue value = memoryModel.getVariableByValue(arrRep);
+        SymbolicValueTemp value = memoryModel.getVariableByValue(arrRep);
         if (value == null) {
             throw new RuntimeException("No variable found for array symbolic represent in memory model");
         }
@@ -30,7 +30,7 @@ public class ArrayZ3Wrapper {
     }
 
     public static Expr<?> resolveInitialElements(ArrayNode arrRep, Context ctx, MemoryModel memoryModel) {
-        SymbolicValue value = memoryModel.getVariableByValue(arrRep);
+        SymbolicValueTemp value = memoryModel.getVariableByValue(arrRep);
         if (value == null) {
             throw new RuntimeException("No variable found for array symbolic represent in memory model");
         }

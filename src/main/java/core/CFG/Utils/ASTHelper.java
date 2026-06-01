@@ -1,7 +1,6 @@
 package core.CFG.Utils;
 
-import core.cfg.CfgGraph;
-import core.cfg.CfgGraphBuilder;
+import core.cfg.ControlFlowGraph;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jdt.core.dom.*;
@@ -30,7 +29,7 @@ public class ASTHelper {
     private static Coverage coverage;
     private static CompilationUnit compilationUnit = null;
 
-    public static CfgGraph generateCfg(MethodDeclaration method) {
+    public static ControlFlowGraph generateCfg(MethodDeclaration method) {
         CfgNode legacy = generateCfgNode(method);
         return null;
     }

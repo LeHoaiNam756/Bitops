@@ -5,7 +5,7 @@ import core.CFG.CfgBlockNode;
 import core.CFG.CfgBoolExprNode;
 import core.CFG.CfgNode;
 import core.CFG.Utils.ASTHelper;
-import core.cfg.CfgGraph;
+import core.cfg.ControlFlowGraph;
 import core.SymbolicExecution.RandomTestData;
 import core.SymbolicExecution.SymbolicExecution;
 import core.SymbolicExecution.dispatch.AstDispatcher;
@@ -81,7 +81,7 @@ public class ConcolicTesting {
         Object[] testInputs = RandomTestData.createRandomTestData(this.parameterClasses);
         executeTestAndRecord(testInputs, testResult, coverage);
 
-        CfgGraph graph = ASTHelper.generateCfg((MethodDeclaration) testUnit);
+        ControlFlowGraph graph = ASTHelper.generateCfg((MethodDeclaration) testUnit);
         PathFinder finder = new PathFinder();
         AstDispatcher dispatcher = DefaultAstHandlers.defaultDispatcher();
         SymbolicExecution symbolicExecution = new SymbolicExecution(dispatcher);

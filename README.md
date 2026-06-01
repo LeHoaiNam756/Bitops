@@ -1,3 +1,4 @@
+# NOT USE THIS README BECAUSE IT IS DEPRECATED
 # CT4J — Concolic Testing for Java
 
 A concolic (concrete + symbolic) utils generation engine for Java. Given a method, it builds a CFG, explores uncovered paths, generates Z3 constraints, and produces concrete utils inputs.

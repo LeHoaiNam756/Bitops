@@ -1,7 +1,7 @@
 package core.TestGeneration.path;
 
 import core.cfg.CfgEdgeKind;
-import core.cfg.CfgGraph;
+import core.cfg.ControlFlowGraph;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Queue;
 
 public class PathFinder {
-    public List<PathStep> findPathThrough(CfgGraph graph, int start, int mid, int end) {
+    public List<PathStep> findPathThrough(ControlFlowGraph graph, int start, int mid, int end) {
         List<PathStep> first = bfs(graph, start, mid);
         if (first.isEmpty()) {
             return Collections.emptyList();
@@ -26,7 +26,7 @@ public class PathFinder {
         return combined;
     }
 
-    private List<PathStep> bfs(CfgGraph graph, int start, int goal) {
+    private List<PathStep> bfs(ControlFlowGraph graph, int start, int goal) {
         Map<Integer, Integer> parents = new HashMap<>();
         Map<Integer, Boolean> decisions = new HashMap<>();
         Queue<Integer> queue = new ArrayDeque<>();
@@ -38,7 +38,7 @@ public class PathFinder {
             if (current == goal) {
                 return buildPath(parents, decisions, goal);
             }
-            for (CfgGraph.Edge edge : graph.outgoing(current)) {
+            for (ControlFlowGraph.Edge edge : graph.outgoing(current)) {
                 int next = edge.getTo();
                 if (!parents.containsKey(next)) {
                     Boolean decision = edge.getKind() == CfgEdgeKind.TRUE
