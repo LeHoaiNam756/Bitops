@@ -338,7 +338,10 @@ public class ToolView {
         public FormattedTestData(int numberOfNode, TestData td) {
             this.input = td.input();
             this.output = td.output();
-            this.coverage = td.coveredNodeIds().size() * 100 / numberOfNode;
+            Set<Integer> coveredNodeIds = td.coveredNodeIds() == null
+                    ? Collections.emptySet()
+                    : td.coveredNodeIds();
+            this.coverage = numberOfNode == 0 ? 100 : coveredNodeIds.size() * 100 / numberOfNode;
         }
 
         public Map<String, Object> input() {
@@ -359,7 +362,7 @@ public class ToolView {
         int total = covered
                 + result.fullCoverage().getUncovered().size()
                 + result.fullCoverage().getSkipped().size();
-        return total == 0 ? 0.0 : covered * 100.0 / total;
+        return total == 0 ? 100 : covered * 100.0 / total;
     }
 
     private String formatValue(Object value) {
