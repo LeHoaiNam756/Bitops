@@ -107,6 +107,26 @@ public class TestDriverEmitterTest {
         assertTrue("generated driver should be compiled for subprocess execution", Files.exists(driverClass));
     }
 
+    @Test
+    public void resolveDriverFqnPrefersMostRecentlyGeneratedDriver() throws Exception {
+        Path classesDir = Files.createTempDirectory("ct4j-driver-fqn-test");
+        Path staleDriver = classesDir.resolve(Path.of("stale", "DriverMain.class"));
+        Path currentDriver = classesDir.resolve(Path.of("wanted", "DriverMain.class"));
+        Files.createDirectories(staleDriver.getParent());
+        Files.createDirectories(currentDriver.getParent());
+        Files.write(staleDriver, new byte[] {0});
+        Files.write(currentDriver, new byte[] {0});
+
+        var field = TestDriver.class.getDeclaredField("currentDriverFqn");
+        field.setAccessible(true);
+        field.set(null, "wanted.DriverMain");
+
+        String driverFqn = TestDriver.resolveDriverFqn(classesDir);
+
+        assertTrue("runner should use the driver generated for the current method",
+                "wanted.DriverMain".equals(driverFqn));
+    }
+
     private static CompilationUnit parse(String source) {
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);

@@ -1,18 +1,55 @@
 package core.generation;
 
+import core.cfg.Coverage;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
 import core.testdriver.TestDriver;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ConcolicTestingTest {
+
+    @Test
+    public void generate_flipBitUsesCurrentScalarDriverParameters() throws Exception {
+        Path zip = createZipProject("BitOps.java", """
+                package sample;
+
+                public class BitOps {
+                    public static int flipBit(final int num, final int bit) {
+                        return num ^ (1 << bit);
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "flipBit".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT);
+
+        assertFalse(result.testDataList().isEmpty());
+        Map<String, Object> input = result.testDataList().get(0).input();
+        assertTrue(input.containsKey("num"));
+        assertTrue(input.containsKey("bit"));
+        assertFalse(input.containsKey("nums"));
+    }
 
     @Test
     public void extractInputsFromModel_usesExactPrimitiveArrayFallbacks() throws Exception {
@@ -133,5 +170,16 @@ public class ConcolicTestingTest {
                 List.class);
         method.setAccessible(true);
         return (Map<String, Object>) method.invoke(null, bindings, params);
+    }
+
+    private static Path createZipProject(String fileName, String source) throws Exception {
+        Path zip = Files.createTempFile("ct4j-flipbit-", ".zip");
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zip))) {
+            zos.putNextEntry(new ZipEntry(fileName));
+            zos.write(source.getBytes(StandardCharsets.UTF_8));
+            zos.closeEntry();
+        }
+        zip.toFile().deleteOnExit();
+        return zip;
     }
 }

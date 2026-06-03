@@ -44,6 +44,8 @@ public final class TestDriver {
 
     private TestDriver() {}
 
+    private static volatile String currentDriverFqn;
+
     // -----------------------------------------------------------------------
     // Public entry point
     // -----------------------------------------------------------------------
@@ -90,6 +92,7 @@ public final class TestDriver {
                 driverFile.toString(),
                 FilePath.PATH_TO_MAVEN_TARGET_CLASSES
         );
+        currentDriverFqn = driverFqn(packageName);
     }
 
     // -----------------------------------------------------------------------
@@ -347,6 +350,11 @@ public final class TestDriver {
      * {@code "com.example.DriverMain"}.
      */
     static String resolveDriverFqn(Path classesDir) throws IOException {
+        String generatedDriverFqn = currentDriverFqn;
+        if (generatedDriverFqn != null && driverClassExists(classesDir, generatedDriverFqn)) {
+            return generatedDriverFqn;
+        }
+
         try (var stream = Files.walk(classesDir)) {
             return stream
                     .filter(p -> p.getFileName().toString().equals("DriverMain.class"))
@@ -360,5 +368,16 @@ public final class TestDriver {
                     })
                     .orElse("DriverMain"); // default package fallback
         }
+    }
+
+    private static String driverFqn(String packageName) {
+        return packageName == null || packageName.isBlank()
+                ? "DriverMain"
+                : packageName + ".DriverMain";
+    }
+
+    private static boolean driverClassExists(Path classesDir, String driverFqn) {
+        Path driverClass = classesDir.resolve(driverFqn.replace('.', java.io.File.separatorChar) + ".class");
+        return Files.exists(driverClass);
     }
 }
