@@ -2,18 +2,25 @@ package core.SymbolicExecution.z3encoder;
 
 import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.ArraySort;
+import com.microsoft.z3.BitVecNum;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FPNum;
 import com.microsoft.z3.FuncDecl;
-import com.microsoft.z3.IntNum;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.SymLiteral;
 
-import java.math.BigInteger;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Extracts primitive array values from a Z3 model after SAT.
+ *
+ * Arrays are declared with IntSort index (see {@link SortResolver#symTypeToSort})
+ * so element evaluation still uses {@code ctx.mkInt(i)} as the index expression.
+ * Scalar (length) bindings now arrive as {@link BitVecNum} values because all
+ * Java integer variables are encoded as BitVec.
+ */
 final class PrimitiveArrayExtractor {
 
     private final SortResolver sorts;
@@ -22,72 +29,105 @@ final class PrimitiveArrayExtractor {
         this.sorts = sorts;
     }
 
-    Optional<SymLiteral> extract(Model model, FuncDecl<?> decl, Map<String, SymLiteral> scalarBindings) {
+    Optional<SymLiteral> extract(Model model, FuncDecl<?> decl,
+                                  Map<String, SymLiteral> scalarBindings) {
         if (decl.getArity() != 0) return Optional.empty();
 
         String name = decl.getName().toString();
         if (!(decl.getRange() instanceof ArraySort<?, ?> arraySort)) return Optional.empty();
+        // Index must be IntSort (how we declare arrays)
         if (!arraySort.getDomain().equals(sorts.intSort())) return Optional.empty();
+        // Skip nested/multi-dim arrays
         if (arraySort.getRange() instanceof ArraySort<?, ?>) return Optional.empty();
 
         Optional<Integer> length = arrayLength(name, scalarBindings);
         if (length.isEmpty()) return Optional.empty();
 
-        Sort range = arraySort.getRange();
+        Sort  range = arraySort.getRange();
         Expr<?> array = sorts.ctx().mkConst(name, decl.getRange());
 
-        if (range.equals(sorts.intSort())) return extractLongArray(model, array, length.get());
-        if (range.equals(sorts.boolSort())) return extractBooleanArray(model, array, length.get());
-        if (range.equals(sorts.fp32Sort())) return extractFloatArray(model, array, length.get(), range);
-        if (range.equals(sorts.fp64Sort())) return extractDoubleArray(model, array, length.get(), range);
+        if (range.equals(sorts.bv32Sort()) || range.equals(sorts.bv64Sort()))
+            return extractBVArray(model, array, length.get(), range);
+        if (range.equals(sorts.boolSort()))
+            return extractBooleanArray(model, array, length.get());
+        if (range.equals(sorts.fp32Sort()))
+            return extractFloatArray(model, array, length.get(), range);
+        if (range.equals(sorts.fp64Sort()))
+            return extractDoubleArray(model, array, length.get(), range);
 
         return Optional.empty();
     }
 
+    // =========================================================================
+    // Length lookup
+    // =========================================================================
+
     private Optional<Integer> arrayLength(String name, Map<String, SymLiteral> scalarBindings) {
         SymLiteral lengthLiteral = scalarBindings.get(name + "__length");
-        if (lengthLiteral == null || !(lengthLiteral.value() instanceof Number number)) return Optional.empty();
+        if (lengthLiteral == null || !(lengthLiteral.value() instanceof Number number))
+            return Optional.empty();
 
         long length = number.longValue();
         if (length < 0 || length > Integer.MAX_VALUE) return Optional.empty();
         return Optional.of((int) length);
     }
 
-    private Optional<SymLiteral> extractLongArray(Model model, Expr<?> array, int length) {
-        long[] values = new long[length];
-        for (int i = 0; i < length; i++) {
-            Expr<?> value = evalElement(model, array, i);
-            if (!(value instanceof IntNum intNum)) return Optional.empty();
-            Optional<Long> converted = toLong(intNum);
-            if (converted.isEmpty()) return Optional.empty();
-            values[i] = converted.get();
-        }
-        return Optional.of(new SymLiteral(values));
-    }
+    // =========================================================================
+    // Element extraction per sort
+    // =========================================================================
 
-    private Optional<Long> toLong(IntNum intNum) {
-        BigInteger value = intNum.getBigInteger();
-        if (value.bitLength() >= Long.SIZE) return Optional.empty();
-        return Optional.of(value.longValue());
+    /** Handles both bv32 (→ int[]) and bv64 (→ long[]) element sorts. */
+    private Optional<SymLiteral> extractBVArray(Model model, Expr<?> array,
+                                                 int length, Sort range) {
+        boolean is64 = range.equals(sorts.bv64Sort());
+        if (is64) {
+            long[] values = new long[length];
+            for (int i = 0; i < length; i++) {
+                Expr<?> val = evalElement(model, array, i);
+                if (!(val instanceof BitVecNum bvn)) return Optional.empty();
+                values[i] = bvn.getLong();
+            }
+            return Optional.of(new SymLiteral(values));
+        } else {
+            long[] values = new long[length];
+            for (int i = 0; i < length; i++) {
+                Expr<?> val = evalElement(model, array, i);
+                if (!(val instanceof BitVecNum bvn)) return Optional.empty();
+                values[i] = bvn.getLong() & 0xFFFFFFFFL; // unsigned 32-bit → long
+            }
+            // Return as int[] if all values fit in int range
+            int[] ints = new int[length];
+            for (int i = 0; i < length; i++) {
+                if (values[i] > Integer.MAX_VALUE) {
+                    // Treat as long[] (signed interpretation)
+                    long[] signed = new long[length];
+                    for (int j = 0; j < length; j++) signed[j] = (int) values[j];
+                    return Optional.of(new SymLiteral(signed));
+                }
+                ints[i] = (int) values[i];
+            }
+            return Optional.of(new SymLiteral(ints));
+        }
     }
 
     private Optional<SymLiteral> extractBooleanArray(Model model, Expr<?> array, int length) {
         boolean[] values = new boolean[length];
         for (int i = 0; i < length; i++) {
-            Expr<?> value = evalElement(model, array, i);
-            if (value == null) return Optional.empty();
-            if (value.isTrue()) values[i] = true;
-            else if (value.isFalse()) values[i] = false;
-            else return Optional.empty();
+            Expr<?> val = evalElement(model, array, i);
+            if (val == null)        return Optional.empty();
+            if (val.isTrue())       values[i] = true;
+            else if (val.isFalse()) values[i] = false;
+            else                    return Optional.empty();
         }
         return Optional.of(new SymLiteral(values));
     }
 
-    private Optional<SymLiteral> extractFloatArray(Model model, Expr<?> array, int length, Sort range) {
+    private Optional<SymLiteral> extractFloatArray(Model model, Expr<?> array,
+                                                    int length, Sort range) {
         float[] values = new float[length];
         for (int i = 0; i < length; i++) {
-            Expr<?> value = evalElement(model, array, i);
-            if (!(value instanceof FPNum fp)) return Optional.empty();
+            Expr<?> val = evalElement(model, array, i);
+            if (!(val instanceof FPNum fp)) return Optional.empty();
             Optional<Float> converted = extractFloat(fp, range);
             if (converted.isEmpty()) return Optional.empty();
             values[i] = converted.get();
@@ -95,11 +135,12 @@ final class PrimitiveArrayExtractor {
         return Optional.of(new SymLiteral(values));
     }
 
-    private Optional<SymLiteral> extractDoubleArray(Model model, Expr<?> array, int length, Sort range) {
+    private Optional<SymLiteral> extractDoubleArray(Model model, Expr<?> array,
+                                                     int length, Sort range) {
         double[] values = new double[length];
         for (int i = 0; i < length; i++) {
-            Expr<?> value = evalElement(model, array, i);
-            if (!(value instanceof FPNum fp)) return Optional.empty();
+            Expr<?> val = evalElement(model, array, i);
+            if (!(val instanceof FPNum fp)) return Optional.empty();
             Optional<Double> converted = extractDouble(fp, range);
             if (converted.isEmpty()) return Optional.empty();
             values[i] = converted.get();
@@ -107,9 +148,19 @@ final class PrimitiveArrayExtractor {
         return Optional.of(new SymLiteral(values));
     }
 
+    // =========================================================================
+    // Element evaluation  (array index stays IntSort per Z3 array theory)
+    // =========================================================================
+
     private Expr<?> evalElement(Model model, Expr<?> array, int index) {
-        return model.eval(sorts.ctx().mkSelect((ArrayExpr) array, sorts.ctx().mkInt(index)), true);
+        return model.eval(
+                sorts.ctx().mkSelect((ArrayExpr) array, sorts.ctx().mkInt(index)),
+                true);
     }
+
+    // =========================================================================
+    // FP extraction helpers
+    // =========================================================================
 
     private Optional<Float> extractFloat(FPNum fp, Sort sort) {
         if (!sort.equals(sorts.fp32Sort())) return Optional.empty();
@@ -118,8 +169,8 @@ final class PrimitiveArrayExtractor {
             long expBits = Long.parseLong(fp.getExponent(false));
             long sigBits = Long.parseLong(fp.getSignificand());
             int bits = (positive ? 0 : (1 << 31))
-                    | ((int) (expBits & 0xFF) << 23)
-                    | (int) (sigBits & 0x7F_FFFF);
+                    | ((int)(expBits & 0xFF) << 23)
+                    | (int)(sigBits & 0x7F_FFFF);
             return Optional.of(Float.intBitsToFloat(bits));
         } catch (Exception e) {
             return parseFiniteDecimal(fp).map(Double::floatValue);
@@ -146,9 +197,9 @@ final class PrimitiveArrayExtractor {
         try {
             int slash = text.indexOf('/');
             if (slash >= 0) {
-                double numerator = Double.parseDouble(text.substring(0, slash));
-                double denominator = Double.parseDouble(text.substring(slash + 1));
-                return Optional.of(numerator / denominator);
+                double num = Double.parseDouble(text.substring(0, slash));
+                double den = Double.parseDouble(text.substring(slash + 1));
+                return Optional.of(num / den);
             }
             return Optional.of(Double.parseDouble(text));
         } catch (NumberFormatException e) {
