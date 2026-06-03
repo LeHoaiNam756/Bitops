@@ -163,7 +163,7 @@ public class ConcolicTesting {
                 allTestData,
                 tracker,
                 MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage));
-        ConcolicResultWriter.write(methodDeclaration, result, Z3StatisticsRecorder.snapshot());
+        ConcolicResultWriter.write(methodDeclaration, result, coverage, Z3StatisticsRecorder.snapshot());
         return result;
     }
 

@@ -2,6 +2,9 @@ package core.generation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import core.cfg.Coverage;
 import core.testdriver.TestData;
 import core.testdriver.TestResult;
 import core.testpath.CoverageTracker;
@@ -25,26 +28,49 @@ public final class ConcolicResultWriter {
 
     public static Path write(MethodDeclaration method,
                              TestResult result,
+                             Coverage coverage,
                              List<Map<String, String>> z3Statistics) throws IOException {
         Path outputDir = Path.of(FilePath.PATH_TO_TOOL_OUTPUT, "concolic-results");
         Files.createDirectories(outputDir);
 
         Path outputFile = outputDir.resolve(safeFileName(method.getName().getIdentifier()) + ".json");
-        MAPPER.writeValue(outputFile.toFile(), toJson(method, result, z3Statistics));
+        ArrayNode runs = readExistingRuns(outputFile);
+        runs.add(MAPPER.valueToTree(toJson(method, result, coverage, z3Statistics)));
+        MAPPER.writeValue(outputFile.toFile(), runs);
         return outputFile;
     }
 
     private static Map<String, Object> toJson(MethodDeclaration method,
                                               TestResult result,
+                                              Coverage coverage,
                                               List<Map<String, String>> z3Statistics) {
         Map<String, Object> json = new LinkedHashMap<>();
         json.put("methodName", method.getName().getIdentifier());
+        json.put("coverageType", coverage.name());
         json.put("testResult", testResults(result));
         json.put("totalCoverage", totalCoverage(result.fullCoverage()));
         json.put("memoryUseBytes", result.memoryUsageBytes());
         json.put("memoryUseMb", result.memoryUsageBytes() / (1024.0 * 1024.0));
         json.put("z3Statistics", z3Statistics);
         return json;
+    }
+
+    private static ArrayNode readExistingRuns(Path outputFile) throws IOException {
+        ArrayNode runs = MAPPER.createArrayNode();
+        if (!Files.exists(outputFile) || Files.size(outputFile) == 0) {
+            return runs;
+        }
+
+        var existing = MAPPER.readTree(outputFile.toFile());
+        if (existing == null || existing.isNull()) {
+            return runs;
+        }
+        if (existing.isArray()) {
+            runs.addAll((ArrayNode) existing);
+        } else if (existing.isObject()) {
+            runs.add((ObjectNode) existing);
+        }
+        return runs;
     }
 
     private static List<Map<String, Object>> testResults(TestResult result) {
