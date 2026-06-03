@@ -125,6 +125,7 @@ public class SymbolicExecution {
                 .register(new ArrayCreationHandler())
                 .register(new MethodInvocationHandler())
                 .register(new VariableDeclarationExpressionHandler())
+                .register(new EnhancedForStatementHandler())
                 .register(new BreakStatementHandler())
                 .register(new ContinueStatementHandler());
     }
