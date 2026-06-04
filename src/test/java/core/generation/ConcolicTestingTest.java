@@ -4,12 +4,14 @@ import core.cfg.Coverage;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
 import core.testdriver.TestDriver;
+import core.testpath.AllPathsFinder;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -21,6 +23,86 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ConcolicTestingTest {
+
+    @Test
+    public void generate_rangeBitwiseAnd() throws Exception {
+        Path zip = createZipProject("BitOps.java", """
+                package sample;
+
+                public class BitOps {
+                    public int rangeBitwiseAnd(int left, int right) {
+                        int rightShiftCnt = 0;
+                        while(left != right){
+                            left = left >> 1;
+                            right = right >> 1;
+                            rightShiftCnt++;
+                    }
+                    int commonPref = (right << rightShiftCnt);
+                    return commonPref;
+                    }
+                }
+
+                """);
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "rangeBitwiseAnd".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("left", 0);
+        seedInput.put("right", 0);
+        var result = ConcolicTesting.getInstance().generate(
+                method, project.getRootAST(method), Coverage.STATEMENT,
+                seedInput,
+                new AllPathsFinder()
+        );
+    }
+
+    @Test
+    public void generate_hammingDistanceUsesZeroZeroRandomInput() throws Exception {
+        Path zip = createZipProject("BitOps.java", """
+                package sample;
+
+                public class BitOps {
+                    public static int hammingDistance(int x, int y) {
+                        int count = 0;
+                        for (int i = 0; i < 31; i++) {
+                            if ((x & 1) != (y & 1)) {
+                                count++;
+                            }
+                            x = x >> 1;
+                            y = y >> 1;
+                        }
+                        return count;
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "hammingDistance".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("x", 0);
+        seedInput.put("y", 0);
+
+        AllPathsFinder allPathsFinder = new AllPathsFinder();
+        allPathsFinder.setMAX_LOOP_ITERATIONS(32);
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                allPathsFinder);
+
+        assertFalse(result.testDataList().isEmpty());
+        assertEquals(seedInput, result.testDataList().get(0).input());
+        assertEquals("0", result.testDataList().get(0).output());
+        assertEquals(0, result.fullCoverage().getUncovered().size());
+        assertEquals(0, result.fullCoverage().getSkipped().size());
+        assertEquals(7, result.fullCoverage().getCovered().size());
+    }
 
     @Test
     public void generate_flipBitUsesCurrentScalarDriverParameters() throws Exception {

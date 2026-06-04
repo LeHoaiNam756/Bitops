@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,9 +63,7 @@ public final class TraceRecorder {
     @Getter
     private static volatile Path   traceFile;
 
-    private static final ConcurrentLinkedQueue<TraceEvent> buffer =
-            new ConcurrentLinkedQueue<>();
-    private static final AtomicInteger bufferSize = new AtomicInteger(0);
+    private static final ConcurrentHashMap<TraceEvent, AtomicInteger> frequencyMap = new ConcurrentHashMap<>();
 
     // -----------------------------------------------------------------------
     // Public API — called by instrumented code + orchestrator
@@ -81,12 +81,23 @@ public final class TraceRecorder {
      *         ({@code ((cond) && mark(trueId, COND_T)) || mark(falseId, COND_F)})
      */
     public static boolean mark(int nodeId, TraceKind kind) {
-        buffer.add(new TraceEvent(nodeId, kind, System.currentTimeMillis()));
-        if (bufferSize.incrementAndGet() >= FLUSH_THRESHOLD) {
-            flushSync();
-        }
-        return kind == TraceKind.COND_T; // lets false-branch probe always run
+        TraceEvent event = new TraceEvent(nodeId, kind);
+        frequencyMap.computeIfAbsent(event, k -> new AtomicInteger(0))
+                .incrementAndGet();
+        return kind == TraceKind.COND_T;
     }
+
+    /**
+     * Snapshot the node IDs hit in the active session without ending it.
+     * Used by generated drivers to persist per-test coverage before
+     * {@link #endSession()} clears the in-memory event map.
+     */
+    public static Set<Integer> coveredNodeIdsSnapshot() {
+        return frequencyMap.keySet().stream()
+                .map(TraceEvent::nodeId)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+    }
+
 
     /**
      * Begin a new trace session for {@code methodSig}.
@@ -100,9 +111,7 @@ public final class TraceRecorder {
                                                  Path clonedProjectRoot) {
         // Clean up any lingering previous session
         endSessionQuietly();
-
-        buffer.clear();
-        bufferSize.set(0);
+        frequencyMap.clear();
 
         Path root = clonedProjectRoot.isAbsolute()
                 ? clonedProjectRoot
@@ -129,54 +138,30 @@ public final class TraceRecorder {
      * End the current session: flush remaining events, stop the scheduler.
      */
     public static synchronized void endSession() {
-        flushSync();
-        endSessionQuietly();
-    }
+        if (traceFile == null) return;
 
-    /**
-     * Explicit flush — blocks until the current buffer contents are written.
-     * Safe to call from any thread.
-     */
-    public static void flush() {
-        flushSync();
-    }
-
-    // -----------------------------------------------------------------------
-    // Internal flush logic
-    // -----------------------------------------------------------------------
-
-    /**
-     * Drains the buffer to {@link #traceFile}.
-     * Falls back gracefully if no session is active or if I/O fails.
-     */
-    private static synchronized void flushSync() {
-        if (traceFile == null || buffer.isEmpty()) return;
-
-        // Snapshot current buffer contents
         StringBuilder sb = new StringBuilder();
-        TraceEvent event;
-        int drained = 0;
-        while ((event = buffer.poll()) != null) {
-            sb.append(event.toJsonLine()).append('\n');
-            drained++;
-        }
-        bufferSize.addAndGet(-drained);
+        frequencyMap.forEach((event, count) ->
+                sb.append(event.toJsonLine(count.get())).append('\n')
+        );
 
-        if (sb.isEmpty()) return;
-
-        try (BufferedWriter w = Files.newBufferedWriter(
-                traceFile, StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.APPEND)) {
-            w.write(sb.toString());
-        } catch (IOException e) {
-            // Fall back to in-memory only — re-enqueue what we drained
-            System.err.println("[TraceRecorder] Flush failed, retaining events in memory: "
-                    + e.getMessage());
-            // We've already removed from buffer; re-add at front is not
-            // supported by ConcurrentLinkedQueue.  Accept the loss and log.
+        if (!sb.isEmpty()) {
+            try (BufferedWriter w = Files.newBufferedWriter(
+                    traceFile, StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND)) {
+                w.write(sb.toString());
+            } catch (IOException e) {
+                System.err.println("[TraceRecorder] Write failed: " + e.getMessage());
+            }
         }
+
+        frequencyMap.clear();
+        traceFile = null;
+        sessionId = null;
+
     }
+
 
     private static void endSessionQuietly() {
         traceFile = null;
@@ -192,13 +177,13 @@ public final class TraceRecorder {
      * Captured at each probe point.  Stored in the in-memory buffer and
      * serialised to the trace file.
      */
-    record TraceEvent(int nodeId, TraceKind kind, long timestamp) {
+    record TraceEvent(int nodeId, TraceKind kind) {
 
-        /** JSON Lines format: {@code {"nodeId":42,"kind":"NODE","ts":1715000000000}} */
-        String toJsonLine() {
+        /** JSON Lines format: {@code {"nodeId":42,"kind":"NODE","count":12}} */
+        String toJsonLine(int count) {
             return "{\"nodeId\":" + nodeId
                     + ",\"kind\":\"" + kind.name() + "\""
-                    + ",\"ts\":" + timestamp
+                    + ",\"count\":" + count
                     + "}";
         }
     }

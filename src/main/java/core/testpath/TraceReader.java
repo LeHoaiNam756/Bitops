@@ -139,17 +139,14 @@ public final class TraceReader {
     private static TraceEvent parseLine(String line) {
         int nodeId    = parseInt(line, "nodeId");
         String kindStr = parseString(line, "kind");
-        long ts       = parseLong(line, "ts");
-        return new TraceEvent(nodeId, TraceKind.valueOf(kindStr), ts);
+        int count       = parseInt(line, "count");
+        return new TraceEvent(nodeId, TraceKind.valueOf(kindStr), count);
     }
 
     private static int parseInt(String json, String key) {
         return Integer.parseInt(extractToken(json, key).trim());
     }
 
-    private static long parseLong(String json, String key) {
-        return Long.parseLong(extractToken(json, key).trim());
-    }
 
     private static String parseString(String json, String key) {
         int ki    = json.indexOf("\"" + key + "\"");
@@ -174,7 +171,7 @@ public final class TraceReader {
     // Value types
     // -----------------------------------------------------------------------
 
-    private record TraceEvent(int nodeId, TraceKind kind, long timestamp) {}
+    private record TraceEvent(int nodeId, TraceKind kind, int count) {}
 
     /**
      * Processing summary returned by {@link #applyTo}.

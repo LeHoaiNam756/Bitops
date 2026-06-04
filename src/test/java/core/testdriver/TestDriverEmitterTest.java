@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestDriverEmitterTest {
@@ -48,6 +49,10 @@ public class TestDriverEmitterTest {
         assertTrue("driver should persist original input", emitted.contains("resultJson.set(\"input\", root)"));
         assertTrue("driver should persist method output", emitted.contains("resultJson.put(\"output\", resultToString(result))"));
         assertTrue("driver should persist coverage snapshot", emitted.contains("resultJson.set(\"coveredNodeIds\""));
+        assertTrue("driver should snapshot in-memory coverage before TraceRecorder.endSession clears it",
+                emitted.contains("TraceRecorder.coveredNodeIdsSnapshot()"));
+        assertFalse("driver should not read coverage from the trace file before it is flushed",
+                emitted.contains("Files.lines(traceFile"));
         assertTrue("driver should write the output file", emitted.contains("writeValue(new File(outputPath), resultJson)"));
     }
 

@@ -70,6 +70,19 @@ public class ConcolicTesting {
     public TestResult generate(MethodDeclaration methodDeclaration,
                                CompilationUnit cu,
                                Coverage coverage) throws Exception {
+        return generate(
+                methodDeclaration,
+                cu,
+                coverage,
+                RandomTestInput.createRandomTestData(methodDeclaration),
+                new AllPathsFinder());
+    }
+
+    TestResult generate(MethodDeclaration methodDeclaration,
+                        CompilationUnit cu,
+                        Coverage coverage,
+                        Map<String, Object> randomInput,
+                        PathFinder pathFinder) throws Exception {
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
 
@@ -88,8 +101,6 @@ public class ConcolicTesting {
                 TestDriver.extractParams(methodDeclaration);
 
         // --- 4. Random seed run ---------------------------------------------
-        Map<String, Object> randomInput =
-                RandomTestInput.createRandomTestData(methodDeclaration);
         List<TestData> allTestData = new ArrayList<>();
         TraceReader traceReader = new TraceReader(product.trackPath());
         try {
@@ -111,7 +122,6 @@ public class ConcolicTesting {
         List<ASTNode> parameters = new ArrayList<>(methodDeclaration.parameters());
 
         SymbolicExecution symbolicExecution = new SymbolicExecution();
-        PathFinder pathFinder = new AllPathsFinder();
 
         // --- 7. Concolic loop -----------------------------------------------
         int iteration = 0;

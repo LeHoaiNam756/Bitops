@@ -127,39 +127,40 @@ public class TestDriverEmitter {
             sb.append("            ObjectNode resultJson = mapper.createObjectNode();\n");
             sb.append("            resultJson.set(\"input\", root);\n");
             sb.append("            resultJson.putNull(\"output\");\n");
-            sb.append("            resultJson.set(\"coveredNodeIds\", mapper.createArrayNode());\n");
+            sb.append("            resultJson.set(\"coveredNodeIds\", coveredNodeIdsJson(mapper));\n");
             sb.append("            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), resultJson);\n");
         } else {
             sb.append("            ObjectNode resultJson = mapper.createObjectNode();\n");
             sb.append("            resultJson.set(\"input\", root);\n");
             sb.append("            resultJson.put(\"output\", resultToString(result));\n");
-            // ── end session FIRST so trace file is fully flushed ──
-            sb.append("            TraceRecorder.flush();\n");
-            // ── then read nodeIds from the trace file ──
-            sb.append("            Path traceFile = TraceRecorder.getTraceFile();\n");
-            sb.append("            ArrayNode arrayNode = mapper.createArrayNode();\n");
-            sb.append("            if (traceFile != null && java.nio.file.Files.exists(traceFile)) {\n");
-            sb.append("                java.nio.file.Files.lines(traceFile, java.nio.charset.StandardCharsets.UTF_8)\n");
-            sb.append("                    .forEach(line -> {\n");
-            sb.append("                        try {\n");
-            sb.append("                            int nodeId = mapper.readTree(line).get(\"nodeId\").asInt();\n");
-            sb.append("                            arrayNode.add(nodeId);\n");
-            sb.append("                        } catch (Exception ignored) {}\n");
-            sb.append("                    });\n");
-            sb.append("            }\n");
-            sb.append("            resultJson.set(\"coveredNodeIds\", arrayNode);\n");
+            sb.append("            resultJson.set(\"coveredNodeIds\", coveredNodeIdsJson(mapper));\n");
             sb.append("            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), resultJson);\n");
         }
 
-        // ── finally block no longer needs to call endSession for non-void
-        //    but still needs it as safety net for the void case and exceptions
+        // ── finally: always flush trace, even when method throws ────────────
         sb.append("            } finally {\n");
-        sb.append("                TraceRecorder.flush();\n");
-        sb.append("                TraceRecorder.endSession();\n");  // safe: endSession() is idempotent
+        sb.append("                TraceRecorder.endSession();\n");
         sb.append("            }\n");
 
-
+        // ── catch InvocationTargetException: method threw — still record trace
+        sb.append("        } catch (java.lang.reflect.InvocationTargetException ite) {\n");
+        sb.append("            // The method under test threw an exception — this is a VALID execution path.\n");
+        sb.append("            // We still collect the trace (covered nodes up to the throw point) and write output.\n");
+        sb.append("            Throwable cause = ite.getCause();\n");
+        sb.append("            try {\n");
+        sb.append("                ObjectNode resultJson = mapper.createObjectNode();\n");
+        sb.append("                resultJson.set(\"input\", root);\n");
+        sb.append("                resultJson.put(\"output\", \"EXCEPTION: \"\n");
+        sb.append("                    + (cause != null ? cause.getClass().getName() + \": \" + cause.getMessage() : ite.toString()));\n");
+        sb.append("                resultJson.set(\"coveredNodeIds\", coveredNodeIdsJson(mapper));\n");
+        sb.append("                resultJson.put(\"threwException\", true);\n");
+        sb.append("                mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), resultJson);\n");
+        sb.append("            } catch (Exception writeEx) {\n");
+        sb.append("                System.err.println(\"[DriverMain] Failed to write exception-path result: \" + writeEx);\n");
+        sb.append("                System.exit(6);\n");
+        sb.append("            }\n");
         sb.append("        } catch (Exception e) {\n");
+        sb.append("            // Reflection/setup error — NOT a method-under-test exception\n");
         sb.append("            System.err.println(\"[DriverMain] Invocation failure: \" + e);\n");
         sb.append("            e.printStackTrace(System.err);\n");
         sb.append("            System.exit(5);\n");
@@ -205,6 +206,14 @@ public class TestDriverEmitter {
         sb.append("            case \"double[][]\" -> double[][].class;\n");
         sb.append("            default -> Class.forName(typeName);\n");
         sb.append("        };\n");
+        sb.append("    }\n\n");
+
+        sb.append("    private static ArrayNode coveredNodeIdsJson(ObjectMapper mapper) {\n");
+        sb.append("        ArrayNode ids = mapper.createArrayNode();\n");
+        sb.append("        for (Integer nodeId : TraceRecorder.coveredNodeIdsSnapshot()) {\n");
+        sb.append("            ids.add(nodeId);\n");
+        sb.append("        }\n");
+        sb.append("        return ids;\n");
         sb.append("    }\n\n");
 
         // ── resultToString ────────────────────────────────────────────────────

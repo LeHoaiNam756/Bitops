@@ -3,6 +3,9 @@ package view;
 import core.cfg.Coverage;
 import core.generation.ConcolicTesting;
 import core.generation.Project;
+import core.instrument.InstrumentationPlan;
+import core.instrument.InstrumentationPlanner;
+import core.instrument.TracePoint;
 import core.parser.ParseEntry;
 import core.testdriver.TestData;
 import core.testdriver.TestResult;
@@ -42,9 +45,14 @@ public class ToolView {
     private final Map<TreeItem<String>, File> fileItemMap = new HashMap<>();
     private final Map<TreeItem<String>, MethodLocation> methodItemMap = new HashMap<>();
     private final Map<File, List<String>> fileContentCache = new HashMap<>();
+    private final EnumMap<LineCoverageState, Set<Integer>> highlightedCoverageLines =
+            new EnumMap<>(LineCoverageState.class);
 
     private File currentFile;
     private Project currentProject;
+    private MethodLocation currentMethodLocation;
+    private TestResult currentTestResult;
+    private InstrumentationPlan currentInstrumentationPlan;
 
     private static class MethodLocation {
         final File file;
@@ -107,6 +115,17 @@ public class ToolView {
                 return new SimpleStringProperty(output == null ? "null" : output);
             });
         }
+        if (reportTable != null) {
+            reportTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, newRow) -> {
+                if (newRow != null) {
+                    highlightTestCoverage(newRow);
+                }
+            });
+        }
+        if (fullCoverageLabel != null) {
+            fullCoverageLabel.setOnMouseClicked(event -> highlightFullCoverage());
+            fullCoverageLabel.setStyle(fullCoverageLabel.getStyle() + "; -fx-cursor: hand;");
+        }
 
         // 2. TreeView Listener
         projectTree.getSelectionModel().selectedItemProperty().addListener((obs,
@@ -116,10 +135,12 @@ public class ToolView {
 
             if (methodItemMap.containsKey(newItem)) {
                 MethodLocation loc = methodItemMap.get(newItem);
+                currentMethodLocation = loc;
                 showFile(loc.file);
                 highlightMethod(loc);
             } else if (fileItemMap.containsKey(newItem)) {
                 File file = fileItemMap.get(newItem);
+                currentMethodLocation = null;
                 showFile(file);
             }
         });
@@ -136,16 +157,16 @@ public class ToolView {
                 } else {
                     setText(item);
 
-                    // Define styles once
                     String baseStyle = "-fx-font-family: 'monospace'; -fx-padding: 0 5 0 5;";
-                    String highlightStyle = "-fx-background-color: #b3e5fc; -fx-text-fill: black;";
-
-                    // Check selection state directly instead of adding listeners
-                    if (isSelected()) {
-                        setStyle(baseStyle + highlightStyle);
-                    } else {
-                        setStyle(baseStyle);
+                    String style = baseStyle;
+                    LineCoverageState state = coverageStateForLine(getIndex());
+                    if (state != null) {
+                        style += state.style();
+                    } else if (isSelected()) {
+                        style += "-fx-background-color: #b3e5fc; -fx-text-fill: black;";
                     }
+
+                    setStyle(style);
                 }
             }
         });
@@ -170,6 +191,7 @@ public class ToolView {
         fileItemMap.clear();
         methodItemMap.clear();
         fileContentCache.clear();
+        clearRunState();
 
         currentProject = new Project(zipFile.toPath());
         TreeItem<String> rootItem = new TreeItem<>(zipFile.getName());
@@ -224,6 +246,7 @@ public class ToolView {
 
     private void showFile(File file) {
         currentFile = file;
+        clearCoverageHighlight();
         List<String> lines = fileContentCache.get(file);
         if (lines == null) {
             try {
@@ -241,6 +264,7 @@ public class ToolView {
         if (currentFile == null || !currentFile.equals(loc.file)) {
             return;
         }
+        clearCoverageHighlight();
 
         // Java lines are 1-based, ListView rows are 0-based
         int startIndex = Math.max(0, loc.startLine - 1);
@@ -281,6 +305,7 @@ public class ToolView {
             long elapsedMillis = System.currentTimeMillis() - startTime;
 
             updateSummary(result, elapsedMillis);
+            prepareCoverageHighlighting(loc, rootAst, coverage, result);
             updateReportTable(result);
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR,
@@ -328,6 +353,127 @@ public class ToolView {
                 .collect(Collectors.toList());
         ObservableList<FormattedTestData> items = FXCollections.observableArrayList(formattedData);
         reportTable.setItems(items);
+        reportTable.getSelectionModel().clearSelection();
+    }
+
+    private void prepareCoverageHighlighting(MethodLocation loc,
+                                             CompilationUnit rootAst,
+                                             Coverage coverage,
+                                             TestResult result) {
+        currentMethodLocation = loc;
+        currentTestResult = result;
+        currentInstrumentationPlan = new InstrumentationPlanner().plan(
+                rootAst,
+                ConcolicTesting.getInstance().getCfg(loc.methodDeclaration, coverage),
+                coverage
+        );
+        clearCoverageHighlight();
+    }
+
+    private void highlightTestCoverage(FormattedTestData row) {
+        if (row == null || currentInstrumentationPlan == null) {
+            return;
+        }
+        Set<Integer> covered = row.coveredNodeIds();
+        Set<Integer> uncovered = new HashSet<>(currentInstrumentationPlan.nodeIds());
+        uncovered.removeAll(covered);
+        applyCoverageHighlight(covered, uncovered, Collections.emptySet());
+    }
+
+    private void highlightFullCoverage() {
+        if (currentTestResult == null || currentInstrumentationPlan == null) {
+            return;
+        }
+        applyCoverageHighlight(
+                currentTestResult.fullCoverage().getCovered(),
+                currentTestResult.fullCoverage().getUncovered(),
+                currentTestResult.fullCoverage().getSkipped()
+        );
+    }
+
+    private void applyCoverageHighlight(Set<Integer> coveredNodeIds,
+                                        Set<Integer> uncoveredNodeIds,
+                                        Set<Integer> skippedNodeIds) {
+        if (currentMethodLocation != null && (currentFile == null || !currentFile.equals(currentMethodLocation.file))) {
+            showFile(currentMethodLocation.file);
+        }
+
+        highlightedCoverageLines.clear();
+        highlightedCoverageLines.put(LineCoverageState.COVERED, linesForNodeIds(coveredNodeIds));
+        highlightedCoverageLines.put(LineCoverageState.UNCOVERED, linesForNodeIds(uncoveredNodeIds));
+        highlightedCoverageLines.put(LineCoverageState.SKIPPED, linesForNodeIds(skippedNodeIds));
+
+        sourceList.getSelectionModel().clearSelection();
+        sourceList.refresh();
+
+        highlightedCoverageLines.values().stream()
+                .flatMap(Set::stream)
+                .min(Integer::compareTo)
+                .ifPresent(sourceList::scrollTo);
+    }
+
+    private Set<Integer> linesForNodeIds(Set<Integer> nodeIds) {
+        if (currentInstrumentationPlan == null || nodeIds == null || nodeIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<Integer> lineIndexes = new HashSet<>();
+        for (Integer nodeId : nodeIds) {
+            if (nodeId == null) {
+                continue;
+            }
+            currentInstrumentationPlan.pointFor(nodeId)
+                    .map(TracePoint::astNode)
+                    .map(ast -> ((CompilationUnit) ast.getRoot()).getLineNumber(ast.getStartPosition()) - 1)
+                    .filter(line -> line >= 0)
+                    .ifPresent(lineIndexes::add);
+        }
+        return lineIndexes;
+    }
+
+    private LineCoverageState coverageStateForLine(int lineIndex) {
+        if (highlightedCoverageLines.getOrDefault(LineCoverageState.SKIPPED, Collections.emptySet()).contains(lineIndex)) {
+            return LineCoverageState.SKIPPED;
+        }
+        if (highlightedCoverageLines.getOrDefault(LineCoverageState.UNCOVERED, Collections.emptySet()).contains(lineIndex)) {
+            return LineCoverageState.UNCOVERED;
+        }
+        if (highlightedCoverageLines.getOrDefault(LineCoverageState.COVERED, Collections.emptySet()).contains(lineIndex)) {
+            return LineCoverageState.COVERED;
+        }
+        return null;
+    }
+
+    private void clearRunState() {
+        currentMethodLocation = null;
+        currentTestResult = null;
+        currentInstrumentationPlan = null;
+        clearCoverageHighlight();
+        if (reportTable != null) {
+            reportTable.getItems().clear();
+        }
+    }
+
+    private void clearCoverageHighlight() {
+        highlightedCoverageLines.clear();
+        if (sourceList != null) {
+            sourceList.refresh();
+        }
+    }
+
+    private enum LineCoverageState {
+        COVERED("-fx-background-color: #c8e6c9; -fx-text-fill: black;"),
+        UNCOVERED("-fx-background-color: #ffcdd2; -fx-text-fill: black;"),
+        SKIPPED("-fx-background-color: #fff3cd; -fx-text-fill: black;");
+
+        private final String style;
+
+        LineCoverageState(String style) {
+            this.style = style;
+        }
+
+        String style() {
+            return style;
+        }
     }
 
 
@@ -335,13 +481,15 @@ public class ToolView {
         private Map<String, Object> input;
         private int coverage;
         private String output;
+        private Set<Integer> coveredNodeIds;
         public FormattedTestData(int numberOfNode, TestData td) {
             this.input = td.input();
             this.output = td.output();
             Set<Integer> coveredNodeIds = td.coveredNodeIds() == null
                     ? Collections.emptySet()
                     : td.coveredNodeIds();
-            this.coverage = numberOfNode == 0 ? 100 : coveredNodeIds.size() * 100 / numberOfNode;
+            this.coveredNodeIds = coveredNodeIds;
+            this.coverage = numberOfNode == 0 ? 0 : coveredNodeIds.size() * 100 / numberOfNode;
         }
 
         public Map<String, Object> input() {
@@ -354,6 +502,10 @@ public class ToolView {
 
         public int coverage() {
             return coverage;
+        }
+
+        public Set<Integer> coveredNodeIds() {
+            return coveredNodeIds;
         }
     }
 
