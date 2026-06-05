@@ -129,7 +129,11 @@ public class ConcolicTesting {
             int uncoveredNodeId = tracker.getUncovered().iterator().next();
             int pathTargetNodeId = tracker.pathTargetFor(uncoveredNodeId);
             List<List<ControlFlowGraph.Edge>> paths =
-                    pathFinder.findPath(cfg, pathTargetNodeId, tracker.requiredExitFor(uncoveredNodeId));
+                    pathFinder.findPath(
+                            cfg,
+                            pathTargetNodeId,
+                            tracker.requiredExitFor(uncoveredNodeId),
+                            tracker);
 
             boolean covered = false;
             for (List<ControlFlowGraph.Edge> path : paths) {

@@ -50,6 +50,54 @@ public class LoopCondensationFlowPathFinder implements PathFinder {
         return Collections.unmodifiableList(filtered);
     }
 
+    @Override
+    public List<List<ControlFlowGraph.Edge>> findPath(
+            ControlFlowGraph cfg,
+            int target,
+            CfgEdgeKind requiredExit,
+            CoverageTracker tracker) {
+
+        if (tracker == null) {
+            return findPath(cfg, target, requiredExit);
+        }
+
+        List<List<ControlFlowGraph.Edge>> candidates = new ArrayList<>(findPathCover(cfg));
+        addFallbackCandidate(candidates, cfg, target, requiredExit);
+        for (int uncovered : sorted(tracker.getUncovered())) {
+            addFallbackCandidate(
+                    candidates,
+                    cfg,
+                    tracker.pathTargetFor(uncovered),
+                    tracker.requiredExitFor(uncovered));
+        }
+
+        List<List<ControlFlowGraph.Edge>> filtered = new ArrayList<>();
+        Set<List<ControlFlowGraph.Edge>> seen = new HashSet<>();
+        for (List<ControlFlowGraph.Edge> path : candidates) {
+            if (!pathContainsNode(path, target) || !usesRequiredExit(path, target, requiredExit)) {
+                continue;
+            }
+            if (uncoveredScore(path, tracker) == 0) {
+                continue;
+            }
+            if (seen.add(path)) {
+                filtered.add(path);
+            }
+        }
+
+        if (filtered.isEmpty()) {
+            addFallbackCandidate(filtered, cfg, target, requiredExit);
+        }
+
+        filtered.sort(Comparator
+                .comparingInt((List<ControlFlowGraph.Edge> path) -> uncoveredScore(path, tracker)).reversed()
+                .thenComparing(Comparator
+                        .comparingInt((List<ControlFlowGraph.Edge> path) -> coveredScore(path, tracker))
+                        .reversed())
+                .thenComparingInt(List::size));
+        return Collections.unmodifiableList(filtered);
+    }
+
     /**
      * Returns the complete ENTRY-to-EXIT paths for the minimum path cover of
      * all nodes that are both reachable from ENTRY and able to reach EXIT.
@@ -387,6 +435,43 @@ public class LoopCondensationFlowPathFinder implements PathFinder {
         result.addAll(prefix);
         result.addAll(suffix);
         return result;
+    }
+
+    private void addFallbackCandidate(
+            List<List<ControlFlowGraph.Edge>> candidates,
+            ControlFlowGraph cfg,
+            int target,
+            CfgEdgeKind requiredExit) {
+
+        List<ControlFlowGraph.Edge> fallback =
+                shortestCompletePathThroughTarget(cfg, target, requiredExit);
+        if (fallback != null) {
+            candidates.add(Collections.unmodifiableList(fallback));
+        }
+    }
+
+    private int uncoveredScore(List<ControlFlowGraph.Edge> path, CoverageTracker tracker) {
+        return coverageScore(path, tracker, tracker.getUncovered());
+    }
+
+    private int coveredScore(List<ControlFlowGraph.Edge> path, CoverageTracker tracker) {
+        return coverageScore(path, tracker, tracker.getCovered());
+    }
+
+    private int coverageScore(
+            List<ControlFlowGraph.Edge> path,
+            CoverageTracker tracker,
+            Set<Integer> coverageItems) {
+
+        int score = 0;
+        for (int item : coverageItems) {
+            int target = tracker.pathTargetFor(item);
+            CfgEdgeKind requiredExit = tracker.requiredExitFor(item);
+            if (pathContainsNode(path, target) && usesRequiredExit(path, target, requiredExit)) {
+                score++;
+            }
+        }
+        return score;
     }
 
     private List<List<ControlFlowGraph.Edge>> pruneRedundantPaths(

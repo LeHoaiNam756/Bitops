@@ -14,4 +14,12 @@ public interface PathFinder {
             CfgEdgeKind requiredExit) {
         return findPath(cfg, target);
     }
+
+    default List<List<ControlFlowGraph.Edge>> findPath(
+            ControlFlowGraph cfg,
+            int target,
+            CfgEdgeKind requiredExit,
+            CoverageTracker tracker) {
+        return findPath(cfg, target, requiredExit);
+    }
 }
