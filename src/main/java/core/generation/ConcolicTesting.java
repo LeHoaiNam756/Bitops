@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.Type;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,19 +125,19 @@ public class ConcolicTesting {
         SymbolicExecution symbolicExecution = new SymbolicExecution();
 
         // --- 7. Concolic loop -----------------------------------------------
-        int iteration = 0;
-        while (!tracker.isComplete() && iteration < MAX_CONCOLIC_ITERATIONS) {
-            int uncoveredNodeId = tracker.getUncovered().iterator().next();
-            int pathTargetNodeId = tracker.pathTargetFor(uncoveredNodeId);
-            List<List<ControlFlowGraph.Edge>> paths =
-                    pathFinder.findPath(
-                            cfg,
-                            pathTargetNodeId,
-                            tracker.requiredExitFor(uncoveredNodeId),
-                            tracker);
-
-            boolean covered = false;
-            for (List<ControlFlowGraph.Edge> path : paths) {
+        List<List<ControlFlowGraph.Edge>> uncoveredBatch =
+                pathFinder.findPathsForUncovered(cfg, tracker);
+        if (!uncoveredBatch.isEmpty()) {
+            int iteration = 0;
+            boolean exhaustedBatch = true;
+            for (List<ControlFlowGraph.Edge> path : uncoveredBatch) {
+                if (tracker.isComplete()) {
+                    break;
+                }
+                if (iteration >= MAX_CONCOLIC_ITERATIONS) {
+                    exhaustedBatch = false;
+                    break;
+                }
                 SolverResult result = symbolicExecution.executePath(
                         cfg, path, parameters, parameterTypes);
 
@@ -156,20 +157,63 @@ public class ConcolicTesting {
                     } catch (Exception e) {
                         System.err.println(e.getMessage());
                     }
+                }
+                iteration++;
+            }
 
-                    if (!tracker.isUncovered(uncoveredNodeId)) {
-                        covered = true;
-                        break; // target node now covered — move to next
-                    }
+            if (exhaustedBatch && !tracker.isComplete()) {
+                for (int nodeId : new HashSet<>(tracker.getUncovered())) {
+                    tracker.markSkipped(nodeId);
                 }
             }
+        } else {
+            int iteration = 0;
+            while (!tracker.isComplete() && iteration < MAX_CONCOLIC_ITERATIONS) {
+                int uncoveredNodeId = tracker.getUncovered().iterator().next();
+                int pathTargetNodeId = tracker.pathTargetFor(uncoveredNodeId);
+                List<List<ControlFlowGraph.Edge>> paths =
+                        pathFinder.findPath(
+                                cfg,
+                                pathTargetNodeId,
+                                tracker.requiredExitFor(uncoveredNodeId),
+                                tracker);
 
-            if (!covered && tracker.isUncovered(uncoveredNodeId)) {
-                // Exhausted all paths without covering the node
-                tracker.markSkipped(uncoveredNodeId);
+                boolean covered = false;
+                for (List<ControlFlowGraph.Edge> path : paths) {
+                    SolverResult result = symbolicExecution.executePath(
+                            cfg, path, parameters, parameterTypes);
+
+                    if (result instanceof SolverResult.Sat sat) {
+                        Map<String, Object> newInputs =
+                                extractInputsFromModel(sat.model(), paramInfos);
+
+                        try {
+                            TestData runResult = TestDriver.run(
+                                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                                    paramInfos,
+                                    newInputs,
+                                    Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
+                            allTestData.add(runResult);
+                            // Ingest traces from this run
+                            traceReader.applyTo(tracker);
+                        } catch (Exception e) {
+                            System.err.println(e.getMessage());
+                        }
+
+                        if (!tracker.isUncovered(uncoveredNodeId)) {
+                            covered = true;
+                            break; // target node now covered — move to next
+                        }
+                    }
+                }
+
+                if (!covered && tracker.isUncovered(uncoveredNodeId)) {
+                    // Exhausted all paths without covering the node
+                    tracker.markSkipped(uncoveredNodeId);
+                }
+
+                iteration++;
             }
-
-            iteration++;
         }
 
         // --- 8. Assemble result ---------------------------------------------

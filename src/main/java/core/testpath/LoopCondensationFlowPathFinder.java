@@ -61,23 +61,10 @@ public class LoopCondensationFlowPathFinder implements PathFinder {
             return findPath(cfg, target, requiredExit);
         }
 
-        List<List<ControlFlowGraph.Edge>> candidates = new ArrayList<>(findPathCover(cfg));
-        addFallbackCandidate(candidates, cfg, target, requiredExit);
-        for (int uncovered : sorted(tracker.getUncovered())) {
-            addFallbackCandidate(
-                    candidates,
-                    cfg,
-                    tracker.pathTargetFor(uncovered),
-                    tracker.requiredExitFor(uncovered));
-        }
-
         List<List<ControlFlowGraph.Edge>> filtered = new ArrayList<>();
         Set<List<ControlFlowGraph.Edge>> seen = new HashSet<>();
-        for (List<ControlFlowGraph.Edge> path : candidates) {
+        for (List<ControlFlowGraph.Edge> path : findPathsForUncovered(cfg, tracker)) {
             if (!pathContainsNode(path, target) || !usesRequiredExit(path, target, requiredExit)) {
-                continue;
-            }
-            if (uncoveredScore(path, tracker) == 0) {
                 continue;
             }
             if (seen.add(path)) {
@@ -96,6 +83,26 @@ public class LoopCondensationFlowPathFinder implements PathFinder {
                         .reversed())
                 .thenComparingInt(List::size));
         return Collections.unmodifiableList(filtered);
+    }
+
+    @Override
+    public List<List<ControlFlowGraph.Edge>> findPathsForUncovered(
+            ControlFlowGraph cfg,
+            CoverageTracker tracker) {
+
+        if (tracker == null || tracker.isComplete()) {
+            return Collections.emptyList();
+        }
+
+        List<List<ControlFlowGraph.Edge>> candidates = new ArrayList<>(findPathCover(cfg));
+        for (int uncovered : sorted(tracker.getUncovered())) {
+            addFallbackCandidate(
+                    candidates,
+                    cfg,
+                    tracker.pathTargetFor(uncovered),
+                    tracker.requiredExitFor(uncovered));
+        }
+        return Collections.unmodifiableList(rankForUncoveredCoverage(candidates, tracker));
     }
 
     /**
@@ -465,13 +472,94 @@ public class LoopCondensationFlowPathFinder implements PathFinder {
 
         int score = 0;
         for (int item : coverageItems) {
-            int target = tracker.pathTargetFor(item);
-            CfgEdgeKind requiredExit = tracker.requiredExitFor(item);
-            if (pathContainsNode(path, target) && usesRequiredExit(path, target, requiredExit)) {
+            if (coversCoverageItem(path, tracker, item)) {
                 score++;
             }
         }
         return score;
+    }
+
+    private List<List<ControlFlowGraph.Edge>> rankForUncoveredCoverage(
+            List<List<ControlFlowGraph.Edge>> candidates,
+            CoverageTracker tracker) {
+
+        List<List<ControlFlowGraph.Edge>> useful = dedupeUsefulCandidates(candidates, tracker);
+        List<List<ControlFlowGraph.Edge>> ranked = new ArrayList<>();
+        Set<Integer> remainingUncovered = new HashSet<>(tracker.getUncovered());
+
+        while (!remainingUncovered.isEmpty() && !useful.isEmpty()) {
+            List<ControlFlowGraph.Edge> best = null;
+            int bestGain = 0;
+            for (List<ControlFlowGraph.Edge> candidate : useful) {
+                int gain = coverageScore(candidate, tracker, remainingUncovered);
+                if (gain > bestGain
+                        || (gain == bestGain && best != null && comparePathPriority(candidate, best, tracker) < 0)) {
+                    best = candidate;
+                    bestGain = gain;
+                }
+            }
+            if (best == null || bestGain == 0) {
+                break;
+            }
+            ranked.add(best);
+            useful.remove(best);
+            removeCoveredItems(remainingUncovered, best, tracker);
+        }
+
+        useful.sort((left, right) -> comparePathPriority(left, right, tracker));
+        ranked.addAll(useful);
+        return ranked;
+    }
+
+    private List<List<ControlFlowGraph.Edge>> dedupeUsefulCandidates(
+            List<List<ControlFlowGraph.Edge>> candidates,
+            CoverageTracker tracker) {
+
+        List<List<ControlFlowGraph.Edge>> useful = new ArrayList<>();
+        Set<List<ControlFlowGraph.Edge>> seen = new HashSet<>();
+        for (List<ControlFlowGraph.Edge> path : candidates) {
+            if (uncoveredScore(path, tracker) == 0) {
+                continue;
+            }
+            if (seen.add(path)) {
+                useful.add(path);
+            }
+        }
+        return useful;
+    }
+
+    private int comparePathPriority(
+            List<ControlFlowGraph.Edge> left,
+            List<ControlFlowGraph.Edge> right,
+            CoverageTracker tracker) {
+
+        int byUncovered = Integer.compare(uncoveredScore(right, tracker), uncoveredScore(left, tracker));
+        if (byUncovered != 0) {
+            return byUncovered;
+        }
+        int byCovered = Integer.compare(coveredScore(right, tracker), coveredScore(left, tracker));
+        if (byCovered != 0) {
+            return byCovered;
+        }
+        return Integer.compare(left.size(), right.size());
+    }
+
+    private void removeCoveredItems(
+            Set<Integer> remaining,
+            List<ControlFlowGraph.Edge> path,
+            CoverageTracker tracker) {
+
+        remaining.removeIf(item -> coversCoverageItem(path, tracker, item));
+    }
+
+    private boolean coversCoverageItem(
+            List<ControlFlowGraph.Edge> path,
+            CoverageTracker tracker,
+            int item) {
+
+        int target = tracker.pathTargetFor(item);
+        CfgEdgeKind requiredExit = tracker.requiredExitFor(item);
+        return pathContainsNode(path, target) && usesRequiredExit(path, target, requiredExit);
     }
 
     private List<List<ControlFlowGraph.Edge>> pruneRedundantPaths(

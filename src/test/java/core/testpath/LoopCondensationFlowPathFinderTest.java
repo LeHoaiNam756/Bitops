@@ -169,6 +169,35 @@ public class LoopCondensationFlowPathFinderTest {
     }
 
     @Test
+    public void findPathsForUncovered_returnsOneBatchCoveringCurrentUncoveredNodes() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        int entry = addEntry(cfg);
+        int branch = addBranch(cfg, "cond");
+        int trueNode = addStmt(cfg, "true");
+        int falseNode = addStmt(cfg, "false");
+        int exit = addExit(cfg);
+        normal(cfg, entry, branch);
+        trueEdge(cfg, branch, trueNode);
+        falseEdge(cfg, branch, falseNode);
+        normal(cfg, trueNode, exit);
+        normal(cfg, falseNode, exit);
+        CoverageTracker tracker = new CoverageTracker(cfg);
+        tracker.markCovered(entry);
+        tracker.markCovered(branch);
+        tracker.markCovered(exit);
+
+        List<List<ControlFlowGraph.Edge>> paths = finder.findPathsForUncovered(cfg, tracker);
+
+        assertEquals(2, paths.size());
+        assertEquals(Set.of(trueNode, falseNode), coveredNodes(paths).stream()
+                .filter(tracker::isUncovered)
+                .collect(Collectors.toSet()));
+        for (List<ControlFlowGraph.Edge> path : paths) {
+            assertTrue(pathContainsNode(path, trueNode) || pathContainsNode(path, falseNode));
+        }
+    }
+
+    @Test
     public void tn1BenchmarkSeq_pathCoverCoversEveryReachableBasicBlock() {
         String src = """
                 public static int TN1_benchmarkSeq(
@@ -263,6 +292,10 @@ public class LoopCondensationFlowPathFinderTest {
         return paths.stream()
                 .flatMap(path -> nodeIds(path).stream())
                 .collect(Collectors.toSet());
+    }
+
+    private boolean pathContainsNode(List<ControlFlowGraph.Edge> path, int node) {
+        return nodeIds(path).contains(node);
     }
 
     private Set<Integer> relevantNodes(ControlFlowGraph cfg, int entry, int exit) {
