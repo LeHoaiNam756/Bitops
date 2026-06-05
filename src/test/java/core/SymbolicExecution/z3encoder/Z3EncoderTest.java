@@ -2,11 +2,14 @@ package core.SymbolicExecution.z3encoder;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.SymArraySelect;
 import core.SymbolicExecution.model.SymBinaryOp;
 import core.SymbolicExecution.model.SymLiteral;
+import core.SymbolicExecution.model.SymStringOp;
 import core.SymbolicExecution.model.SymVariable;
+import core.SymbolicExecution.model.types.ObjectSymType;
 import org.junit.Test;
 
 import java.util.List;
@@ -66,6 +69,100 @@ public class Z3EncoderTest {
 
             assertEquals(1, encoded.size());
             assertEquals(ctx.getBoolSort(), encoded.get(0).getSort());
+        }
+    }
+
+    @Test
+    public void encode_stringLiteral_usesZ3StringSort() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of());
+            Z3Encoder encoder = new Z3Encoder(resolver);
+
+            Expr<?> encoded = encoder.encode(SymLiteral.of("target"));
+
+            assertEquals(ctx.getStringSort(), encoded.getSort());
+        }
+    }
+
+    @Test
+    public void encode_stringConcat_usesZ3StringSort() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of());
+            Z3Encoder encoder = new Z3Encoder(resolver);
+            SymBinaryOp concat = new SymBinaryOp(
+                    SymLiteral.of("left"),
+                    SymBinaryOp.Op.ADD,
+                    SymLiteral.of("right"));
+
+            Expr<?> encoded = encoder.encode(concat);
+
+            assertEquals(ctx.getStringSort(), encoded.getSort());
+        }
+    }
+
+    @Test
+    public void constraintSolver_stringEquality_extractsStringModel() {
+        try (ConstraintSolver solver = ConstraintSolver.create(
+                Map.of("s", new ObjectSymType("java.lang.String")))) {
+            SymBinaryOp constraint = new SymBinaryOp(
+                    new SymVariable("s"),
+                    SymBinaryOp.Op.EQ,
+                    SymLiteral.of("target"));
+
+            SolverResult result = solver.check(List.of(constraint));
+
+            SolverResult.Sat sat = (SolverResult.Sat) result;
+            assertEquals("target", sat.model().lookup("s").orElseThrow().value());
+        }
+    }
+
+    @Test
+    public void constraintSolver_stringContains_usesZ3StringTheory() {
+        try (ConstraintSolver solver = ConstraintSolver.create(
+                Map.of("s", new ObjectSymType("java.lang.String")))) {
+            SymVariable s = new SymVariable("s");
+
+            SolverResult result = solver.check(List.of(
+                    new SymBinaryOp(s, SymBinaryOp.Op.EQ, SymLiteral.of("target")),
+                    new SymStringOp(s, SymStringOp.Op.CONTAINS, List.of(SymLiteral.of("arg")))
+            ));
+
+            assertEquals(true, result.isSat());
+        }
+    }
+
+    @Test
+    public void constraintSolver_stringLength_canCompareWithJavaIntLiteral() {
+        try (ConstraintSolver solver = ConstraintSolver.create(
+                Map.of("s", new ObjectSymType("java.lang.String")))) {
+            SymVariable s = new SymVariable("s");
+            SymStringOp length = new SymStringOp(s, SymStringOp.Op.LENGTH, List.of());
+
+            SolverResult result = solver.check(List.of(
+                    new SymBinaryOp(s, SymBinaryOp.Op.EQ, SymLiteral.of("target")),
+                    new SymBinaryOp(length, SymBinaryOp.Op.EQ, SymLiteral.of(6))
+            ));
+
+            assertEquals(true, result.isSat());
+        }
+    }
+
+    @Test
+    public void constraintSolver_stringSubstring_encodesExtract() {
+        try (ConstraintSolver solver = ConstraintSolver.create(
+                Map.of("s", new ObjectSymType("java.lang.String")))) {
+            SymVariable s = new SymVariable("s");
+            SymStringOp substring = new SymStringOp(
+                    s,
+                    SymStringOp.Op.SUBSTRING,
+                    List.of(SymLiteral.of(0), SymLiteral.of(3)));
+
+            SolverResult result = solver.check(List.of(
+                    new SymBinaryOp(s, SymBinaryOp.Op.EQ, SymLiteral.of("target")),
+                    new SymBinaryOp(substring, SymBinaryOp.Op.EQ, SymLiteral.of("tar"))
+            ));
+
+            assertEquals(true, result.isSat());
         }
     }
 }

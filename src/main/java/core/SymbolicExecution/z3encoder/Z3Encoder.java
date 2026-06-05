@@ -16,6 +16,7 @@ import java.util.List;
  *  float                      →  FPSort(32)   (IEEE 754 single, RNE rounding)
  *  double                     →  FPSort(64)   (IEEE 754 double, RNE rounding)
  *  boolean                    →  BoolSort
+ *  String                     →  StringSort   (Z3 string/sequence theory)
  *  SymVariable                →  mkConst(name, sort) where sort from varSorts map
  *  SymFieldAccess             →  fresh BV32 constant "receiver__field"
  *
@@ -55,6 +56,26 @@ public final class Z3Encoder {
     /** FP rounding mode: round-nearest-ties-to-even (matches Java). */
     private final FPRMExpr RNE;
 
+    /**
+     * Side-constraints emitted while encoding {@code TO_LOWER_CASE} /
+     * {@code TO_UPPER_CASE}.  Each call introduces a fresh result variable and
+     * asserts two axioms:
+     * <ol>
+     *   <li>Length equality: {@code len(result) = len(input)}
+     *   <li>Character mapping: {@code ∀ i ∈ [0, len(input)).
+     *         let c = code(input[i])
+     *         if 'A' ≤ c ≤ 'Z' then code(result[i]) = c + 32   [toLower]
+     *                           else code(result[i]) = c}
+     * </ol>
+     * The caller must add these constraints to the solver in the same
+     * {@code assert} batch as the main formula.  Retrieve and clear via
+     * {@link #drainSideConstraints()}.
+     */
+    private final java.util.List<BoolExpr> sideConstraints = new java.util.ArrayList<>();
+
+    /** Counter for generating unique result-variable names. */
+    private int caseOpCounter = 0;
+
     // =========================================================================
     // Construction
     // =========================================================================
@@ -76,6 +97,26 @@ public final class Z3Encoder {
      */
     public Expr<?> encode(SymbolicValue node) {
         return visit(node, new IdentityHashMap<>(), new IdentityHashMap<>());
+    }
+
+    /**
+     * Returns any side-constraints accumulated during the most recent
+     * {@link #encode} / {@link #encodeAll} call (e.g. from
+     * {@code TO_LOWER_CASE} / {@code TO_UPPER_CASE}), then clears the list.
+     *
+     * <p>These <em>must</em> be asserted into the solver together with the
+     * primary formula, otherwise the case-folding result variables are
+     * unconstrained:
+     * <pre>
+     *   List&lt;BoolExpr&gt; constraints = encoder.encodeAll(pathConditions);
+     *   solver.add(constraints.toArray(new BoolExpr[0]));
+     *   solver.add(encoder.drainSideConstraints().toArray(new BoolExpr[0]));
+     * </pre>
+     */
+    public java.util.List<BoolExpr> drainSideConstraints() {
+        var result = java.util.List.copyOf(sideConstraints);
+        sideConstraints.clear();
+        return result;
     }
 
     /**
@@ -121,6 +162,7 @@ public final class Z3Encoder {
         if (node instanceof SymVariable var)    return encodeVariable(var, sortCache);
         if (node instanceof SymUnaryOp u)       return encodeUnary(u,  exprCache, sortCache);
         if (node instanceof SymBinaryOp b)      return encodeBinary(b, exprCache, sortCache);
+        if (node instanceof SymStringOp s)      return encodeStringOp(s, exprCache, sortCache);
         if (node instanceof SymITE ite)         return encodeITE(ite,  exprCache, sortCache);
         if (node instanceof SymArraySelect s)   return encodeArraySelect(s,  exprCache, sortCache);
         if (node instanceof SymArrayStore st)   return encodeArrayStore(st,  exprCache, sortCache);
@@ -145,6 +187,9 @@ public final class Z3Encoder {
 
         // ── Boolean ───────────────────────────────────────────────────────
         if (value instanceof Boolean b) return ctx.mkBool(b);
+
+        // ── String ────────────────────────────────────────────────────────
+        if (value instanceof String s) return ctx.mkString(s);
 
         // ── Float (IEEE 754 single) ───────────────────────────────────────
         if (value instanceof Float f) {
@@ -246,6 +291,12 @@ public final class Z3Encoder {
         Expr<?> left  = visit(b.left(),  exprCache, sortCache);
         Expr<?> right = visit(b.right(), exprCache, sortCache);
 
+        // ── String domain ─────────────────────────────────────────────────────
+        if (sorts.isStringSort(resultSort) || sorts.isStringSort(leftSort)
+                || sorts.isStringSort(rightSort)) {
+            return encodeStringBinary(b.op(), left, right, leftSort, rightSort, b);
+        }
+
         // ── FP domain ─────────────────────────────────────────────────────────
         if (isFPSort(resultSort) || isFPSort(leftSort) || isFPSort(rightSort)) {
             FPSort  targetFP = resultSort.equals(sorts.fp64Sort())
@@ -265,6 +316,258 @@ public final class Z3Encoder {
         BitVecExpr bvLeft  = coerceToBV(left,  leftSort,  targetBV);
         BitVecExpr bvRight = coerceToBV(right, rightSort, targetBV);
         return encodeBVBinary(b.op(), bvLeft, bvRight, b);
+    }
+
+    // ── String concat / equality ───────────────────────────────────────────
+
+    private Expr<?> encodeStringBinary(SymBinaryOp.Op op,
+                                       Expr<?> l, Expr<?> r,
+                                       Sort leftSort, Sort rightSort,
+                                       SymBinaryOp node) {
+        if (!sorts.isStringSort(leftSort) || !sorts.isStringSort(rightSort)) {
+            throw new EncodingException(
+                    "String operation requires both operands to have String sort", node);
+        }
+
+        return switch (op) {
+            case ADD -> ctx.mkConcat(
+                    (Expr<SeqSort<CharSort>>) l,
+                    (Expr<SeqSort<CharSort>>) r);
+            case EQ  -> ctx.mkEq(l, r);
+            case NEQ -> ctx.mkNot(ctx.mkEq(l, r));
+            default -> throw new EncodingException(
+                    "Op '" + op + "' not supported in String domain", node);
+        };
+    }
+
+    // =========================================================================
+    // SymStringOp
+    // =========================================================================
+
+    private Expr<?> encodeStringOp(SymStringOp op,
+                                   IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                   IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        Expr<SeqSort<CharSort>> receiver = asStringExpr(
+                visit(op.receiver(), exprCache, sortCache),
+                sorts.resolve(op.receiver(), sortCache),
+                op);
+
+        return switch (op.op()) {
+            case EQUALS -> ctx.mkEq(receiver, stringArg(op, 0, exprCache, sortCache));
+            case CONTAINS -> ctx.mkContains(receiver, stringArg(op, 0, exprCache, sortCache));
+            case STARTS_WITH -> ctx.mkPrefixOf(stringArg(op, 0, exprCache, sortCache), receiver);
+            case ENDS_WITH -> ctx.mkSuffixOf(stringArg(op, 0, exprCache, sortCache), receiver);
+            case LENGTH -> ctx.mkInt2BV(32, ctx.mkLength(receiver));
+            case IS_EMPTY -> ctx.mkEq(ctx.mkLength(receiver), ctx.mkInt(0));
+            case SUBSTRING     -> encodeSubstring(op, receiver, exprCache, sortCache);
+            case TO_LOWER_CASE -> encodeCaseFold(receiver, true);
+            case TO_UPPER_CASE -> encodeCaseFold(receiver, false);
+            case TRIM          -> encodeTrim(receiver);
+            case REPLACE       -> ctx.mkReplace(
+                                      receiver,
+                                      stringArg(op, 0, exprCache, sortCache),
+                                      stringArg(op, 1, exprCache, sortCache));
+            case INDEX_OF      -> encodeIndexOf(op, receiver, exprCache, sortCache);
+        };
+    }
+
+    private Expr<?> encodeSubstring(SymStringOp op,
+                                    Expr<SeqSort<CharSort>> receiver,
+                                    IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                    IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (op.args().isEmpty() || op.args().size() > 2) {
+            throw new EncodingException("String.substring expects one or two arguments", op);
+        }
+
+        IntExpr begin = intIndexArg(op, 0, exprCache, sortCache);
+        IntExpr length = op.args().size() == 1
+                ? (IntExpr) ctx.mkSub(ctx.mkLength(receiver), begin)
+                : (IntExpr) ctx.mkSub(intIndexArg(op, 1, exprCache, sortCache), begin);
+        return ctx.mkExtract(receiver, begin, length);
+    }
+
+    /**
+     * Encodes {@code String.indexOf}.
+     * <ul>
+     *   <li>One arg  → {@code str.indexof(recv, needle, 0)}
+     *   <li>Two args → {@code str.indexof(recv, needle, fromIndex)}
+     * </ul>
+     * Z3's {@code str.indexof} returns an {@code IntSort} value (−1 when absent).
+     * We convert to BV32 to match the declared sort of {@code INDEX_OF}.
+     */
+    private Expr<?> encodeIndexOf(SymStringOp op,
+                                   Expr<SeqSort<CharSort>> receiver,
+                                   IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                   IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (op.args().isEmpty() || op.args().size() > 2) {
+            throw new EncodingException("String.indexOf expects one or two arguments", op);
+        }
+        Expr<SeqSort<CharSort>> needle = stringArg(op, 0, exprCache, sortCache);
+        IntExpr offset = op.args().size() == 1
+                ? ctx.mkInt(0)
+                : intIndexArg(op, 1, exprCache, sortCache);
+        // mkIndexOf returns IntSort; narrow to BV32 (signed — indexOf returns -1 on miss)
+        IntExpr result = (IntExpr) ctx.mkIndexOf(receiver, needle, offset);
+        return ctx.mkInt2BV(32, result);
+    }
+
+    /**
+     * Encodes {@code String.toLowerCase()} / {@code String.toUpperCase()}.
+     *
+     * <p>Z3's string theory has no native case-folding op, so we model it by
+     * introducing a fresh result variable and asserting two axioms as
+     * side-constraints (see {@link #drainSideConstraints()}):
+     *
+     * <ol>
+     *   <li><b>Length:</b> {@code len(result) = len(input)}
+     *   <li><b>Per-character mapping</b> via a universally quantified formula:
+     *       <pre>
+     *         ∀ i : Int.  0 ≤ i ∧ i < len(input)  →
+     *           let c      = str.to_code(str.at(input,  i))
+     *           let r      = str.to_code(str.at(result, i))
+     *           let isCase = (lo ≤ c ≤ hi)          -- 'A'-'Z' or 'a'-'z'
+     *           in  r = if isCase then c ± 32 else c
+     *       </pre>
+     *   The quantifier is bounded by a concrete {@code len(input)} guard,
+     *   so Z3's string solver can instantiate it on concrete lengths.
+     * </ol>
+     *
+     * @param toLower {@code true} for toLowerCase, {@code false} for toUpperCase
+     */
+    private Expr<SeqSort<CharSort>> encodeCaseFold(
+            Expr<SeqSort<CharSort>> input, boolean toLower) {
+
+        SeqSort<CharSort> strSort = sorts.stringSort();
+        String resultName = (toLower ? "str.to_lower#" : "str.to_upper#") + caseOpCounter++;
+
+        // Fresh result variable
+        Expr<SeqSort<CharSort>> result =
+                (Expr<SeqSort<CharSort>>) ctx.mkConst(resultName, strSort);
+
+        // ── Axiom 1: same length ──────────────────────────────────────────────
+        IntExpr inputLen  = (IntExpr) ctx.mkLength(input);
+        IntExpr resultLen = (IntExpr) ctx.mkLength(result);
+        sideConstraints.add(ctx.mkEq(resultLen, inputLen));
+
+        // ── Axiom 2: per-character case mapping ───────────────────────────────
+        //
+        // Named integer constant used as the bound variable in mkForall.
+        // Z3's Java mkForall takes the same Expr constants in both the
+        // bound-vars array and the body — it converts them to de Bruijn
+        // indices internally.
+        IntExpr i = ctx.mkIntConst("i#" + resultName);
+
+        // c = charToInt(nth(input,  i))   — code point of input char
+        // r = charToInt(nth(result, i))   — code point of result char
+        // ctx.charToInt() is the correct Java API name (no "mk" prefix).
+        IntExpr c = ctx.charToInt((Expr<CharSort>) ctx.mkNth(input,  i));
+        IntExpr r = ctx.charToInt((Expr<CharSort>) ctx.mkNth(result, i));
+
+        // Source range: 'A'–'Z' (65–90) for toLower; 'a'–'z' (97–122) for toUpper
+        int lo = toLower ? 65  : 97;   // 'A' : 'a'
+        int hi = toLower ? 90  : 122;  // 'Z' : 'z'
+        int delta = toLower ? 32 : -32;
+
+        BoolExpr inRange = ctx.mkAnd(
+                ctx.mkGe(c, ctx.mkInt(lo)),
+                ctx.mkLe(c, ctx.mkInt(hi)));
+
+        // r = (inRange ? c ± 32 : c)
+        IntExpr mappedCode = (IntExpr) ctx.mkITE(inRange,
+                ctx.mkAdd(c, ctx.mkInt(delta)), c);
+        BoolExpr charConstraint = ctx.mkEq(r, mappedCode);
+
+        // Guard: 0 ≤ i < len(input)
+        BoolExpr inBounds = ctx.mkAnd(
+                ctx.mkGe(i, ctx.mkInt(0)),
+                ctx.mkLt(i, inputLen));
+
+        // ∀ i. inBounds → charConstraint
+        // Pass the same IntExpr constant in both the bound-vars array and the
+        // body; Z3 replaces it with the correct de Bruijn index internally.
+        BoolExpr body = ctx.mkImplies(inBounds, charConstraint);
+        BoolExpr forAll = ctx.mkForall(
+                new Expr[]{ i },   // bound variable — same object used in body
+                body,
+                1,       // weight
+                null, null, null, null);
+
+        sideConstraints.add(forAll);
+
+        return result;
+    }
+
+    /**
+     * Encodes {@code String.trim()} as an uninterpreted function.
+     *
+     * <p>Z3 has no native trim op and a precise character-level axiom would
+     * require existential quantifiers over the leading/trailing whitespace
+     * counts (making it hard to solve). We model trim as an uninterpreted
+     * function and add two lightweight structural axioms:
+     * <ul>
+     *   <li>{@code len(trim(s)) ≤ len(s)}
+     *   <li>{@code trim(trim(s)) = trim(s)}  (idempotent)
+     * </ul>
+     * This is sound for path conditions that only test the trimmed result
+     * (e.g. {@code s.trim().equals("hello")}); the solver will find a model
+     * where the result is the target string.
+     */
+    private Expr<SeqSort<CharSort>> encodeTrim(Expr<SeqSort<CharSort>> input) {
+        SeqSort<CharSort> strSort = sorts.stringSort();
+        Sort[]     sig  = { strSort };
+        FuncDecl<?> fnTrim = ctx.mkFuncDecl("str.trim", sig, strSort);
+
+        Expr<SeqSort<CharSort>> trimmed =
+                (Expr<SeqSort<CharSort>>) ctx.mkApp(fnTrim, input);
+
+        // len(trim(s)) ≤ len(s)
+        sideConstraints.add(ctx.mkLe(
+                (IntExpr) ctx.mkLength(trimmed),
+                (IntExpr) ctx.mkLength(input)));
+
+        // trim(trim(s)) = trim(s)
+        Expr<SeqSort<CharSort>> doubleTrimmed =
+                (Expr<SeqSort<CharSort>>) ctx.mkApp(fnTrim, trimmed);
+        sideConstraints.add(ctx.mkEq(doubleTrimmed, trimmed));
+
+        return trimmed;
+    }
+
+    private Expr<SeqSort<CharSort>> stringArg(SymStringOp op,
+                                              int index,
+                                              IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                              IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (index >= op.args().size()) {
+            throw new EncodingException("Missing String argument " + index + " for " + op.op(), op);
+        }
+        SymbolicValue arg = op.args().get(index);
+        return asStringExpr(visit(arg, exprCache, sortCache), sorts.resolve(arg, sortCache), op);
+    }
+
+    private IntExpr intIndexArg(SymStringOp op,
+                                int index,
+                                IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (index >= op.args().size()) {
+            throw new EncodingException("Missing index argument " + index + " for " + op.op(), op);
+        }
+        SymbolicValue arg = op.args().get(index);
+        Expr<?> encoded = visit(arg, exprCache, sortCache);
+        Sort sort = sorts.resolve(arg, sortCache);
+        if (sort.equals(sorts.intSort())) {
+            return (IntExpr) encoded;
+        }
+        if (sort instanceof BitVecSort) {
+            return ctx.mkBV2Int((BitVecExpr) encoded, false);
+        }
+        throw new EncodingException("String index argument must be integral", op);
+    }
+
+    private Expr<SeqSort<CharSort>> asStringExpr(Expr<?> expr, Sort sort, SymbolicValue source) {
+        if (!sorts.isStringSort(sort)) {
+            throw new EncodingException("Expected String sort, got " + sort, source);
+        }
+        return (Expr<SeqSort<CharSort>>) expr;
     }
 
     // ── FP binary ───────────────────────────────────────────────────────────
@@ -468,6 +771,10 @@ public final class Z3Encoder {
 
         if (sort instanceof FPSort) {
             return ctx.mkFPToBV(ctx.mkFPRoundTowardZero(), (FPExpr) expr, w, true);
+        }
+
+        if (sort.equals(sorts.intSort())) {
+            return ctx.mkInt2BV(w, (Expr<IntSort>) expr);
         }
 
         throw new IllegalArgumentException("Cannot coerce sort " + sort + " to BitVecSort");

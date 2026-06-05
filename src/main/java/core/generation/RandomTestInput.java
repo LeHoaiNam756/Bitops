@@ -6,12 +6,14 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.SimpleType;
 
 import java.lang.reflect.Array;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class RandomTestInput {
 
@@ -66,6 +68,10 @@ public final class RandomTestInput {
             return createRandomPrimitiveValue(primitiveType.getPrimitiveTypeCode());
         }
 
+        if (isStringType(type)) {
+            return createRandomStringValue();
+        }
+
         throw new RuntimeException("Unsupported parameter type: " + type);
     }
 
@@ -90,10 +96,18 @@ public final class RandomTestInput {
         int length = 1 + random.nextInt(5);
 
         if (dimensions == 1) {
-            // Base case: 1-D array of primitives.
+            // Base case: 1-D array of primitives or String.
+            if (isStringType(baseType)) {
+                String[] array = new String[length];
+                for (int i = 0; i < length; i++) {
+                    array[i] = createRandomStringValue();
+                }
+                return array;
+            }
+
             if (!baseType.isPrimitiveType()) {
                 throw new RuntimeException(
-                        "Unsupported array element type (only primitives supported): " + baseType);
+                        "Unsupported array element type (only primitives and String supported): " + baseType);
             }
             PrimitiveType.Code code = ((PrimitiveType) baseType).getPrimitiveTypeCode();
             Class<?> componentClass = primitiveCodeToClass(code);
@@ -164,6 +178,21 @@ public final class RandomTestInput {
         throw new RuntimeException("Unsupported primitive type code: " + code);
     }
 
+    private static String createRandomStringValue() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "abcdefghijklmnopqrstuvwxyz"
+                + "0123456789"
+                + "!@#$%^&*()_+=-[]{}|;:',.<>?/";
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int length = random.nextInt(5,21);
+        StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            stringBuilder.append(characters.charAt(index));
+        }
+        return stringBuilder.toString();
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
@@ -179,6 +208,14 @@ public final class RandomTestInput {
         if (PrimitiveType.FLOAT.equals(code))   return float.class;
         if (PrimitiveType.DOUBLE.equals(code))  return double.class;
         throw new RuntimeException("Unsupported primitive type code: " + code);
+    }
+
+    private static boolean isStringType(Type type) {
+        if (type instanceof SimpleType simpleType) {
+            String name = simpleType.getName().getFullyQualifiedName();
+            return "String".equals(name) || "java.lang.String".equals(name);
+        }
+        return false;
     }
 
     private static void validateBounds(double min, double max, String typeName) {

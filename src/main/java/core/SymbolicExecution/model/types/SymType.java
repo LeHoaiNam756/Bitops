@@ -2,7 +2,7 @@ package core.SymbolicExecution.model.types;
 
 public sealed interface SymType permits
         PrimitiveSymType,
-        ObjectSymType,
+        ClassSymType,
         ArraySymType,
         NullSymType,
         VoidSymType,
@@ -23,6 +23,10 @@ public sealed interface SymType permits
 
     default boolean isObject() {
         return this instanceof ObjectSymType;
+    }
+
+    default boolean isClass() {
+        return this instanceof ClassSymType;
     }
 
     default boolean isArray() {

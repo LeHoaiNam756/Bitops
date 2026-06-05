@@ -18,6 +18,7 @@ import java.util.Map;
  *    float                      →  FPSort(32)  – IEEE 754 single
  *    double                     →  FPSort(64)  – IEEE 754 double
  *    boolean                    →  BoolSort
+ *    String                     →  StringSort
  *
  *  SymVariable
  *    looked up in the caller-supplied varSorts map (built from TypeContext).
@@ -63,6 +64,7 @@ public final class SortResolver {
     final FPSort     fp64Sort;   // double – IEEE 754 double
     final BitVecSort bv32Sort;   // int / short / byte / char
     final BitVecSort bv64Sort;   // long
+    final SeqSort<CharSort> stringSort; // java.lang.String
 
     // =========================================================================
     // Construction
@@ -83,6 +85,7 @@ public final class SortResolver {
         this.fp64Sort = ctx.mkFPSort64();
         this.bv32Sort = ctx.mkBitVecSort(32);
         this.bv64Sort = ctx.mkBitVecSort(64);
+        this.stringSort = ctx.getStringSort();
     }
 
     // =========================================================================
@@ -142,6 +145,15 @@ public final class SortResolver {
             return resolveBinary(b, memo);
         }
 
+        if (node instanceof SymStringOp stringOp) {
+            return switch (stringOp.op()) {
+                case EQUALS, CONTAINS, STARTS_WITH, ENDS_WITH, IS_EMPTY -> boolSort;
+                case LENGTH, INDEX_OF                                    -> bv32Sort;
+                case SUBSTRING, TO_LOWER_CASE, TO_UPPER_CASE,
+                     TRIM, REPLACE                                       -> stringSort;
+            };
+        }
+
         // ── ITE ───────────────────────────────────────────────────────────
         if (node instanceof SymITE ite) {
             return resolve(ite.thenBranch(), memo);
@@ -183,6 +195,15 @@ public final class SortResolver {
                  UGT, UGE, ULT, ULE,
                  AND, OR              -> boolSort;
 
+            case ADD -> {
+                Sort ls = resolve(b.left(),  memo);
+                Sort rs = resolve(b.right(), memo);
+                if (isStringSort(ls) || isStringSort(rs)) {
+                    yield stringSort;
+                }
+                yield widenArithmetic(ls, rs);
+            }
+
             // Bitwise → widened BV sort
             case BAND, BOR, BXOR,
                  BLS, BRS, BURS      -> {
@@ -195,6 +216,10 @@ public final class SortResolver {
             default -> {
                 Sort ls = resolve(b.left(),  memo);
                 Sort rs = resolve(b.right(), memo);
+                if (isStringSort(ls) || isStringSort(rs)) {
+                    throw new EncodingException(
+                            "Op '" + b.op() + "' not supported for String operands", b);
+                }
                 yield widenArithmetic(ls, rs);
             }
         };
@@ -247,7 +272,9 @@ public final class SortResolver {
             }
             return range;
         }
-        if (type instanceof ObjectSymType) { return bv32Sort; }  // heap address
+        if (type instanceof ObjectSymType objectType) {
+            return isStringClass(objectType) ? stringSort : bv32Sort;
+        }
         if (type instanceof NullSymType)   { return bv32Sort; }
         if (type instanceof VoidSymType)   { throw new IllegalArgumentException("void has no Z3 Sort"); }
         if (type instanceof UnknownSymType){ return bv32Sort; }
@@ -268,6 +295,7 @@ public final class SortResolver {
         if (value instanceof Float)   { return fp32Sort; }
         if (value instanceof Double)  { return fp64Sort; }
         if (value instanceof Boolean) { return boolSort; }
+        if (value instanceof String)  { return stringSort; }
         throw new IllegalArgumentException("Unknown literal type: " + value.getClass());
     }
 
@@ -282,4 +310,13 @@ public final class SortResolver {
     public FPSort     fp64Sort() { return fp64Sort;  }
     public BitVecSort bv32Sort() { return bv32Sort;  }
     public BitVecSort bv64Sort() { return bv64Sort;  }
+    public SeqSort<CharSort> stringSort() { return stringSort; }
+
+    boolean isStringSort(Sort sort) {
+        return sort.equals(stringSort);
+    }
+
+    private boolean isStringClass(ObjectSymType type) {
+        return "java.lang.String".equals(type.className()) || "String".equals(type.className());
+    }
 }

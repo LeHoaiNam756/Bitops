@@ -117,7 +117,8 @@ public final class SymTypeMap {
         if (type instanceof SimpleType
                 || type instanceof QualifiedType
                 || type instanceof NameQualifiedType) {
-            return new ObjectSymType(resolveTypeName(type));
+            String typeName = resolveTypeName(type);
+            return new ObjectSymType(canonicalClassName(typeName));
         }
 
         // ── Null type (rare – appears in some JDT internals) ─────────
@@ -152,5 +153,13 @@ public final class SymTypeMap {
             return resolveTypeName(pt.getType());
         }
         return type.toString();
+    }
+
+    private static boolean isStringType(String typeName) {
+        return "String".equals(typeName) || "java.lang.String".equals(typeName);
+    }
+
+    private static String canonicalClassName(String typeName) {
+        return isStringType(typeName) ? "java.lang.String" : typeName;
     }
 }

@@ -121,12 +121,14 @@ public class SymbolicExecution {
                 .register(new NumberLiteralHandler())
                 .register(new BooleanLiteralHandler())
                 .register(new CharacterLiteralHandler())
+                .register(new StringLiteralHandler())
                 .register(new ArrayAccessHandler())
                 .register(new ArrayCreationHandler())
                 .register(new MethodInvocationHandler())
                 .register(new VariableDeclarationExpressionHandler())
                 .register(new EnhancedForStatementHandler())
                 .register(new BreakStatementHandler())
-                .register(new ContinueStatementHandler());
+                .register(new ContinueStatementHandler())
+                .register(new ThrowStatementHandler());
     }
 }

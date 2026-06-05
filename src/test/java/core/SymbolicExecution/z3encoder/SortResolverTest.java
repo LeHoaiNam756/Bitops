@@ -4,6 +4,7 @@ import com.microsoft.z3.ArraySort;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.types.ArraySymType;
+import core.SymbolicExecution.model.types.ObjectSymType;
 import core.SymbolicExecution.model.types.PrimitiveSymType;
 import org.junit.Test;
 
@@ -24,7 +25,18 @@ public class SortResolverTest {
             assertTrue(sort instanceof ArraySort<?, ?>);
             ArraySort<?, ?> arraySort = (ArraySort<?, ?>) sort;
             assertEquals(ctx.getIntSort(), arraySort.getDomain());
-            assertEquals(ctx.getIntSort(), arraySort.getRange());
+            assertEquals(ctx.mkBitVecSort(32), arraySort.getRange());
+        }
+    }
+
+    @Test
+    public void symTypeToSort_stringObject_returnsStringSort() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of());
+
+            Sort sort = resolver.symTypeToSort(new ObjectSymType("java.lang.String"));
+
+            assertEquals(ctx.getStringSort(), sort);
         }
     }
 }

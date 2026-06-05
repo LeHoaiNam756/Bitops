@@ -9,4 +9,5 @@ public final record SymLiteral(Object value) implements SymbolicValue {
     public static SymLiteral of(short s) {return new SymLiteral(s);}
     public static SymLiteral of(byte b) {return new SymLiteral(b);}
     public static SymLiteral of(boolean b) {return new SymLiteral(b);}
+    public static SymLiteral of(String s) {return new SymLiteral(s);}
 }
