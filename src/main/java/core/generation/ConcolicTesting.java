@@ -269,6 +269,11 @@ public class ConcolicTesting {
             case "long[]" -> new long[length];
             case "float[]" -> new float[length];
             case "double[]" -> new double[length];
+            case "String[]", "java.lang.String[]" -> {
+                String[] values = new String[length];
+                java.util.Arrays.fill(values, defaultStringValue());
+                yield values;
+            }
             default -> null;
         };
     }
@@ -341,6 +346,7 @@ public class ConcolicTesting {
             case "long"    -> 0L;
             case "float"   -> 0.0f;
             case "double"  -> 0.0;
+            case "String", "java.lang.String" -> defaultStringValue();
             default -> {
                 // Arrays or object types — can't generate a default here;
                 // the caller will likely hit a driver failure, which is
@@ -352,5 +358,9 @@ public class ConcolicTesting {
                 yield null;
             }
         };
+    }
+
+    private static String defaultStringValue() {
+        return "1.2.3.4";
     }
 }

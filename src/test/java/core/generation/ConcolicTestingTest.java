@@ -134,6 +134,44 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_stringParameterCoversStringEqualityBranch() throws Exception {
+        Path zip = createZipProject("StringUnit.java", """
+                package sample;
+
+                public class StringUnit {
+                    public static int roleScore(String role) {
+                        if (role.equals("admin")) {
+                            return 10;
+                        }
+                        return 1;
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "roleScore".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("role", "guest");
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                new AllPathsFinder());
+
+        assertFalse(result.testDataList().isEmpty());
+        assertEquals(seedInput, result.testDataList().get(0).input());
+        assertEquals("1", result.testDataList().get(0).output());
+        assertTrue(result.testDataList().stream()
+                .anyMatch(testData -> "admin".equals(testData.input().get("role"))
+                        && "10".equals(testData.output())));
+        assertEquals(0, result.fullCoverage().getUncovered().size());
+    }
+
+    @Test
     public void extractInputsFromModel_usesExactPrimitiveArrayFallbacks() throws Exception {
         Z3ModelBindings bindings = new Z3ModelBindings(Map.of(
                 "ints__length", SymLiteral.of(1),
@@ -219,8 +257,22 @@ public class ConcolicTestingTest {
         assertEquals(true, inputs.get("flag"));
         assertEquals(11, inputs.get("count"));
         assertArrayEquals(new String[] {"x"}, (String[]) inputs.get("unsupported"));
-        assertTrue(inputs.get("missingUnsupported") instanceof int[]);
-        assertArrayEquals(new int[0], (int[]) inputs.get("missingUnsupported"));
+        assertTrue(inputs.get("missingUnsupported") instanceof String[]);
+        assertArrayEquals(new String[0], (String[]) inputs.get("missingUnsupported"));
+    }
+
+    @Test
+    public void extractInputsFromModel_defaultsMissingStringToNonNullValue() throws Exception {
+        Z3ModelBindings bindings = Z3ModelBindings.empty();
+        List<TestDriver.ParamInfo> params = List.of(
+                new TestDriver.ParamInfo("ip", "String"),
+                new TestDriver.ParamInfo("qualified", "java.lang.String")
+        );
+
+        Map<String, Object> inputs = extractInputsFromModel(bindings, params);
+
+        assertEquals("1.2.3.4", inputs.get("ip"));
+        assertEquals("1.2.3.4", inputs.get("qualified"));
     }
 
     @Test

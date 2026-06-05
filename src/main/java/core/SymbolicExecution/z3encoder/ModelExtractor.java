@@ -25,6 +25,7 @@ import java.util.Map;
  *  Z3 BoolVal (false)       →  SymLiteral(false)
  *  Z3 FPNum (fp32)          →  SymLiteral(float)
  *  Z3 FPNum (fp64)          →  SymLiteral(double)
+ *  Z3 String value          →  SymLiteral(String)
  *  anything else            →  skipped (not representable as a Java literal)
  *
  * Note: IntNum no longer appears for Java integer variables because SortResolver
@@ -122,6 +123,11 @@ public final class ModelExtractor {
         // ── Floating-point ────────────────────────────────────────────────────
         if (expr instanceof FPNum fp) {
             return extractFP(fp, sort);
+        }
+
+        // ── String ────────────────────────────────────────────────────────────
+        if (expr.isString()) {
+            return java.util.Optional.of(SymLiteral.of(expr.getString()));
         }
 
         // Anything else (arrays, UFs, algebraic numbers…) → skip

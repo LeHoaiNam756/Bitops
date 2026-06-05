@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public record ObjectSymType(
         String className
-) implements SymType {
+) implements ClassSymType {
 
     public ObjectSymType {
         Objects.requireNonNull(className);

@@ -9,10 +9,16 @@ import core.SymbolicExecution.model.*;
  * analysis time, collapsing the node into a single literal.
  *
  * Examples:
- *   BinaryOp(Lit(3), ADD, Lit(4))   → Lit(7)
- *   UnaryOp(NEG, Lit(5))            → Lit(-5)
- *   ITE(Lit(true), t, e)            → t
- *   UnaryOp(NOT, UnaryOp(NOT, x))   → x      (double-negation)
+ *   BinaryOp(Lit(3), ADD, Lit(4))              → Lit(7)
+ *   UnaryOp(NEG, Lit(5))                       → Lit(-5)
+ *   ITE(Lit(true), t, e)                       → t
+ *   UnaryOp(NOT, UnaryOp(NOT, x))              → x        (double-negation)
+ *   StringOp(Lit("hi"), LENGTH,      [])       → Lit(2)
+ *   StringOp(Lit("hi"), IS_EMPTY,    [])       → Lit(false)
+ *   StringOp(Lit("Hi"), TO_LOWER_CASE, [])     → Lit("hi")
+ *   StringOp(Lit("hi"), CONTAINS,   [Lit("i")]) → Lit(true)
+ *   StringOp(Lit("hi"), SUBSTRING,  [Lit(1)])  → Lit("i")
+ *   StringOp(Lit("hi"), INDEX_OF,   [Lit("i"), Lit(0)]) → Lit(1)
  */
 public final class ConstantFoldingStrategy implements SimplificationStrategy {
 
@@ -22,9 +28,10 @@ public final class ConstantFoldingStrategy implements SimplificationStrategy {
 
     @Override
     public SymbolicValue apply(SymbolicValue node) {
-        if (node instanceof SymBinaryOp b) { return foldBinary(b); }
-        if (node instanceof SymUnaryOp u) { return foldUnary(u); }
-        if (node instanceof SymITE ie) { return foldITE(ie); }
+        if (node instanceof SymBinaryOp b)  { return foldBinary(b); }
+        if (node instanceof SymUnaryOp u)   { return foldUnary(u); }
+        if (node instanceof SymITE ie)      { return foldITE(ie); }
+        if (node instanceof SymStringOp so) { return foldStringOp(so); }
         return node;
     }
 
@@ -35,12 +42,21 @@ public final class ConstantFoldingStrategy implements SimplificationStrategy {
         Object l = ll.value();
         Object r = rl.value();
 
+        if (l instanceof String ls && r instanceof String rs) {
+            return switch (b.op()) {
+                case ADD -> SymLiteral.of(ls + rs);
+                case EQ  -> SymLiteral.of(ls.equals(rs));
+                case NEQ -> SymLiteral.of(!ls.equals(rs));
+                default  -> b;
+            };
+        }
+
         if (l instanceof Boolean lb && r instanceof Boolean rb) {
             return switch (b.op()) {
                 case AND -> SymLiteral.of(lb && rb);
                 case OR  -> SymLiteral.of(lb || rb);
-                case EQ  -> SymLiteral.of(lb.equals(rb));
-                case NEQ -> SymLiteral.of(!lb.equals(rb));
+                case EQ  -> SymLiteral.of(lb == rb);
+                case NEQ -> SymLiteral.of(lb != rb);
                 default  -> b;
             };
         }
@@ -114,6 +130,105 @@ public final class ConstantFoldingStrategy implements SimplificationStrategy {
         if (ite.cond() instanceof SymLiteral lit && lit.value() instanceof Boolean b)
             return b ? ite.thenBranch() : ite.elseBranch();
         return ite;
+    }
+
+    /**
+     * Folds a {@link SymStringOp} when the receiver (and any required args) are
+     * all {@link SymLiteral} values. Returns the original node if folding is not
+     * possible (e.g. symbolic receiver, wrong arg types, or out-of-bounds index).
+     */
+    private SymbolicValue foldStringOp(SymStringOp so) {
+        // Receiver must be a literal String.
+        if (!(so.receiver() instanceof SymLiteral recvLit)) return so;
+        if (!(recvLit.value() instanceof String s))         return so;
+
+        // Helper: extract a literal String arg at position i, or return null.
+        java.util.List<SymbolicValue> args = so.args();
+
+        try {
+            return switch (so.op()) {
+                // ---- zero-arg ops ------------------------------------------------
+                case LENGTH       -> SymLiteral.of(s.length());
+                case IS_EMPTY     -> SymLiteral.of(s.isEmpty());
+                case TO_LOWER_CASE -> SymLiteral.of(s.toLowerCase());
+                case TO_UPPER_CASE -> SymLiteral.of(s.toUpperCase());
+                case TRIM          -> SymLiteral.of(s.trim());
+
+                // ---- one-arg String ops -----------------------------------------
+                case EQUALS      -> {
+                    if (!isLitString(args, 0)) yield so;
+                    yield SymLiteral.of(s.equals(litString(args, 0)));
+                }
+                case CONTAINS    -> {
+                    if (!isLitString(args, 0)) yield so;
+                    yield SymLiteral.of(s.contains(litString(args, 0)));
+                }
+                case STARTS_WITH -> {
+                    if (!isLitString(args, 0)) yield so;
+                    yield SymLiteral.of(s.startsWith(litString(args, 0)));
+                }
+                case ENDS_WITH   -> {
+                    if (!isLitString(args, 0)) yield so;
+                    yield SymLiteral.of(s.endsWith(litString(args, 0)));
+                }
+
+                // ---- SUBSTRING(begin) or SUBSTRING(begin, end) ------------------
+                case SUBSTRING   -> {
+                    if (!isLitInt(args, 0)) yield so;
+                    int begin = litInt(args, 0);
+                    if (args.size() == 1) {
+                        yield SymLiteral.of(s.substring(begin));
+                    }
+                    if (!isLitInt(args, 1)) yield so;
+                    yield SymLiteral.of(s.substring(begin, litInt(args, 1)));
+                }
+
+                // ---- INDEX_OF(str) or INDEX_OF(str, fromIndex) ------------------
+                case INDEX_OF    -> {
+                    if (!isLitString(args, 0)) yield so;
+                    String needle = litString(args, 0);
+                    if (args.size() == 1) {
+                        yield SymLiteral.of(s.indexOf(needle));
+                    }
+                    if (!isLitInt(args, 1)) yield so;
+                    yield SymLiteral.of(s.indexOf(needle, litInt(args, 1)));
+                }
+
+                // ---- REPLACE(target, replacement) --------------------------------
+                case REPLACE     -> {
+                    if (!isLitString(args, 0) || !isLitString(args, 1)) yield so;
+                    yield SymLiteral.of(s.replace(litString(args, 0), litString(args, 1)));
+                }
+            };
+        } catch (IndexOutOfBoundsException e) {
+            // Out-of-bounds indices at analysis time — leave node symbolic.
+            return so;
+        }
+    }
+
+    // ---- SymStringOp arg-extraction helpers ------------------------------------
+
+    /** Returns true if args[i] is a SymLiteral whose value is a String. */
+    private static boolean isLitString(java.util.List<SymbolicValue> args, int i) {
+        return i < args.size()
+                && args.get(i) instanceof SymLiteral lit
+                && lit.value() instanceof String;
+    }
+
+    /** Returns true if args[i] is a SymLiteral whose value is an integral number. */
+    private static boolean isLitInt(java.util.List<SymbolicValue> args, int i) {
+        if (i >= args.size() || !(args.get(i) instanceof SymLiteral lit)) return false;
+        Object v = lit.value();
+        return v instanceof Integer || v instanceof Long
+                || v instanceof Short || v instanceof Byte;
+    }
+
+    private static String litString(java.util.List<SymbolicValue> args, int i) {
+        return (String) ((SymLiteral) args.get(i)).value();
+    }
+
+    private static int litInt(java.util.List<SymbolicValue> args, int i) {
+        return (int) toLong(((SymLiteral) args.get(i)).value());
     }
 
      private static SymbolicValue foldNeg(Object v) {
