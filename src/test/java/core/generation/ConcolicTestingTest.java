@@ -4,7 +4,10 @@ import core.cfg.Coverage;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
 import core.testdriver.TestDriver;
+import core.testdriver.TestResult;
 import core.testpath.AllPathsFinder;
+import core.testpath.LoopCondensationFlowPathFinder;
+import core.testpath.PathFinder;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 
@@ -172,6 +175,78 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void comparePathFinders_tn1BenchmarkSeq() throws Exception {
+        Path zip = createZipProject("Scholarship.java", """
+                package sample;
+
+                public class Scholarship {
+                    public static int TN1_benchmarkSeq(
+                            int examScore,
+                            int projectScore,
+                            int attendanceDays,
+                            int applicationTier) {
+                        int scholarshipPoints = 0;
+
+                        if (applicationTier >= 1) {
+                            if (examScore > 10) {
+                                scholarshipPoints += 1;
+                            }
+                            if (projectScore > 20) {
+                                scholarshipPoints += 2;
+                            }
+                            if (attendanceDays < 30) {
+                                scholarshipPoints += 4;
+                            }
+                        } else {
+                            if (examScore <= 10) {
+                                scholarshipPoints -= 1;
+                            }
+                        }
+
+                        if (examScore > 0 && projectScore > 0) {
+                            if (attendanceDays > 0) {
+                                scholarshipPoints += 10;
+                            } else {
+                                scholarshipPoints += 20;
+                            }
+                        } else if (examScore > 0) {
+                            scholarshipPoints += 30;
+                        }
+
+                        return scholarshipPoints;
+                    }
+                }
+                """);
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("examScore", 0);
+        seedInput.put("projectScore", 0);
+        seedInput.put("attendanceDays", 0);
+        seedInput.put("applicationTier", 0);
+
+        TestResult oldResult = runTn1Benchmark(zip, seedInput, new AllPathsFinder());
+        TestResult newResult = runTn1Benchmark(zip, seedInput, new LoopCondensationFlowPathFinder());
+
+        System.out.printf(
+                "TN1 AllPathsFinder: tests=%d covered=%d uncovered=%d skipped=%d memory=%d%n",
+                oldResult.size(),
+                oldResult.fullCoverage().getCovered().size(),
+                oldResult.fullCoverage().getUncovered().size(),
+                oldResult.fullCoverage().getSkipped().size(),
+                oldResult.memoryUsageBytes());
+        System.out.printf(
+                "TN1 LoopCondensationFlowPathFinder: tests=%d covered=%d uncovered=%d skipped=%d memory=%d%n",
+                newResult.size(),
+                newResult.fullCoverage().getCovered().size(),
+                newResult.fullCoverage().getUncovered().size(),
+                newResult.fullCoverage().getSkipped().size(),
+                newResult.memoryUsageBytes());
+
+        assertEquals(oldResult.fullCoverage().getUncovered().size(),
+                newResult.fullCoverage().getUncovered().size());
+        assertTrue(newResult.size() <= oldResult.size());
+    }
+
+    @Test
     public void extractInputsFromModel_usesExactPrimitiveArrayFallbacks() throws Exception {
         Z3ModelBindings bindings = new Z3ModelBindings(Map.of(
                 "ints__length", SymLiteral.of(1),
@@ -315,5 +390,23 @@ public class ConcolicTestingTest {
         }
         zip.toFile().deleteOnExit();
         return zip;
+    }
+
+    private TestResult runTn1Benchmark(
+            Path zip,
+            Map<String, Object> seedInput,
+            PathFinder pathFinder) throws Exception {
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "TN1_benchmarkSeq".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        return ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                pathFinder);
     }
 }

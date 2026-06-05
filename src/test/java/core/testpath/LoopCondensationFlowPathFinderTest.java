@@ -199,6 +199,53 @@ public class LoopCondensationFlowPathFinderTest {
 
     @Test
     public void tn1BenchmarkSeq_pathCoverCoversEveryReachableBasicBlock() {
+        ControlFlowGraph cfg = buildTn1BenchmarkSeqCfg();
+        int entry = findNodeByKind(cfg, CfgNodeKind.ENTRY);
+        int exit = findNodeByKind(cfg, CfgNodeKind.EXIT);
+
+        List<List<ControlFlowGraph.Edge>> paths = finder.findPathCover(cfg);
+
+        assertEquals(4, paths.size());
+        assertAllPathsBounded(paths, entry, exit);
+        assertEquals(relevantNodes(cfg, entry, exit), coveredNodes(paths));
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=1");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=2");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=4");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints-=1");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=10");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=20");
+        assertPathCoverContains(cfg, paths, "scholarshipPoints+=30");
+        assertPathCoverContains(cfg, paths, "return scholarshipPoints;");
+    }
+
+    @Test
+    public void tn1BenchmarkSeq_newFinderUsesLowerPathCostThanOldFinderForUncoveredBatch() {
+        ControlFlowGraph cfg = buildTn1BenchmarkSeqCfg();
+        int entry = findNodeByKind(cfg, CfgNodeKind.ENTRY);
+        int exit = findNodeByKind(cfg, CfgNodeKind.EXIT);
+        CoverageTracker tracker = new CoverageTracker(relevantNodes(cfg, entry, exit));
+        tracker.markCovered(entry);
+        tracker.markCovered(exit);
+
+        AllPathsFinder oldFinder = new AllPathsFinder();
+        oldFinder.setMAX_LOOP_ITERATIONS(0);
+        int oldCost = 0;
+        for (int uncovered : tracker.getUncovered()) {
+            oldCost += oldFinder.findPath(cfg, tracker.pathTargetFor(uncovered)).size();
+        }
+
+        List<List<ControlFlowGraph.Edge>> newBatch = finder.findPathsForUncovered(cfg, tracker);
+        int newCost = newBatch.size();
+
+        assertTrue("Old finder should generate candidate paths for the benchmark", oldCost > 0);
+        assertTrue("New loop-flow finder should require fewer paths than old per-node search",
+                newCost < oldCost);
+        assertEquals(tracker.getUncovered(), coveredNodes(newBatch).stream()
+                .filter(tracker::isUncovered)
+                .collect(Collectors.toSet()));
+    }
+
+    private ControlFlowGraph buildTn1BenchmarkSeqCfg() {
         String src = """
                 public static int TN1_benchmarkSeq(
                         int examScore,
@@ -237,23 +284,7 @@ public class LoopCondensationFlowPathFinderTest {
                 }
                 """;
         List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
-        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
-        int entry = findNodeByKind(cfg, CfgNodeKind.ENTRY);
-        int exit = findNodeByKind(cfg, CfgNodeKind.EXIT);
-
-        List<List<ControlFlowGraph.Edge>> paths = finder.findPathCover(cfg);
-
-        assertEquals(4, paths.size());
-        assertAllPathsBounded(paths, entry, exit);
-        assertEquals(relevantNodes(cfg, entry, exit), coveredNodes(paths));
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=1");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=2");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=4");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints-=1");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=10");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=20");
-        assertPathCoverContains(cfg, paths, "scholarshipPoints+=30");
-        assertPathCoverContains(cfg, paths, "return scholarshipPoints;");
+        return new CfgBuilder().build((MethodDeclaration) methods.get(0));
     }
 
     private int addEntry(ControlFlowGraph cfg) {
