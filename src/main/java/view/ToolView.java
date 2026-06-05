@@ -3,12 +3,16 @@ package view;
 import core.cfg.Coverage;
 import core.generation.ConcolicTesting;
 import core.generation.Project;
+import core.generation.RandomTestInput;
 import core.instrument.InstrumentationPlan;
 import core.instrument.InstrumentationPlanner;
 import core.instrument.TracePoint;
 import core.parser.ParseEntry;
 import core.testdriver.TestData;
 import core.testdriver.TestResult;
+import core.testpath.AllPathsFinder;
+import core.testpath.LoopCondensationFlowPathFinder;
+import core.testpath.PathFinder;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +32,7 @@ public class ToolView {
     public Label projectPath;
     public RadioButton originalConcolic;
     public RadioButton greedyPathFinder;
+    public RadioButton flowNetworkPathFinder;
     public RadioButton statementCoverage;
     public RadioButton branchCoverage;
     public RadioButton mcdcCoverage;
@@ -80,6 +85,7 @@ public class ToolView {
         ToggleGroup modeGroup = new ToggleGroup();
         originalConcolic.setToggleGroup(modeGroup);
         greedyPathFinder.setToggleGroup(modeGroup);
+        flowNetworkPathFinder.setToggleGroup(modeGroup);
         originalConcolic.setSelected(true);
 
         ToggleGroup coverageGroup = new ToggleGroup();
@@ -300,7 +306,9 @@ public class ToolView {
             TestResult result = ConcolicTesting.getInstance().generate(
                     loc.methodDeclaration,
                     rootAst,
-                    coverage
+                    coverage,
+                    RandomTestInput.createRandomTestData(loc.methodDeclaration),
+                    getSelectedPathFinder()
             );
             long elapsedMillis = System.currentTimeMillis() - startTime;
 
@@ -323,6 +331,13 @@ public class ToolView {
             return Coverage.MCDC;
         }
         return Coverage.STATEMENT;
+    }
+
+    private PathFinder getSelectedPathFinder() {
+        if (flowNetworkPathFinder.isSelected()) {
+            return new LoopCondensationFlowPathFinder();
+        }
+        return new AllPathsFinder();
     }
 
     private void updateSummary(TestResult result, long elapsedMillis) {

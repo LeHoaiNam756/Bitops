@@ -8,6 +8,7 @@ import core.SymbolicExecution.model.SymArraySelect;
 import core.SymbolicExecution.model.SymBinaryOp;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.model.SymStringOp;
+import core.SymbolicExecution.model.SymUnaryOp;
 import core.SymbolicExecution.model.SymVariable;
 import core.SymbolicExecution.model.types.ObjectSymType;
 import org.junit.Test;
@@ -64,6 +65,42 @@ public class Z3EncoderTest {
             Z3Encoder encoder = new Z3Encoder(resolver);
             SymBinaryOp masked = new SymBinaryOp(new SymVariable("x"), SymBinaryOp.Op.BAND, SymLiteral.of(255));
             SymBinaryOp constraint = new SymBinaryOp(masked, SymBinaryOp.Op.SLT, new SymVariable("y"));
+
+            List<BoolExpr> encoded = encoder.encodeAll(List.of(constraint));
+
+            assertEquals(1, encoded.size());
+            assertEquals(ctx.getBoolSort(), encoded.get(0).getSort());
+        }
+    }
+
+    @Test
+    public void encodeAll_boolEquality_doesNotCoerceToBitVec() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of(
+                    "a", ctx.getBoolSort(),
+                    "b", ctx.getBoolSort()
+            ));
+            Z3Encoder encoder = new Z3Encoder(resolver);
+            SymBinaryOp constraint = new SymBinaryOp(
+                    new SymVariable("a"),
+                    SymBinaryOp.Op.EQ,
+                    new SymVariable("b"));
+
+            List<BoolExpr> encoded = encoder.encodeAll(List.of(constraint));
+
+            assertEquals(1, encoded.size());
+            assertEquals(ctx.getBoolSort(), encoded.get(0).getSort());
+        }
+    }
+
+    @Test
+    public void encodeAll_notOfBoolEquality_doesNotCoerceToBitVec() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of());
+            Z3Encoder encoder = new Z3Encoder(resolver);
+            SymUnaryOp constraint = new SymUnaryOp(
+                    SymUnaryOp.Op.NOT,
+                    new SymBinaryOp(SymLiteral.of(true), SymBinaryOp.Op.EQ, SymLiteral.of(false)));
 
             List<BoolExpr> encoded = encoder.encodeAll(List.of(constraint));
 

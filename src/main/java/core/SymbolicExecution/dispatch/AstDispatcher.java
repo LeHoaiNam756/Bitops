@@ -16,11 +16,15 @@ public class AstDispatcher {
     }
 
     public SymbolicValue eval(ASTNode node, SymbolicState state) {
+        if (node == null) {
+            return null;
+        }
+
         for (AstHandler handler : handlers) {
             if (handler.supports(node)) {
                 return handler.eval(node, state, this);
             }
         }
-        throw new IllegalArgumentException("No handler for AST node: " + node.getClass());
+        return null;
     }
 }

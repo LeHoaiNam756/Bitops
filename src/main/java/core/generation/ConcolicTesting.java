@@ -78,11 +78,11 @@ public class ConcolicTesting {
                 new AllPathsFinder());
     }
 
-    TestResult generate(MethodDeclaration methodDeclaration,
-                        CompilationUnit cu,
-                        Coverage coverage,
-                        Map<String, Object> randomInput,
-                        PathFinder pathFinder) throws Exception {
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               Map<String, Object> randomInput,
+                               PathFinder pathFinder) throws Exception {
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
 

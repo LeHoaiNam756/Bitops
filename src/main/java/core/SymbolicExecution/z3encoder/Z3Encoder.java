@@ -626,8 +626,12 @@ public final class Z3Encoder {
                                       Expr<?> l, Expr<?> r,
                                       Sort leftSort, Sort rightSort,
                                       SymBinaryOp node) {
-        // For numeric comparisons coerce operands to a common BV width first.
-        if (isNumericComparison(op)) {
+        if (isEqualityComparison(op)) {
+            return encodeEquality(op, l, r, leftSort, rightSort, node);
+        }
+
+        // For relational numeric comparisons coerce operands to a common BV width first.
+        if (isRelationalComparison(op)) {
             BitVecSort target = commonBVSort(leftSort, rightSort);
             BitVecExpr bvL = coerceToBV(l, leftSort,  target);
             BitVecExpr bvR = coerceToBV(r, rightSort, target);
@@ -640,6 +644,27 @@ public final class Z3Encoder {
             default  -> throw new EncodingException(
                     "Op '" + op + "' not a bool-result binary op", node);
         };
+    }
+
+    private BoolExpr encodeEquality(SymBinaryOp.Op op,
+                                    Expr<?> l, Expr<?> r,
+                                    Sort leftSort, Sort rightSort,
+                                    SymBinaryOp node) {
+        BoolExpr equality;
+        if (leftSort.equals(rightSort)) {
+            equality = ctx.mkEq(l, r);
+        } else if (canCoerceToBV(leftSort) && canCoerceToBV(rightSort)) {
+            BitVecSort target = commonBVSort(leftSort, rightSort);
+            equality = ctx.mkEq(
+                    coerceToBV(l, leftSort, target),
+                    coerceToBV(r, rightSort, target));
+        } else {
+            throw new EncodingException(
+                    "Cannot compare sorts " + leftSort + " and " + rightSort + " with " + op,
+                    node);
+        }
+
+        return op == SymBinaryOp.Op.NEQ ? ctx.mkNot(equality) : equality;
     }
 
     private BoolExpr encodeBVComparison(SymBinaryOp.Op op,
@@ -818,10 +843,20 @@ public final class Z3Encoder {
         return s instanceof FPSort;
     }
 
-    private static boolean isNumericComparison(SymBinaryOp.Op op) {
+    private static boolean isEqualityComparison(SymBinaryOp.Op op) {
+        return op == SymBinaryOp.Op.EQ || op == SymBinaryOp.Op.NEQ;
+    }
+
+    private static boolean isRelationalComparison(SymBinaryOp.Op op) {
         return switch (op) {
-            case EQ, NEQ, SGT, SLT, SGE, SLE, UGT, UGE, ULT, ULE -> true;
+            case SGT, SLT, SGE, SLE, UGT, UGE, ULT, ULE -> true;
             default -> false;
         };
+    }
+
+    private boolean canCoerceToBV(Sort sort) {
+        return sort instanceof BitVecSort
+                || sort instanceof FPSort
+                || sort.equals(sorts.intSort());
     }
 }
