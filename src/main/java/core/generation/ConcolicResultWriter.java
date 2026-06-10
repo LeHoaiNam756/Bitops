@@ -51,6 +51,7 @@ public final class ConcolicResultWriter {
         json.put("totalCoverage", totalCoverage(result.fullCoverage()));
         json.put("memoryUseBytes", result.memoryUsageBytes());
         json.put("memoryUseMb", result.memoryUsageBytes() / (1024.0 * 1024.0));
+        json.put("executionTimeMs", result.executionTimeMillis());
         json.put("z3Statistics", z3Statistics);
         return json;
     }

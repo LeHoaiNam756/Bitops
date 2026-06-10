@@ -302,7 +302,6 @@ public class ToolView {
                 throw new IllegalStateException("Cannot find root AST for selected method: " + loc.methodName);
             }
 
-            long startTime = System.currentTimeMillis();
             TestResult result = ConcolicTesting.getInstance().generate(
                     loc.methodDeclaration,
                     rootAst,
@@ -310,9 +309,8 @@ public class ToolView {
                     RandomTestInput.createRandomTestData(loc.methodDeclaration),
                     getSelectedPathFinder()
             );
-            long elapsedMillis = System.currentTimeMillis() - startTime;
 
-            updateSummary(result, elapsedMillis);
+            updateSummary(result);
             prepareCoverageHighlighting(loc, rootAst, coverage, result);
             updateReportTable(result);
         } catch (Exception e) {
@@ -340,7 +338,7 @@ public class ToolView {
         return new AllPathsFinder();
     }
 
-    private void updateSummary(TestResult result, long elapsedMillis) {
+    private void updateSummary(TestResult result) {
         if (result == null) {
             return;
         }
@@ -351,7 +349,7 @@ public class ToolView {
             memoryUsageLabel.setText(String.format("%.2f MB", result.memoryUsageBytes() / (1024.0 * 1024.0)));
         }
         if (runtimeLabel != null) {
-            runtimeLabel.setText(String.format("%d ms", elapsedMillis));
+            runtimeLabel.setText(String.format("%d ms", result.executionTimeMillis()));
         }
     }
 

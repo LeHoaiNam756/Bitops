@@ -84,6 +84,7 @@ public class ConcolicTesting {
                                Coverage coverage,
                                Map<String, Object> randomInput,
                                PathFinder pathFinder) throws Exception {
+        long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
 
@@ -217,10 +218,12 @@ public class ConcolicTesting {
         }
 
         // --- 8. Assemble result ---------------------------------------------
+        long elapsedMillis = Math.max(0L, (System.nanoTime() - startNanos) / 1_000_000L);
         TestResult result = new TestResult(
                 allTestData,
                 tracker,
-                MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage));
+                MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage),
+                elapsedMillis);
         ConcolicResultWriter.write(methodDeclaration, result, coverage, Z3StatisticsRecorder.snapshot());
         return result;
     }

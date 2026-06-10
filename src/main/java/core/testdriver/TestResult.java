@@ -22,6 +22,8 @@ import java.util.Objects;
  *   <li>{@link #memoryUsageBytes()} — bytes allocated by the current thread during
  *       the entire generation run, measured by the caller with
  *       {@code com.sun.management.ThreadMXBean}.</li>
+ *   <li>{@link #executionTimeMillis()} — wall-clock execution time for the
+ *       generation run, in milliseconds.</li>
  * </ul>
  *
  * <p>Instances are immutable.  Use {@link Builder} to assemble the result
@@ -35,7 +37,7 @@ import java.util.Objects;
  * }
  *
  * // fullCoverage is the CoverageTracker fed probes from every test case combined
- * TestResult result = builder.build(fullRunTracker, allocatedBytes);
+ * TestResult result = builder.build(fullRunTracker, allocatedBytes, elapsedMillis);
  * }</pre>
  */
 public final class TestResult {
@@ -43,6 +45,7 @@ public final class TestResult {
     private final List<TestData>  testDataList;
     private final CoverageTracker fullCoverage;
     private final long            memoryUsageBytes;
+    private final long            executionTimeMillis;
 
     // -----------------------------------------------------------------------
     // Construction
@@ -58,9 +61,25 @@ public final class TestResult {
     public TestResult(List<TestData> testDataList,
                       CoverageTracker fullCoverage,
                       long memoryUsageBytes) {
+        this(testDataList, fullCoverage, memoryUsageBytes, 0L);
+    }
+
+    /**
+     * Direct constructor — prefer {@link Builder} for incremental assembly.
+     *
+     * @param testDataList          all test cases (defensive copy is taken)
+     * @param fullCoverage          coverage tracker updated by running all test cases
+     * @param memoryUsageBytes      current-thread allocated bytes over the generation run
+     * @param executionTimeMillis   wall-clock execution time over the generation run
+     */
+    public TestResult(List<TestData> testDataList,
+                      CoverageTracker fullCoverage,
+                      long memoryUsageBytes,
+                      long executionTimeMillis) {
         this.testDataList     = List.copyOf(Objects.requireNonNull(testDataList, "testDataList"));
         this.fullCoverage     = Objects.requireNonNull(fullCoverage, "fullCoverage");
         this.memoryUsageBytes = memoryUsageBytes;
+        this.executionTimeMillis = executionTimeMillis;
     }
 
     // -----------------------------------------------------------------------
@@ -95,6 +114,13 @@ public final class TestResult {
         return memoryUsageBytes;
     }
 
+    /**
+     * Wall-clock execution time for the generation run, in milliseconds.
+     */
+    public long executionTimeMillis() {
+        return executionTimeMillis;
+    }
+
     /** Convenience: number of test cases in this result. */
     public int size() {
         return testDataList.size();
@@ -110,6 +136,7 @@ public final class TestResult {
                 + "cases=" + testDataList.size()
                 + ", fullCoverage=" + fullCoverage
                 + ", memoryUsageBytes=" + memoryUsageBytes
+                + ", executionTimeMillis=" + executionTimeMillis
                 + '}';
     }
 
@@ -125,7 +152,7 @@ public final class TestResult {
      * builder.add(testData1);
      * builder.add(testData2);
      * // fullRunTracker has been fed probes from all test cases combined
-     * TestResult result = builder.build(fullRunTracker, heapDelta);
+     * TestResult result = builder.build(fullRunTracker, heapDelta, elapsedMillis);
      * }</pre>
      */
     public static final class Builder {
@@ -145,7 +172,20 @@ public final class TestResult {
          * @param memoryUsageBytes current-thread allocated bytes measured over the whole run
          */
         public TestResult build(CoverageTracker fullCoverage, long memoryUsageBytes) {
-            return new TestResult(cases, fullCoverage, memoryUsageBytes);
+            return build(fullCoverage, memoryUsageBytes, 0L);
+        }
+
+        /**
+         * Finalise and return the immutable {@link TestResult}.
+         *
+         * @param fullCoverage          coverage tracker updated by the full test suite run
+         * @param memoryUsageBytes      current-thread allocated bytes measured over the whole run
+         * @param executionTimeMillis   wall-clock execution time measured over the whole run
+         */
+        public TestResult build(CoverageTracker fullCoverage,
+                                long memoryUsageBytes,
+                                long executionTimeMillis) {
+            return new TestResult(cases, fullCoverage, memoryUsageBytes, executionTimeMillis);
         }
     }
 }

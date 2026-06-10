@@ -63,6 +63,7 @@ public class ConcolicResultWriterTest {
         assertEquals("same", root.get(0).path("methodName").asText());
         assertEquals("STATEMENT", root.get(0).path("coverageType").asText());
         assertEquals("BRANCH", root.get(1).path("coverageType").asText());
+        assertEquals(250L, root.get(0).path("executionTimeMs").asLong());
     }
 
     private static TestResult resultWithCoverage() {
@@ -71,7 +72,8 @@ public class ConcolicResultWriterTest {
         return new TestResult(
                 List.of(new TestData(Map.of("x", 1))),
                 tracker,
-                1024
+                1024,
+                250
         );
     }
 
