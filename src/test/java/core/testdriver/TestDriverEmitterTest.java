@@ -15,7 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -70,7 +73,8 @@ public class TestDriverEmitterTest {
         );
 
         assertTrue("driver should import TraceRecorder", emitted.contains("import core.testpath.TraceRecorder;"));
-        assertTrue("driver should start a trace session", emitted.contains("TraceRecorder.startSession(\"sample.Calculator#add\""));
+        assertTrue("driver should keep the trace session name", emitted.contains("SESSION_NAME = \"sample.Calculator#add\""));
+        assertTrue("driver should start a trace session", emitted.contains("TraceRecorder.startSession(SESSION_NAME"));
         assertTrue("driver should end the trace session", emitted.contains("TraceRecorder.endSession();"));
     }
 
@@ -132,10 +136,162 @@ public class TestDriverEmitterTest {
                 "wanted.DriverMain".equals(driverFqn));
     }
 
+    @Test
+    public void generatedDriverInvokesPublicConstructorUnit() throws Exception {
+        String source = """
+                package sample;
+
+                public class CtorSubject {
+                    public CtorSubject(int x) {
+                        core.testpath.TraceRecorder.mark(101, core.instrument.TraceKind.NODE);
+                    }
+                }
+                """;
+
+        MethodDeclaration constructor = compileAndGenerateDriver(
+                "CtorSubject",
+                source,
+                method -> method.isConstructor() && method.parameters().size() == 1
+        );
+
+        TestData data = TestDriver.run(
+                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                TestDriver.extractParams(constructor),
+                Map.of("x", 7),
+                Files.createTempDirectory("ct4j-driver-run")
+        );
+
+        assertEquals("CONSTRUCTED: CtorSubject", data.output());
+        assertTrue("constructor coverage should be captured before endSession clears it",
+                data.coveredNodeIds().contains(101));
+    }
+
+    @Test
+    public void generatedDriverInvokesPrivateConstructorUnit() throws Exception {
+        String source = """
+                package sample;
+
+                public class PrivateCtorSubject {
+                    private PrivateCtorSubject(String value) {
+                        core.testpath.TraceRecorder.mark(102, core.instrument.TraceKind.NODE);
+                    }
+                }
+                """;
+
+        MethodDeclaration constructor = compileAndGenerateDriver(
+                "PrivateCtorSubject",
+                source,
+                method -> method.isConstructor()
+        );
+
+        TestData data = TestDriver.run(
+                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                TestDriver.extractParams(constructor),
+                Map.of("value", "abc"),
+                Files.createTempDirectory("ct4j-driver-run")
+        );
+
+        assertEquals("CONSTRUCTED: PrivateCtorSubject", data.output());
+        assertTrue(data.coveredNodeIds().contains(102));
+    }
+
+    @Test
+    public void generatedDriverCapturesConstructorExceptionCoverage() throws Exception {
+        String source = """
+                package sample;
+
+                public class FailingCtorSubject {
+                    public FailingCtorSubject(String value) {
+                        core.testpath.TraceRecorder.mark(103, core.instrument.TraceKind.NODE);
+                        throw new IllegalArgumentException("bad " + value);
+                    }
+                }
+                """;
+
+        MethodDeclaration constructor = compileAndGenerateDriver(
+                "FailingCtorSubject",
+                source,
+                method -> method.isConstructor()
+        );
+
+        TestData data = TestDriver.run(
+                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                TestDriver.extractParams(constructor),
+                Map.of("value", "input"),
+                Files.createTempDirectory("ct4j-driver-run")
+        );
+
+        assertTrue(data.output().startsWith("EXCEPTION: java.lang.IllegalArgumentException: bad input"));
+        assertTrue("exception path should still report covered nodes",
+                data.coveredNodeIds().contains(103));
+    }
+
+    @Test
+    public void generatedDriverInvokesPrivateMethodUnit() throws Exception {
+        String source = """
+                package sample;
+
+                public class PrivateMethodSubject {
+                    private int twice(int x) {
+                        core.testpath.TraceRecorder.mark(104, core.instrument.TraceKind.NODE);
+                        return x * 2;
+                    }
+                }
+                """;
+
+        MethodDeclaration method = compileAndGenerateDriver(
+                "PrivateMethodSubject",
+                source,
+                candidate -> "twice".equals(candidate.getName().getIdentifier())
+        );
+
+        TestData data = TestDriver.run(
+                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                TestDriver.extractParams(method),
+                Map.of("x", 3),
+                Files.createTempDirectory("ct4j-driver-run")
+        );
+
+        assertEquals("6", data.output());
+        assertTrue(data.coveredNodeIds().contains(104));
+    }
+
     private static CompilationUnit parse(String source) {
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(source.toCharArray());
         return (CompilationUnit) parser.createAST(null);
+    }
+
+    private static MethodDeclaration compileAndGenerateDriver(String className,
+                                                              String source,
+                                                              Predicate<MethodDeclaration> selector)
+            throws Exception {
+        Path tempDir = Files.createTempDirectory("ct4j-driver-test");
+        Path sourceDir = tempDir.resolve("sample");
+        Files.createDirectories(sourceDir);
+        Path instrumentedFile = sourceDir.resolve(className + ".java");
+        Files.writeString(instrumentedFile, source, StandardCharsets.UTF_8);
+        Compiler.getInstance().compileJavaFile(
+                instrumentedFile.toString(),
+                FilePath.PATH_TO_MAVEN_TARGET_CLASSES
+        );
+
+        CompilationUnit cu = parse(source);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = null;
+        for (MethodDeclaration candidate : type.getMethods()) {
+            if (selector.test(candidate)) {
+                method = candidate;
+                break;
+            }
+        }
+        assertTrue("test source should contain selected unit", method != null);
+
+        TestDriver.generate(
+                new InstrumentationFactory.InstrumentationProduct(null, null, instrumentedFile, null),
+                method
+        );
+        return method;
     }
 }

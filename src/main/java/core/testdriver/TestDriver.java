@@ -82,7 +82,8 @@ public final class TestDriver {
                 className,
                 method.getName().getIdentifier(),
                 params,
-                returnTypeName(method)
+                returnTypeName(method),
+                method.isConstructor()
         );
 
         Path driverFile = outputDir.resolve("DriverMain.java");

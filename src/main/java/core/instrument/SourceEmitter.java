@@ -122,17 +122,12 @@ public final class SourceEmitter {
         }
         sb.append(" {\n");
 
-        // Fields – reproduced verbatim
-        for (FieldDeclaration fd : td.getFields()) {
-            sb.append(fd).append("\n");
-        }
-
-        // Methods
-        for (MethodDeclaration md : td.getMethods()) {
-            if (md.isConstructor()) {
-                sb.append(md).append("\n");
-            } else {
+        // Preserve declarations such as fields, initializers, constructors, and nested types.
+        for (Object rawBody : td.bodyDeclarations()) {
+            if (rawBody instanceof MethodDeclaration md && !md.isConstructor()) {
                 emitMethod(md, ctx, sb);
+            } else {
+                sb.append(rawBody).append("\n");
             }
         }
 

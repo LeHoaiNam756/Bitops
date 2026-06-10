@@ -16,6 +16,7 @@ import java.util.zip.ZipOutputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ProjectTest {
     @Test
@@ -41,6 +42,20 @@ public class ProjectTest {
         CompilationUnit root = project.getRootAST(project.getMethods().get(0));
         assertNull(root.getJavaElement());
         assertEquals("Sample.java", root.getProperty(ParseEntry.SOURCE_FILE_NAME_PROPERTY));
+    }
+
+    @Test
+    public void getMethodsIncludesConstructorsAsUnits() throws IOException {
+        Path zip = createZipProject(
+                "Sample.java",
+                "class Sample { Sample() {} Sample(int x) {} int add() { return 1; } }");
+
+        Project project = new Project(zip);
+
+        List<MethodDeclaration> methods = project.getMethods();
+        assertEquals(3, methods.size());
+        assertEquals(2, methods.stream().filter(MethodDeclaration::isConstructor).count());
+        assertTrue(methods.stream().anyMatch(method -> "add".equals(method.getName().getIdentifier())));
     }
 
     private static Path createZipProject(String fileName, String source) throws IOException {

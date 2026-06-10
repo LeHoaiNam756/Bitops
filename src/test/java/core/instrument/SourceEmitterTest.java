@@ -3,8 +3,14 @@ package core.instrument;
 import core.cfg.CfgBuilder;
 import core.cfg.ControlFlowGraph;
 import core.cfg.Coverage;
+import core.utils.Compiler;
+import core.utils.FilePath;
 import org.eclipse.jdt.core.dom.*;
 import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -128,6 +134,47 @@ public class SourceEmitterTest {
                 emitted.contains("TraceKind.COND_F"));
         assertFalse("MCDC coverage should not emit statement node markers",
                 emitted.contains("TraceKind.NODE"));
+    }
+
+    @Test
+    public void preservesStaticInitializersThatAssignBlankFinalFields() throws Exception {
+        CompilationUnit cu = parse("""
+                package com.xk72.charles.gui;
+
+                public final class P {
+                    private static final String[] n;
+
+                    static {
+                        n = new String[] {"x"};
+                    }
+
+                    private String lookup(int i) {
+                        return n[i];
+                    }
+                }
+
+                class LicenceException extends Exception {
+                    LicenceException(String message) {
+                        super(message);
+                    }
+                }
+                """);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        ControlFlowGraph cfg = new CfgBuilder().build(method);
+        InstrumentationPlan plan = new InstrumentationPlanner().plan(cu, cfg, Coverage.STATEMENT);
+
+        String emitted = new SourceEmitter().emit(cu, plan, Coverage.STATEMENT, "core.output.clone");
+
+        assertTrue("static initializer should be preserved", emitted.contains("static"));
+        assertTrue("blank final field assignment should be preserved", emitted.contains("new String[]"));
+
+        Path tempDir = Files.createTempDirectory("ct4j-p-like-clone-");
+        Path emittedFile = tempDir.resolve("P.java");
+        Files.writeString(emittedFile, emitted, StandardCharsets.UTF_8);
+        Compiler.getInstance().compileJavaFile(
+                emittedFile.toString(),
+                FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
     }
 
     private static CompilationUnit parse(String source) {
