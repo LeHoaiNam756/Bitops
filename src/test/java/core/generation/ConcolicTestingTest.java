@@ -8,6 +8,7 @@ import core.testdriver.TestResult;
 import core.testpath.AllPathsFinder;
 import core.testpath.LoopCondensationFlowPathFinder;
 import core.testpath.PathFinder;
+import core.utils.FilePath;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 
@@ -105,6 +106,48 @@ public class ConcolicTestingTest {
         assertEquals(0, result.fullCoverage().getUncovered().size());
         assertEquals(0, result.fullCoverage().getSkipped().size());
         assertEquals(7, result.fullCoverage().getCovered().size());
+    }
+
+    @Test
+    public void generate_publicSolutionFromLeetCodeStyleFileKeepsMethodNamedResultJson() throws Exception {
+        Path zip = createZipProject("0191-number-of-1-bits.java", """
+                public class Solution {
+                    public int hammingWeight(int n) {
+                        int count = 0;
+                        for (int i = 0; i < 32; i++) {
+                            if ((n & 1) == 1) {
+                                count++;
+                            }
+                            n = n >> 1;
+                        }
+                        return count;
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "hammingWeight".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("n", 1);
+
+        AllPathsFinder allPathsFinder = new AllPathsFinder();
+        allPathsFinder.setMAX_LOOP_ITERATIONS(32);
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                allPathsFinder);
+
+        assertFalse(result.testDataList().isEmpty());
+        assertEquals("1", result.testDataList().get(0).output());
+        assertTrue(Files.exists(Path.of(FilePath.PATH_TO_CLONED_PROJECT, "Solution.java")));
+        assertTrue(Files.exists(Path.of(
+                FilePath.PATH_TO_TOOL_OUTPUT,
+                "concolic-results",
+                "hammingWeight.json")));
     }
 
     @Test

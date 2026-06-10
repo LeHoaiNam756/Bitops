@@ -9,6 +9,8 @@ import core.utils.FilePath;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,7 +52,7 @@ public class InstrumentationFactory {
         String instrumentedSource = emitter.emit(
                 cu, plan, coverage, FilePath.CLONED_PROJECT_ROOT_PACKAGE);
         prepareCloneDirectory();
-        String instrumentedProductPath = writeCloneFile(fileNameFor(cu), instrumentedSource);
+        String instrumentedProductPath = writeCloneFile(cloneFileNameFor(cu), instrumentedSource);
         try {
             core.utils.Compiler.getInstance().compileJavaFile(
                     instrumentedProductPath, FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
@@ -99,5 +101,15 @@ public class InstrumentationFactory {
             return fileName;
         }
         throw new IllegalArgumentException("CompilationUnit does not contain a source file name");
+    }
+
+    static String cloneFileNameFor(CompilationUnit cu) {
+        for (Object rawType : cu.types()) {
+            if (rawType instanceof TypeDeclaration td
+                    && Modifier.isPublic(td.getModifiers())) {
+                return td.getName().getIdentifier() + ".java";
+            }
+        }
+        return fileNameFor(cu);
     }
 }
