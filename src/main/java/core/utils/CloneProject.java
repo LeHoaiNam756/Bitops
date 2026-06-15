@@ -53,10 +53,16 @@ public final class CloneProject {
             ProjectParser parser = new ProjectParser();
             parser.loadFile(file2TestPath);
             CompilationUnit compilationUnit = parser.getCompilationUnit();
-            createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, file.getName());
+
+            // Extract the actual class name from the CompilationUnit
+            String actualClassName = extractClassName(compilationUnit);
+            String correctFileName = actualClassName + ".java";
+
+            createFile(FilePath.JCIA_PROJECT_ROOT_PATH + File.separator + FilePath.PATH_TO_CLONED_PROJECT, correctFileName);
             String sourceCode = createCloneSourceCode(compilationUnit, coverage);
-            writeDataToFile(sourceCode, FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName());
-            return FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + file.getName();
+            String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + File.separator + FilePath.PATH_TO_CLONED_PROJECT + File.separator + correctFileName;
+            writeDataToFile(sourceCode, filePath);
+            return filePath;
         } catch (IOException e) {
             throw new RuntimeException("Error processing file: " + file2TestPath, e);
         }
@@ -97,6 +103,24 @@ public final class CloneProject {
         return result.toString();
     }
 
+
+    /**
+     * Extracts the class name from a CompilationUnit
+     */
+    private static String extractClassName(CompilationUnit compilationUnit) {
+        List<TypeDeclaration> classes = new ArrayList<>();
+        compilationUnit.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(TypeDeclaration node) {
+                classes.add(node);
+                return super.visit(node);
+            }
+        });
+        if (classes.isEmpty()) {
+            throw new RuntimeException("No class found in compilation unit");
+        }
+        return classes.get(0).getName().toString();
+    }
 
     /**
      * Finds the root package directory of a Java project given a specific target
@@ -290,9 +314,9 @@ public final class CloneProject {
             fileName = fileName + ".java";
         }
 
-        createFile(FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT, fileName);
+        createFile(FilePath.JCIA_PROJECT_ROOT_PATH + File.separator + FilePath.PATH_TO_CLONED_PROJECT, fileName);
         String sourceCode = createCloneSourceCode(compilationUnit, coverage);
-        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + "\\" + FilePath.PATH_TO_CLONED_PROJECT + "\\" + fileName;
+        String filePath = FilePath.JCIA_PROJECT_ROOT_PATH + File.separator + FilePath.PATH_TO_CLONED_PROJECT + File.separator + fileName;
         writeDataToFile(sourceCode, filePath);
 
         try {
@@ -673,3 +697,4 @@ public final class CloneProject {
         return res;
     }
 }
+
