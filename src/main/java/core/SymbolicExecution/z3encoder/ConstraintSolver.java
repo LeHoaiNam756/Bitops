@@ -75,6 +75,10 @@ public final class ConstraintSolver implements AutoCloseable {
     private final SortResolver sortResolver;
     private final Z3Encoder encoder;
     private final ModelExtractor extractor;
+    private final LegacySortResolver legacySortResolver;
+    private final LegacyZ3Encoder legacyEncoder;
+    private final LegacyModelExtractor legacyExtractor;
+    private final Z3EncodingMode encodingMode;
 
     // =========================================================================
     // Construction
@@ -86,8 +90,15 @@ public final class ConstraintSolver implements AutoCloseable {
      * @param factory   shared SymValueFactory (intern table for the analysis session)
      */
     public ConstraintSolver(Map<String, SymType> varTypes, SymValueFactory factory) {
+        this(varTypes, factory, Z3EncodingMode.BITVECTOR);
+    }
+
+    public ConstraintSolver(Map<String, SymType> varTypes,
+                            SymValueFactory factory,
+                            Z3EncodingMode encodingMode) {
         // One Z3 Context per solver instance (not thread-safe; one per thread)
         this.ctx = new Context();
+        this.encodingMode = encodingMode == null ? Z3EncodingMode.BITVECTOR : encodingMode;
 
         // Z3 solver with incremental push/pop support
         this.z3Solver = ctx.mkSolver();
@@ -97,10 +108,15 @@ public final class ConstraintSolver implements AutoCloseable {
         params.add("timeout", 5_000);  // milliseconds
         z3Solver.setParameters(params);
 
-        // Build the sort map from the caller's SymType map
+        // Build both pipelines from the caller's SymType map. Only one is used
+        // per solver instance, but keeping both initialized preserves the
+        // existing constructor shape and keeps mode selection localized here.
         this.sortResolver = new SortResolver(ctx, buildSortMap(varTypes));
         this.encoder      = new Z3Encoder(sortResolver);
         this.extractor    = new ModelExtractor(sortResolver);
+        this.legacySortResolver = new LegacySortResolver(ctx, varTypes);
+        this.legacyEncoder      = new LegacyZ3Encoder(legacySortResolver);
+        this.legacyExtractor    = new LegacyModelExtractor(legacySortResolver);
     }
 
     /**
@@ -108,6 +124,11 @@ public final class ConstraintSolver implements AutoCloseable {
      */
     public static ConstraintSolver create(Map<String, SymType> varTypes) {
         return new ConstraintSolver(varTypes, SymValueFactory.global());
+    }
+
+    public static ConstraintSolver create(Map<String, SymType> varTypes,
+                                          Z3EncodingMode encodingMode) {
+        return new ConstraintSolver(varTypes, SymValueFactory.global(), encodingMode);
     }
 
     // =========================================================================
@@ -144,7 +165,9 @@ public final class ConstraintSolver implements AutoCloseable {
         // ── Step 2: Encode simplified constraints to Z3 BoolExprs ─────────────
         List<BoolExpr> z3Constraints;
         try {
-            z3Constraints = encoder.encodeAll(live);
+            z3Constraints = encodingMode == Z3EncodingMode.LEGACY_INT_REAL
+                    ? legacyEncoder.encodeAll(live)
+                    : encoder.encodeAll(live);
             System.out.println(z3Constraints);
         } catch (EncodingException e) {
             // Encoding failure: report as UNKNOWN (conservative, not UNSAT)
@@ -165,7 +188,9 @@ public final class ConstraintSolver implements AutoCloseable {
 
             case SATISFIABLE -> {
                 Model           model    = z3Solver.getModel();
-                Z3ModelBindings bindings = extractor.extract(model);
+                Z3ModelBindings bindings = encodingMode == Z3EncodingMode.LEGACY_INT_REAL
+                        ? legacyExtractor.extract(model)
+                        : extractor.extract(model);
                 yield SolverResult.sat(bindings);
             }
 

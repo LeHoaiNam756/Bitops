@@ -9,6 +9,7 @@ import core.SymbolicExecution.model.types.SymType;
 import core.SymbolicExecution.model.types.SymTypeMap;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.z3encoder.SolverResult;
+import core.SymbolicExecution.z3encoder.Z3EncodingMode;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
 import core.SymbolicExecution.z3encoder.Z3StatisticsRecorder;
 import core.testdriver.TestData;
@@ -84,6 +85,15 @@ public class ConcolicTesting {
                                Coverage coverage,
                                Map<String, Object> randomInput,
                                PathFinder pathFinder) throws Exception {
+        return generate(methodDeclaration, cu, coverage, randomInput, pathFinder, Z3EncodingMode.BITVECTOR);
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               Map<String, Object> randomInput,
+                               PathFinder pathFinder,
+                               Z3EncodingMode encodingMode) throws Exception {
         long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
@@ -140,7 +150,7 @@ public class ConcolicTesting {
                     break;
                 }
                 SolverResult result = symbolicExecution.executePath(
-                        cfg, path, parameters, parameterTypes);
+                        cfg, path, parameters, parameterTypes, encodingMode);
 
                 if (result instanceof SolverResult.Sat sat) {
                     Map<String, Object> newInputs =
@@ -182,7 +192,7 @@ public class ConcolicTesting {
                 boolean covered = false;
                 for (List<ControlFlowGraph.Edge> path : paths) {
                     SolverResult result = symbolicExecution.executePath(
-                            cfg, path, parameters, parameterTypes);
+                            cfg, path, parameters, parameterTypes, encodingMode);
 
                     if (result instanceof SolverResult.Sat sat) {
                         Map<String, Object> newInputs =

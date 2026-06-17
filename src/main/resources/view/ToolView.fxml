@@ -24,8 +24,8 @@
                     <Separator orientation="VERTICAL"/>
                     <Label text="Test Generation Mode:"/>
                     <HBox spacing="6" alignment="CENTER_LEFT">
-                        <RadioButton fx:id="originalConcolic" text="BitOps Concolic"/>
-                        <RadioButton fx:id="greedyPathFinder" text="Original Concolic"/>
+                        <RadioButton fx:id="bitOpsConcolic" text="BitOps Concolic"/>
+                        <RadioButton fx:id="originalConcolic" text="Original Concolic"/>
                         <RadioButton fx:id="flowNetworkPathFinder" text="Loop Flow Cover"/>
                     </HBox>
                     <Separator orientation="VERTICAL" />

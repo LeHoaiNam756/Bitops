@@ -4,6 +4,7 @@ import core.cfg.Coverage;
 import core.generation.ConcolicTesting;
 import core.generation.Project;
 import core.generation.RandomTestInput;
+import core.SymbolicExecution.z3encoder.Z3EncodingMode;
 import core.instrument.InstrumentationPlan;
 import core.instrument.InstrumentationPlanner;
 import core.instrument.TracePoint;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
 
 public class ToolView {
     public Label projectPath;
+    public RadioButton bitOpsConcolic;
     public RadioButton originalConcolic;
-    public RadioButton greedyPathFinder;
     public RadioButton flowNetworkPathFinder;
     public RadioButton statementCoverage;
     public RadioButton branchCoverage;
@@ -83,10 +84,10 @@ public class ToolView {
 
         // Toggle groups for mode and coverage
         ToggleGroup modeGroup = new ToggleGroup();
+        bitOpsConcolic.setToggleGroup(modeGroup);
         originalConcolic.setToggleGroup(modeGroup);
-        greedyPathFinder.setToggleGroup(modeGroup);
         flowNetworkPathFinder.setToggleGroup(modeGroup);
-        originalConcolic.setSelected(true);
+        bitOpsConcolic.setSelected(true);
 
         ToggleGroup coverageGroup = new ToggleGroup();
         statementCoverage.setToggleGroup(coverageGroup);
@@ -307,7 +308,8 @@ public class ToolView {
                     rootAst,
                     coverage,
                     RandomTestInput.createRandomTestData(loc.methodDeclaration),
-                    getSelectedPathFinder()
+                    getSelectedPathFinder(),
+                    getSelectedEncodingMode()
             );
 
             updateSummary(result);
@@ -336,6 +338,13 @@ public class ToolView {
             return new LoopCondensationFlowPathFinder();
         }
         return new AllPathsFinder();
+    }
+
+    private Z3EncodingMode getSelectedEncodingMode() {
+        if (originalConcolic.isSelected()) {
+            return Z3EncodingMode.LEGACY_INT_REAL;
+        }
+        return Z3EncodingMode.BITVECTOR;
     }
 
     private void updateSummary(TestResult result) {

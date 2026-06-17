@@ -7,6 +7,7 @@ import core.SymbolicExecution.model.types.*;
 import core.SymbolicExecution.simplifier.SymbolicSimplifier;
 import core.SymbolicExecution.z3encoder.ConstraintSolver;
 import core.SymbolicExecution.z3encoder.SolverResult;
+import core.SymbolicExecution.z3encoder.Z3EncodingMode;
 import core.cfg.ControlFlowGraph;
 import core.cfg.CfgEdgeKind;
 import core.cfg.CfgNodeKind;
@@ -50,6 +51,15 @@ public class SymbolicExecution {
             List<ControlFlowGraph.Edge> path,
             List<ASTNode> parameters,
             Map<String, SymType> parameterTypes) {
+        return executePath(cfg, path, parameters, parameterTypes, Z3EncodingMode.BITVECTOR);
+    }
+
+    public SolverResult executePath(
+            ControlFlowGraph cfg,
+            List<ControlFlowGraph.Edge> path,
+            List<ASTNode> parameters,
+            Map<String, SymType> parameterTypes,
+            Z3EncodingMode encodingMode) {
 
         SymbolicState state = SymbolicState.builder()
                 .memoryModel(new MemoryModel())
@@ -93,7 +103,7 @@ public class SymbolicExecution {
         List<SymbolicValue> simplifiedConstraints = expressionSimplifier.simplifyAll(constraints);
 
         // --- 4. Solve -------------------------------------------------------
-        try (ConstraintSolver solver = ConstraintSolver.create(parameterTypes)) {
+        try (ConstraintSolver solver = ConstraintSolver.create(parameterTypes, encodingMode)) {
             return solver.check(simplifiedConstraints);
         }
     }
