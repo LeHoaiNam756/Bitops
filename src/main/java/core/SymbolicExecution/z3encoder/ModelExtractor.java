@@ -103,6 +103,14 @@ public final class ModelExtractor {
             if (expr.isTrue())  return java.util.Optional.of(SymLiteral.of(true));
             if (expr.isFalse()) return java.util.Optional.of(SymLiteral.of(false));
         }
+        // Support Array Index
+        if (expr instanceof IntNum intNum) {
+            long val = intNum.getInt64();
+            if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
+                return java.util.Optional.of(SymLiteral.of((int) val));
+            }
+            return java.util.Optional.of(SymLiteral.of(val));
+        }
 
         // ── BitVec (all Java integral types) ──────────────────────────────────
         if (expr instanceof BitVecNum bv) {
