@@ -6,6 +6,7 @@ import com.microsoft.z3.BitVecNum;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FPNum;
 import com.microsoft.z3.FuncDecl;
+import com.microsoft.z3.IntNum;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.SymLiteral;
@@ -44,10 +45,18 @@ final class PrimitiveArrayExtractor {
         if (length.isEmpty()) return Optional.empty();
 
         Sort  range = arraySort.getRange();
-        Expr<?> array = sorts.ctx().mkConst(name, decl.getRange());
+        Expr<?> array = model.getConstInterp(decl);
+        if (array == null) {
+            array = sorts.ctx().mkConst(name, decl.getRange());
+        }
 
         if (range.equals(sorts.bv32Sort()) || range.equals(sorts.bv64Sort()))
             return extractBVArray(model, array, length.get(), range);
+        // IntSort element range: array was declared with IntSort elements instead of
+        // bv32Sort (happens when the varSorts builder uses ctx.getIntSort() for int[]).
+        // We extract IntNum elements and return them as int[] / long[] depending on value.
+        if (range.equals(sorts.intSort()))
+            return extractIntSortArray(model, array, length.get());
         if (range.equals(sorts.boolSort()))
             return extractBooleanArray(model, array, length.get());
         if (range.equals(sorts.fp32Sort()))
@@ -89,22 +98,13 @@ final class PrimitiveArrayExtractor {
             }
             return Optional.of(new SymLiteral(values));
         } else {
-            long[] values = new long[length];
+            // bv32: getLong() returns a sign-extended 64-bit value; truncate to int
+            // to recover the correct signed 32-bit Java int value.
+            int[] ints = new int[length];
             for (int i = 0; i < length; i++) {
                 Expr<?> val = evalElement(model, array, i);
                 if (!(val instanceof BitVecNum bvn)) return Optional.empty();
-                values[i] = bvn.getLong() & 0xFFFFFFFFL; // unsigned 32-bit → long
-            }
-            // Return as int[] if all values fit in int range
-            int[] ints = new int[length];
-            for (int i = 0; i < length; i++) {
-                if (values[i] > Integer.MAX_VALUE) {
-                    // Treat as long[] (signed interpretation)
-                    long[] signed = new long[length];
-                    for (int j = 0; j < length; j++) signed[j] = (int) values[j];
-                    return Optional.of(new SymLiteral(signed));
-                }
-                ints[i] = (int) values[i];
+                ints[i] = (int) bvn.getLong();   // signed two's-complement truncation
             }
             return Optional.of(new SymLiteral(ints));
         }
@@ -149,13 +149,51 @@ final class PrimitiveArrayExtractor {
     }
 
     // =========================================================================
-    // Element evaluation  (array index stays IntSort per Z3 array theory)
+    // IntSort element extraction  (legacy / mis-declared arrays)
     // =========================================================================
 
+    /**
+     * Extracts elements from an array whose element sort is IntSort rather than
+     * the expected bv32Sort.  This happens when the varSorts builder registers
+     * int-array elements as {@code ctx.getIntSort()} instead of going through
+     * {@link SortResolver#symTypeToSort}.
+     *
+     * <p>Values that fit in a signed 32-bit range are returned as {@code int[]};
+     * values that require more bits are returned as {@code long[]}.
+     */
+    private Optional<SymLiteral> extractIntSortArray(Model model, Expr<?> array, int length) {
+        long[] values = new long[length];
+        for (int i = 0; i < length; i++) {
+            Expr<?> val = evalElement(model, array, i);
+            if (val instanceof IntNum intNum) {
+                values[i] = intNum.getInt64();
+            } else if (val instanceof BitVecNum bvn) {
+                // Defensive: solver may simplify to BV even when sort is Int
+                values[i] = bvn.getLong();
+            } else {
+                return Optional.empty();
+            }
+        }
+        // Prefer int[] when all values fit in signed 32-bit range
+        boolean allInt = true;
+        for (long v : values) {
+            if (v < Integer.MIN_VALUE || v > Integer.MAX_VALUE) { allInt = false; break; }
+        }
+        if (allInt) {
+            int[] ints = new int[length];
+            for (int i = 0; i < length; i++) ints[i] = (int) values[i];
+            return Optional.of(new SymLiteral(ints));
+        }
+        return Optional.of(new SymLiteral(values));
+    }
+
+    // =========================================================================
+    // Element evaluation  (array index stays IntSort per Z3 array theory)
+    // =========================================================================
     private Expr<?> evalElement(Model model, Expr<?> array, int index) {
-        return model.eval(
-                sorts.ctx().mkSelect((ArrayExpr) array, sorts.ctx().mkInt(index)),
-                true);
+        Expr<?> select = sorts.ctx().mkSelect((ArrayExpr) array, sorts.ctx().mkInt(index));
+        // Evaluate against the model and explicitly simplify the expression tree
+        return model.eval(select, true).simplify();
     }
 
     // =========================================================================

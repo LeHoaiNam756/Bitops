@@ -103,7 +103,13 @@ public final class ModelExtractor {
             if (expr.isTrue())  return java.util.Optional.of(SymLiteral.of(true));
             if (expr.isFalse()) return java.util.Optional.of(SymLiteral.of(false));
         }
-        // Support Array Index
+        // IntSort constants: these should not appear for Java int/long variables
+        // (those must be declared as bv32/bv64 via SortResolver.symTypeToSort), but
+        // they DO appear when the varSorts builder uses ctx.getIntSort() directly —
+        // e.g. for length variables (nums__length) or any scalar registered outside
+        // symTypeToSort.  We extract them here so they are not silently dropped.
+        // Note: array-index expressions never appear as model *constants*; this
+        // branch handles the scalar mis-declaration case exclusively.
         if (expr instanceof IntNum intNum) {
             long val = intNum.getInt64();
             if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {

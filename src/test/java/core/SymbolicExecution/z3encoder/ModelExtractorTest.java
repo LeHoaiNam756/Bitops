@@ -31,8 +31,8 @@ public class ModelExtractorTest {
             Z3ModelBindings bindings = extractor.extract(model);
 
             SymLiteral literal = bindings.lookup("nums").orElseThrow();
-            assertTrue(literal.value() instanceof long[]);
-            assertArrayEquals(new long[] {7L}, (long[]) literal.value());
+            assertTrue(literal.value() instanceof int[]);
+            assertArrayEquals(new int[] {7}, (int[]) literal.value());
         }
     }
 
