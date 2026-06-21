@@ -2,6 +2,7 @@ package core.SymbolicExecution.z3encoder;
 
 import com.microsoft.z3.*;
 import core.SymbolicExecution.model.*;
+import core.SymbolicExecution.model.types.*;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -162,6 +163,7 @@ public final class Z3Encoder {
         if (node instanceof SymVariable var)    return encodeVariable(var, sortCache);
         if (node instanceof SymUnaryOp u)       return encodeUnary(u,  exprCache, sortCache);
         if (node instanceof SymBinaryOp b)      return encodeBinary(b, exprCache, sortCache);
+        if (node instanceof SymCastOp c)        return encodeCast(c,   exprCache, sortCache);
         if (node instanceof SymStringOp s)      return encodeStringOp(s, exprCache, sortCache);
         if (node instanceof SymITE ite)         return encodeITE(ite,  exprCache, sortCache);
         if (node instanceof SymArraySelect s)   return encodeArraySelect(s,  exprCache, sortCache);
@@ -181,9 +183,9 @@ public final class Z3Encoder {
         // ── Integral types → BitVec ───────────────────────────────────────
         if (value instanceof Integer i)   return ctx.mkBV(i, 32);
         if (value instanceof Long    l)   return ctx.mkBV(l, 64);
-        if (value instanceof Short   s)   return ctx.mkBV(s, 32);
-        if (value instanceof Byte    b)   return ctx.mkBV(b, 32);
-        if (value instanceof Character c) return ctx.mkBV(c, 32);
+        if (value instanceof Short   s)   return ctx.mkBV(s, 16);
+        if (value instanceof Byte    b)   return ctx.mkBV(b, 8);
+        if (value instanceof Character c) return ctx.mkBV(c, 16);
 
         // ── Boolean ───────────────────────────────────────────────────────
         if (value instanceof Boolean b) return ctx.mkBool(b);
@@ -277,6 +279,134 @@ public final class Z3Encoder {
     }
 
     // =========================================================================
+    // SymCastOp  –  JLS 26 §5.1 / §5.4 / §5.5 type conversions
+    // =========================================================================
+
+    /**
+     * Encodes a Java cast expression {@code (T) expr} according to JLS 26 §5.1.
+     *
+     * <p>Supported conversion categories:
+     * <ul>
+     *   <li><b>Identity (§5.1.1)</b> – target sort equals operand sort; return as-is.</li>
+     *   <li><b>Widening primitive (§5.1.2)</b> – byte/short/char/int → wider integral or FP;
+     *       int/long → float/double.  Integral widening uses sign-extension except char which
+     *       uses zero-extension (char is unsigned 0–65535).  Integral-to-FP uses
+     *       {@code mkFPToFP(RNE, signedBV, targetSort)}.</li>
+     *   <li><b>Narrowing primitive (§5.1.3)</b> – wider integral/FP → narrower.  Integral
+     *       narrowing discards high-order bits ({@code mkExtract}), <em>not</em> sign-extension.
+     *       FP→FP narrowing uses {@code mkFPToFP(RNE)}.  FP→integral uses
+     *       {@code mkFPToBV(roundTowardZero)} per §5.1.3 (truncates toward zero).</li>
+     *   <li><b>Widening-then-narrowing (§5.1.4)</b> – byte→short is widening, handled above.</li>
+     *   <li><b>boolean (§5.1.1)</b> – only identity cast {@code (boolean)} is legal in Java;
+     *       returned unchanged.</li>
+     *   <li><b>Reference / object (§5.5)</b> – modelled as a bv32 identity (heap address);
+     *       the encoder has no heap model so we return the operand coerced to bv32.</li>
+     * </ul>
+     *
+     * <p>The method uses {@link SortResolver#javaTypeOf} to distinguish char (zero-extension)
+     * from other sub-int types (sign-extension) during integral widening, matching the
+     * {@link #coerceToBV} policy used in binary expressions.
+     */
+    private Expr<?> encodeCast(SymCastOp cast,
+                                IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                IdentityHashMap<SymbolicValue, Sort>    sortCache) {
+
+        Expr<?> operand    = visit(cast.operand(), exprCache, sortCache);
+        Sort    fromSort   = sorts.resolve(cast.operand(), sortCache);
+        Sort    toSort     = sorts.symTypeToSort(cast.type());
+
+        // ── Identity ──────────────────────────────────────────────────────────
+        if (fromSort.equals(toSort)) {
+            return operand;
+        }
+
+        // ── Boolean → boolean only: identity (Java does not allow other casts) ─
+        if (toSort.equals(sorts.boolSort())) {
+            if (fromSort.equals(sorts.boolSort())) return operand;
+            throw new EncodingException(
+                    "Illegal cast to boolean from non-boolean sort " + fromSort, cast);
+        }
+
+        // ── Target is a String sort (reference cast — treated as identity) ─────
+        if (sorts.isStringSort(toSort)) {
+            if (sorts.isStringSort(fromSort)) return operand;
+            throw new EncodingException(
+                    "Cannot cast non-String expression to String sort", cast);
+        }
+
+        // ── Target is FP ──────────────────────────────────────────────────────
+        //   BV  → FP : widening integral-to-FP (§5.1.2); char is unsigned so zero-ext
+        //   FP  → FP : widening (float→double) or narrowing (double→float), both use RNE (§5.1.3)
+        if (toSort instanceof FPSort fpTarget) {
+            if (fromSort instanceof FPSort) {
+                // float ↔ double: mkFPToFP with RNE handles both directions
+                return ctx.mkFPToFP(RNE, (FPExpr) operand, fpTarget);
+            }
+            if (fromSort instanceof BitVecSort) {
+                // Integral → FP (§5.1.2): treat char as unsigned, others as signed
+                boolean unsigned = cast.operand() instanceof SymLiteral lit
+                        && lit.value() instanceof Character;
+                SymType jt = sorts.javaTypeOf(cast.operand());
+                boolean isChar = jt == PrimitiveSymType.CHAR || unsigned;
+                return ctx.mkFPToFP(RNE, (BitVecExpr) operand, fpTarget, !isChar);
+            }
+            throw new EncodingException(
+                    "Cannot cast sort " + fromSort + " to FP sort " + toSort, cast);
+        }
+
+        // ── Target is BV ──────────────────────────────────────────────────────
+        if (toSort instanceof BitVecSort bvTarget) {
+            int targetWidth = bvTarget.getSize();
+
+            // FP → integral (§5.1.3): truncate toward zero (JLS mandates this)
+            if (fromSort instanceof FPSort) {
+                // mkFPToBV(rounding, fp, bits, signed): signed=true for all Java integral types
+                return ctx.mkFPToBV(ctx.mkFPRoundTowardZero(), (FPExpr) operand,
+                                    targetWidth, true);
+            }
+
+            // BV → BV: widening or narrowing
+            if (fromSort instanceof BitVecSort bvFrom) {
+                int fromWidth = bvFrom.getSize();
+
+                if (fromWidth == targetWidth) {
+                    // Same width: identity (e.g. (int)(int) — no-op after promotion)
+                    return operand;
+                }
+
+                if (fromWidth > targetWidth) {
+                    // Narrowing (§5.1.3): discard high-order bits — extract low targetWidth bits.
+                    // This is NOT sign-extension; it is a raw bit truncation, matching JVM behaviour:
+                    //   (byte) 256  = 0, (short) 65536 = 0, (byte) -129 = 127
+                    return ctx.mkExtract(targetWidth - 1, 0, (BitVecExpr) operand);
+                }
+
+                // Widening (§5.1.2): char is zero-extended; byte/short/int are sign-extended.
+                SymType jt = sorts.javaTypeOf(cast.operand());
+                boolean isChar = jt == PrimitiveSymType.CHAR;
+                return isChar
+                        ? ctx.mkZeroExt(targetWidth - fromWidth, (BitVecExpr) operand)
+                        : ctx.mkSignExt(targetWidth - fromWidth, (BitVecExpr) operand);
+            }
+
+            // IntSort (array-index / reference) → BV: treat as unsigned int-to-BV
+            if (fromSort.equals(sorts.intSort())) {
+                return ctx.mkInt2BV(targetWidth, (Expr<IntSort>) operand);
+            }
+
+            throw new EncodingException(
+                    "Cannot cast sort " + fromSort + " to BV sort " + toSort, cast);
+        }
+
+        // ── Reference (object) types: bv32 identity (heap address model) ──────
+        // Both fromSort and toSort should already be bv32 for object types (see
+        // SortResolver.symTypeToSort), so the identity branch above normally fires.
+        // This is a defensive fallback for any exotic sort combination.
+        throw new EncodingException(
+                "Unsupported cast from sort " + fromSort + " to sort " + toSort, cast);
+    }
+
+    // =========================================================================
     // SymBinaryOp
     // =========================================================================
 
@@ -287,6 +417,14 @@ public final class Z3Encoder {
         Sort resultSort = sorts.resolve(b, sortCache);
         Sort leftSort   = sorts.resolve(b.left(),  sortCache);
         Sort rightSort  = sorts.resolve(b.right(), sortCache);
+
+        // Retrieve Java source types for the operands so that coerceToBV can
+        // apply zero-extension for char (JLS §5.1.2) vs sign-extension for
+        // byte/short/int.  These are null for non-variable sub-expressions
+        // (literals, compound expressions) because literals are already
+        // bit-exact and compound results are always int-promoted or wider.
+        SymType leftJavaType  = sorts.javaTypeOf(b.left());
+        SymType rightJavaType = sorts.javaTypeOf(b.right());
 
         Expr<?> left  = visit(b.left(),  exprCache, sortCache);
         Expr<?> right = visit(b.right(), exprCache, sortCache);
@@ -312,9 +450,13 @@ public final class Z3Encoder {
         }
 
         // ── BitVec domain (arithmetic + bitwise) ──────────────────────────────
+        // For shift ops the result sort equals the LEFT operand's sort (JLS §15.19),
+        // so we coerce left to targetBV normally but keep the right operand's
+        // width independent — matchWidth + maskShiftDist in encodeBVBinary will
+        // handle it.  For all other BV ops both operands are coerced to targetBV.
         BitVecSort targetBV = resultSort instanceof BitVecSort bvs ? bvs : sorts.bv32Sort();
-        BitVecExpr bvLeft  = coerceToBV(left,  leftSort,  targetBV);
-        BitVecExpr bvRight = coerceToBV(right, rightSort, targetBV);
+        BitVecExpr bvLeft   = coerceToBV(left,  leftSort,  targetBV, leftJavaType);
+        BitVecExpr bvRight  = coerceToBV(right, rightSort, targetBV, rightJavaType);
         return encodeBVBinary(b.op(), bvLeft, bvRight, b);
     }
 
@@ -612,9 +754,23 @@ public final class Z3Encoder {
             case BAND -> ctx.mkBVAND(l, r);
             case BOR  -> ctx.mkBVOR(l, r);
             case BXOR -> ctx.mkBVXOR(l, r);
-            case BLS  -> ctx.mkBVSHL(l, r);
-            case BRS  -> ctx.mkBVASHR(l, r);   // arithmetic (signed) shift right
-            case BURS -> ctx.mkBVLSHR(l, r);   // logical (unsigned) shift right
+            // JLS §15.19: shift distance is masked to the low 5 bits (int) or 6 bits (long).
+            // Z3 BV shifts do NOT do this automatically — a value >= width gives 0 / all-sign-bits,
+            // which differs from Java's wrap-around semantics.  We mask the RHS before shifting.
+            // The RHS may also have a different BV width than L (e.g. long << int after coercion),
+            // so we first truncate/extend it to match L's width, then apply the bit-mask.
+            case BLS  -> {
+                BitVecExpr dist = matchWidth(r, l.getSortSize());
+                yield ctx.mkBVSHL(l, maskShiftDist(dist, l.getSortSize()));
+            }
+            case BRS  -> {                                          // arithmetic (signed) shift right
+                BitVecExpr dist = matchWidth(r, l.getSortSize());
+                yield ctx.mkBVASHR(l, maskShiftDist(dist, l.getSortSize()));
+            }
+            case BURS -> {                                          // logical (unsigned) shift right
+                BitVecExpr dist = matchWidth(r, l.getSortSize());
+                yield ctx.mkBVLSHR(l, maskShiftDist(dist, l.getSortSize()));
+            }
             default -> throw new EncodingException(
                     "Unexpected op in BV encoding: " + op, node);
         };
@@ -769,29 +925,32 @@ public final class Z3Encoder {
     // =========================================================================
 
     /**
-     * Coerce any integral/FP expression to a {@link BitVecExpr} of {@code target} width.
+     * Coerce any integral/FP expression to a {@link BitVecExpr} of {@code target} width,
+     * using the Java source type to choose sign-extension vs zero-extension.
      *
-     * BitVecSort (same width)  → identity
-     * BitVecSort (narrower)    → sign-extend
-     * BitVecSort (wider)       → extract low bits
-     * FPSort                   → mkFPToBV (round-to-zero signed)
+     * <p>JLS §5.1.2: widening of {@code char} is zero-extension (it is unsigned 0–65535).
+     * All other integral types ({@code byte}, {@code short}, {@code int}) use sign-extension.
+     *
+     * @param expr      Z3 expression to coerce
+     * @param sort      Z3 sort of {@code expr}
+     * @param target    desired target BV width
+     * @param javaType  Java source type of the operand, or {@code null} if unknown
+     *                  (falls back to sign-extension when null)
      */
-    private BitVecExpr coerceToBV(Expr<?> expr, Sort sort, BitVecSort target) {
+    private BitVecExpr coerceToBV(Expr<?> expr, Sort sort, BitVecSort target,
+                                   SymType javaType) {
         int w = target.getSize();
-
-        if (expr instanceof BitVecExpr bv) {
-            int bw = bv.getSortSize();
-            if (bw == w) return bv;
-            if (bw < w)  return ctx.mkSignExt(w - bw, bv);
-            return ctx.mkExtract(w - 1, 0, bv);
-        }
 
         if (sort instanceof BitVecSort bvs) {
             int bw = bvs.getSize();
             BitVecExpr bv = (BitVecExpr) expr;
             if (bw == w) return bv;
-            if (bw < w)  return ctx.mkSignExt(w - bw, bv);
-            return ctx.mkExtract(w - 1, 0, bv);
+            if (bw > w)  return ctx.mkExtract(w - 1, 0, bv);
+            // Narrower → need to widen; char is zero-extended, everything else sign-extended
+            boolean isChar = javaType == PrimitiveSymType.CHAR;
+            return isChar
+                    ? ctx.mkZeroExt(w - bw, bv)   // JLS §5.1.2 char: unsigned zero-extension
+                    : ctx.mkSignExt(w - bw, bv);   // byte / short / int: sign-extension
         }
 
         if (sort instanceof FPSort) {
@@ -803,6 +962,15 @@ public final class Z3Encoder {
         }
 
         throw new IllegalArgumentException("Cannot coerce sort " + sort + " to BitVecSort");
+    }
+
+    /**
+     * Type-unaware overload retained for call-sites that don't have a Java source type
+     * (ITE branch reconciliation, field-access, etc.). Uses sign-extension as a safe
+     * default — callers that need char zero-extension must use the four-arg overload.
+     */
+    private BitVecExpr coerceToBV(Expr<?> expr, Sort sort, BitVecSort target) {
+        return coerceToBV(expr, sort, target, null);
     }
 
     /**
@@ -858,5 +1026,37 @@ public final class Z3Encoder {
         return sort instanceof BitVecSort
                 || sort instanceof FPSort
                 || sort.equals(sorts.intSort());
+    }
+
+    // =========================================================================
+    // Shift-distance helpers  (JLS §15.19)
+    // =========================================================================
+
+    /**
+     * Adjust {@code dist} to exactly {@code targetWidth} bits so it can be
+     * used as the RHS of a Z3 shift on a value of that width.
+     *
+     * <p>The shift distance operand may arrive with a different BV width than
+     * the left operand (e.g. {@code long << int} after generic coercion).  We
+     * truncate or zero-extend to match — the subsequent mask makes the high bits
+     * irrelevant anyway.
+     */
+    private BitVecExpr matchWidth(BitVecExpr dist, int targetWidth) {
+        int dw = dist.getSortSize();
+        if (dw == targetWidth) return dist;
+        if (dw > targetWidth)  return ctx.mkExtract(targetWidth - 1, 0, dist);
+        return ctx.mkZeroExt(targetWidth - dw, dist);  // zero-extend (distance is unsigned)
+    }
+
+    /**
+     * Mask a shift-distance BV to the low 5 bits (int, width=32) or 6 bits
+     * (long, width=64), implementing JLS §15.19 distance-masking.
+     *
+     * @param dist   BV already normalised to {@code width} bits by {@link #matchWidth}
+     * @param width  width of the value being shifted (32 or 64)
+     */
+    private BitVecExpr maskShiftDist(BitVecExpr dist, int width) {
+        long maskVal = (width == 64) ? 0x3FL : 0x1FL;
+        return ctx.mkBVAND(dist, ctx.mkBV(maskVal, width));
     }
 }

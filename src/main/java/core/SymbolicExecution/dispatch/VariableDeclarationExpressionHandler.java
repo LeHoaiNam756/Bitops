@@ -10,23 +10,29 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class VariableDeclarationExpressionHandler implements AstHandler {
+
     @Override
     public boolean supports(ASTNode node) {
-       return node instanceof VariableDeclarationExpression;
+        return node instanceof VariableDeclarationExpression;
     }
 
     @Override
     public SymbolicValue eval(ASTNode node, SymbolicState state, AstDispatcher dispatcher) {
         VariableDeclarationExpression vde = (VariableDeclarationExpression) node;
         SymType declaredType = SymTypeMap.convert(vde.getType());
+
         for (Object o : vde.fragments()) {
             VariableDeclarationFragment vdf = (VariableDeclarationFragment) o;
             String varName = vdf.getName().getIdentifier();
+
             if (vdf.getInitializer() != null) {
                 state.getTypeContext().push(declaredType);
-                SymbolicValue val = dispatcher.eval(vdf.getInitializer(), state);
-                state.getMemoryModel().write(varName, val);
-                state.getTypeContext().pop();
+                try {
+                    SymbolicValue val = dispatcher.eval(vdf.getInitializer(), state);
+                    state.getMemoryModel().write(varName, val);
+                } finally {
+                    state.getTypeContext().pop();
+                }
             } else {
                 state.getMemoryModel().write(varName, new SymVariable(varName));
             }

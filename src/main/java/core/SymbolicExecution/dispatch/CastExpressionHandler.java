@@ -1,5 +1,6 @@
 package core.SymbolicExecution.dispatch;
 
+import core.SymbolicExecution.model.SymCastOp;
 import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.types.SymType;
@@ -16,11 +17,14 @@ public class CastExpressionHandler implements AstHandler{
     @Override
     public SymbolicValue eval(ASTNode node, SymbolicState state, AstDispatcher dispatcher) {
         CastExpression cast = (CastExpression) node;
-        SymbolicValue operand = dispatcher.eval(cast.getExpression(), state);
         SymType targetType = SymTypeMap.convert(cast.getType());
         state.getTypeContext().push(targetType);
-        return operand;
-
+        try {
+            SymbolicValue operand = dispatcher.eval(cast.getExpression(), state);
+            return new SymCastOp(targetType, operand);
+        } finally {
+            state.getTypeContext().pop();
+        }
     }
 
 

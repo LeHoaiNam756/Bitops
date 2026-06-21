@@ -111,7 +111,7 @@ public final class ConstraintSolver implements AutoCloseable {
         // Build both pipelines from the caller's SymType map. Only one is used
         // per solver instance, but keeping both initialized preserves the
         // existing constructor shape and keeps mode selection localized here.
-        this.sortResolver = new SortResolver(ctx, buildSortMap(varTypes));
+        this.sortResolver = new SortResolver(ctx, buildSortMap(varTypes), varTypes);
         this.encoder      = new Z3Encoder(sortResolver);
         this.extractor    = new ModelExtractor(sortResolver);
         this.legacySortResolver = new LegacySortResolver(ctx, varTypes);
@@ -263,7 +263,7 @@ public final class ConstraintSolver implements AutoCloseable {
     private Map<String, Sort> buildSortMap(Map<String, SymType> varTypes) {
         // Temporary resolver with empty varSorts — only used for symTypeToSort(),
         // which doesn't need the map (it only reads the pre-built sort constants).
-        SortResolver bootstrap = new SortResolver(ctx, Map.of());
+        SortResolver bootstrap = new SortResolver(ctx, Map.of(),null);
         java.util.HashMap<String, Sort> sortMap = new java.util.HashMap<>();
         varTypes.forEach((name, symType) -> {
             try {

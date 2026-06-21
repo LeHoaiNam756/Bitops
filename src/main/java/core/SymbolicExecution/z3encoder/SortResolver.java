@@ -13,7 +13,9 @@ import java.util.Map;
  * ── Sort rules ───────────────────────────────────────────────────────────────
  *
  *  SymLiteral
- *    int / short / byte / char  →  BitVecSort(32)
+ *    int                        →  BitVecSort(32)
+ *    short / char               →  BitVecSort(16)
+ *    byte                       →  BitVecSort(8)
  *    long                       →  BitVecSort(64)
  *    float                      →  FPSort(32)  – IEEE 754 single
  *    double                     →  FPSort(64)  – IEEE 754 double
@@ -56,13 +58,16 @@ public final class SortResolver {
 
     private final Context           ctx;
     private final Map<String, Sort> varSorts;   // variable name → Z3 Sort
+    private final Map<String, SymType> varJavaTypes;
 
     // Pre-built sorts (allocated once per Context)
     final IntSort    intSort;   // kept for array-index and reference types ONLY
     final BoolSort   boolSort;
     final FPSort     fp32Sort;   // float  – IEEE 754 single
     final FPSort     fp64Sort;   // double – IEEE 754 double
-    final BitVecSort bv32Sort;   // int / short / byte / char
+    final BitVecSort bv8Sort;    // byte
+    final BitVecSort bv16Sort;   // short / char
+    final BitVecSort bv32Sort;   // int
     final BitVecSort bv64Sort;   // long
     final SeqSort<CharSort> stringSort; // java.lang.String
 
@@ -71,22 +76,33 @@ public final class SortResolver {
     // =========================================================================
 
     /**
-     * @param ctx      the Z3 Context (owns all Sort objects)
-     * @param varSorts caller-supplied map: variable name → Z3 Sort,
-     *                 built from TypeContext before starting the encoding pass
+     * @param ctx          the Z3 Context (owns all Sort objects)
+     * @param varSorts     caller-supplied map: variable name → Z3 Sort,
+     *                     built from TypeContext before starting the encoding pass
+     * @param varJavaTypes
      */
-    public SortResolver(Context ctx, Map<String, Sort> varSorts) {
+    public SortResolver(Context ctx, Map<String, Sort> varSorts, Map<String, SymType> varJavaTypes) {
         this.ctx      = ctx;
         this.varSorts = varSorts;
+        this.varJavaTypes = varJavaTypes;
 
         this.intSort  = ctx.getIntSort();   // array indices / references only
         this.boolSort = ctx.getBoolSort();
         this.fp32Sort = ctx.mkFPSort32();
         this.fp64Sort = ctx.mkFPSort64();
+        this.bv8Sort  = ctx.mkBitVecSort(8);
+        this.bv16Sort = ctx.mkBitVecSort(16);
         this.bv32Sort = ctx.mkBitVecSort(32);
         this.bv64Sort = ctx.mkBitVecSort(64);
         this.stringSort = ctx.getStringSort();
     }
+
+    // for test only
+    @Deprecated
+    public SortResolver(Context ctx, Map<String, Sort> varSorts) {
+        this(ctx, varSorts, null);
+    }
+
 
     // =========================================================================
     // Public API
@@ -124,6 +140,7 @@ public final class SortResolver {
         // ── Variables ─────────────────────────────────────────────────────
         if (node instanceof SymVariable var) {
             Sort s = varSorts.get(var.name());
+
             if (s == null) {
                 System.err.println("[SortResolver] WARNING: no sort for variable '"
                         + var.name() + "' – defaulting to bv32Sort");
@@ -173,6 +190,14 @@ public final class SortResolver {
             return resolve(st.arr(), memo);
         }
 
+        // ── Cast: result sort is the declared target type ─────────────────────
+        if (node instanceof SymCastOp cast) {
+            // The target SymType is already on the record; convert it directly.
+            // This avoids recursing into the operand, which may have a different sort,
+            // and correctly handles both narrowing and widening casts (§5.1.2/§5.1.3).
+            return symTypeToSort(cast.type());
+        }
+
         // ── Field access: fresh variable → bv32 ───────────────────────────
         if (node instanceof SymFieldAccess) {
             return bv32Sort;
@@ -204,13 +229,19 @@ public final class SortResolver {
                 yield widenArithmetic(ls, rs);
             }
 
-            // Bitwise → widened BV sort
-            case BAND, BOR, BXOR,
-                 BLS, BRS, BURS      -> {
+            // Bitwise (non-shift) → symmetric widened BV sort
+            case BAND, BOR, BXOR -> {
                 Sort ls = resolve(b.left(),  memo);
                 Sort rs = resolve(b.right(), memo);
                 yield widenBitVec(ls, rs);
             }
+
+            // Shift ops (JLS §15.19): result type = promoted type of LEFT operand only.
+            // The right operand (shift distance) never widens the result.
+            //   long << int  → bv64  (left is long)
+            //   int  << long → bv32  (left is int;  long shift distance is masked to 6 bits but
+            //                          the result sort is still int)
+            case BLS, BRS, BURS -> resolve(b.left(), memo);
 
             // Arithmetic → widen operand sorts
             default -> {
@@ -257,7 +288,9 @@ public final class SortResolver {
     public Sort symTypeToSort(SymType type) {
         if (type instanceof PrimitiveSymType p) {
             return switch (p) {
-                case INT, SHORT, BYTE, CHAR -> bv32Sort;
+                case BYTE                   -> bv8Sort;
+                case SHORT, CHAR            -> bv16Sort;
+                case INT                    -> bv32Sort;
                 case LONG                   -> bv64Sort;
                 case FLOAT                  -> fp32Sort;
                 case DOUBLE                 -> fp64Sort;
@@ -287,10 +320,10 @@ public final class SortResolver {
     // =========================================================================
 
     private Sort sortOfLiteral(Object value) {
-        if (value instanceof Integer || value instanceof Short
-                || value instanceof Byte || value instanceof Character) {
-            return bv32Sort;
-        }
+        if (value instanceof Byte)      { return bv8Sort;  }
+        if (value instanceof Short
+                || value instanceof Character) { return bv16Sort; }
+        if (value instanceof Integer)   { return bv32Sort; }
         if (value instanceof Long)    { return bv64Sort; }
         if (value instanceof Float)   { return fp32Sort; }
         if (value instanceof Double)  { return fp64Sort; }
@@ -308,9 +341,45 @@ public final class SortResolver {
     public BoolSort   boolSort() { return boolSort;  }
     public FPSort     fp32Sort() { return fp32Sort;  }
     public FPSort     fp64Sort() { return fp64Sort;  }
+    public BitVecSort bv8Sort()  { return bv8Sort;   }
+    public BitVecSort bv16Sort() { return bv16Sort;  }
     public BitVecSort bv32Sort() { return bv32Sort;  }
     public BitVecSort bv64Sort() { return bv64Sort;  }
     public SeqSort<CharSort> stringSort() { return stringSort; }
+
+    /**
+     * Return the Java source {@link SymType} of a symbolic node if it can be
+     * determined without traversal — used by Z3Encoder to choose sign- vs
+     * zero-extension when coercing operands (JLS §5.1.2).
+     *
+     * <ul>
+     *   <li>{@link SymVariable} → looked up in {@code varJavaTypes} map.
+     *   <li>{@link SymLiteral}  → inferred from the literal's Java class
+     *       ({@code Character} → {@code CHAR}, etc.).
+     *   <li>All other nodes    → {@code null} (compound expression; its result
+     *       is already int-promoted or wider, so the caller falls back to
+     *       sign-extension, which is correct for non-char promoted types).
+     * </ul>
+     */
+    public SymType javaTypeOf(SymbolicValue node) {
+        if (node instanceof SymVariable var && varJavaTypes != null) {
+            return varJavaTypes.get(var.name());   // may be null for unknown vars
+        }
+        if (node instanceof SymLiteral lit) {
+            Object v = lit.value();
+            if (v instanceof Character) return PrimitiveSymType.CHAR;
+            if (v instanceof Byte)      return PrimitiveSymType.BYTE;
+            if (v instanceof Short)     return PrimitiveSymType.SHORT;
+            if (v instanceof Integer)   return PrimitiveSymType.INT;
+            if (v instanceof Long)      return PrimitiveSymType.LONG;
+            if (v instanceof Float)     return PrimitiveSymType.FLOAT;
+            if (v instanceof Double)    return PrimitiveSymType.DOUBLE;
+            if (v instanceof Boolean)   return PrimitiveSymType.BOOLEAN;
+        }
+        // Compound expression: result is already int-promoted; return null so
+        // the caller uses sign-extension (the correct default for int and wider).
+        return null;
+    }
 
     boolean isStringSort(Sort sort) {
         return sort.equals(stringSort);

@@ -207,7 +207,6 @@ public class VariableDeclarationStatementHandlerTest {
             assertThrows(RuntimeException.class, () -> handler.eval(vds, state, dispatcher));
 
             verify(typeContext).push(eq(convertedType));
-            verify(typeContext, never()).pop();
         }
     }
 

@@ -32,7 +32,7 @@ public class AllPathsFinder implements PathFinder {
     // ------------------------------------------------------------------
 
     /** Number of full loop iterations to unroll (k=1 → visit each node at most twice). */
-    private int MAX_LOOP_ITERATIONS = 2;
+    private int MAX_LOOP_ITERATIONS = 32;
 
     /** Maximum number of distinct ENTRY→target paths to collect before stopping. */
     private int MAX_PATHS = 256;

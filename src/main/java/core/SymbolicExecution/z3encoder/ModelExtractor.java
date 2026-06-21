@@ -149,12 +149,28 @@ public final class ModelExtractor {
     }
 
     /**
-     * Convert a Z3 FPNum to float or double depending on the FP sort width.
-     * Reconstructs the IEEE 754 bit pattern from sign + exponent + significand.
+     * Convert a Z3 FPNum to a {@link SymLiteral} float or double.
+     *
+     * <p>Z3 can return FP values in two formats:
+     * <ol>
+     *   <li><b>Bit-pattern format</b> – {@code getExponent}/{@code getSignificand}
+     *       return decimal strings of the raw IEEE 754 biased exponent and
+     *       mantissa bits.  We reconstruct the bit pattern manually.</li>
+     *   <li><b>Fraction / decimal string format</b> – {@code fp.toString()} returns
+     *       either {@code "numerator/denominator"} or a plain decimal string
+     *       (e.g. {@code "1.5"}, {@code "3/2"}).  This happens for special values
+     *       and when Z3 chose to simplify the representation.</li>
+     * </ol>
+     *
+     * <p>{@code fp.getSign()} does not exist on the Z3 Java API; use
+     * {@code fp.isPositive()} / {@code fp.isNegative()} instead.
+     * If bit-pattern reconstruction fails for any reason we fall back to
+     * parsing {@code fp.toString()} as a fraction or decimal.
      */
     private java.util.Optional<SymLiteral> extractFP(FPNum fp, Sort sort) {
+        // ── Bit-pattern reconstruction ────────────────────────────────────────
         try {
-            boolean positive = !fp.getSign();
+            boolean positive = fp.isPositive();
             long    expBits  = Long.parseLong(fp.getExponent(false));
             long    sigBits  = Long.parseLong(fp.getSignificand());
 
@@ -173,8 +189,44 @@ public final class ModelExtractor {
             }
 
         } catch (Exception e) {
-            System.err.println("[ModelExtractor] Could not extract FP value: " + e.getMessage());
+            System.err.println("[ModelExtractor] Bit-pattern FP extraction failed, "
+                    + "falling back to string parse: " + e.getMessage());
         }
-        return java.util.Optional.empty();
+
+        // ── String fallback: fraction "p/q" or plain decimal ─────────────────
+        // Z3 uses this format when the value is a special constant (±Inf, NaN)
+        // or when it simplifies the representation internally.
+        return parseFiniteDecimal(fp, sort);
+    }
+
+    /**
+     * Parse {@code fp.toString()} as either {@code "numerator/denominator"} or
+     * a plain decimal string and box the result as float or double depending on
+     * {@code sort}.
+     */
+    private java.util.Optional<SymLiteral> parseFiniteDecimal(FPNum fp, Sort sort) {
+        String text = fp.toString();
+        try {
+            double value;
+            int slash = text.indexOf('/');
+            if (slash >= 0) {
+                double num = Double.parseDouble(text.substring(0, slash));
+                double den = Double.parseDouble(text.substring(slash + 1));
+                value = num / den;
+            } else {
+                value = Double.parseDouble(text);
+            }
+
+            if (sort.equals(sorts.fp32Sort())) {
+                return java.util.Optional.of(SymLiteral.of((float) value));
+            }
+            // fp64 or unknown FP sort: return as double
+            return java.util.Optional.of(SymLiteral.of(value));
+
+        } catch (NumberFormatException e) {
+            System.err.println("[ModelExtractor] Could not parse FP string \"" + text
+                    + "\": " + e.getMessage());
+            return java.util.Optional.empty();
+        }
     }
 }

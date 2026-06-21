@@ -3,11 +3,11 @@ package core.SymbolicExecution.dispatch;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.types.PrimitiveSymType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.NumberLiteral;
-import core.SymbolicExecution.model.types.PrimitiveSymType;
 
-public class NumberLiteralHandler implements AstHandler{
+public class NumberLiteralHandler implements AstHandler {
 
     @Override
     public boolean supports(ASTNode node) {
@@ -23,127 +23,182 @@ public class NumberLiteralHandler implements AstHandler{
             throw new IllegalArgumentException("Empty numeric literal");
         }
 
-        PrimitiveSymType targetType = resolveFromBinding(literalNode);
-
-        if (targetType == null && state.getTypeContext().peek() instanceof PrimitiveSymType peek) {
-            targetType = peek;
+        // Prefer the JDT type binding — it is authoritative when the compilation
+        // environment is available and tells us the compiler-resolved type of this
+        // literal (e.g. "int" for plain 42, "long" for 42L).
+        PrimitiveSymType bindingType = resolveFromBinding(literalNode);
+        if (bindingType != null) {
+            // Binding is authoritative: apply strict range checks.  The compiler
+            // would already have rejected an out-of-range literal at source level,
+            // so a range violation here indicates a bug in the JDT AST, not in
+            // the source program.
+            return parseWithType(tok, bindingType, true);
         }
 
-        if (targetType != null) {
-            return parseExplicitType(tok, targetType);
+        // Fallback: no binding available (test environment, partial compilation).
+        // Consult the type context pushed by the enclosing handler
+        // (CastExpressionHandler, VariableDeclarationHandler, AssignmentHandler).
+        if (state.getTypeContext().peek() instanceof PrimitiveSymType contextType) {
+            // Context-driven narrowing: the source literal is written as an int
+            // (e.g. "byte b = 200") and the compiler applies a silent narrowing
+            // conversion.  Do NOT range-check — truncate instead, exactly as the
+            // JVM does.  200 as byte = (byte)(int)200 = -56.
+            return parseWithType(tok, contextType, false);
         }
 
+        // No type information at all: infer from token suffix or parse as int/double.
         return parseBySuffixOrDefault(tok);
     }
 
-    private PrimitiveSymType resolveFromBinding(NumberLiteral node) {
-        if (node.resolveTypeBinding() != null) {
-            String typeName = node.resolveTypeBinding().getName();
-            return switch (typeName) {
-                case "int" -> PrimitiveSymType.INT;
-                case "short" -> PrimitiveSymType.SHORT;
-                case "byte" -> PrimitiveSymType.BYTE;
-                case "long" -> PrimitiveSymType.LONG;
-                case "float" -> PrimitiveSymType.FLOAT;
-                case "double" -> PrimitiveSymType.DOUBLE;
-                default -> null;
-            };
-        }
-        return null;
-    }
+    // -------------------------------------------------------------------------
+    // Type-directed parsing
+    // -------------------------------------------------------------------------
 
-    private SymbolicValue parseExplicitType(String tok, PrimitiveSymType type) {
-        String cleanTok = stripIntegerSuffix(tok);
+    /**
+     * Parse {@code tok} as {@code type}.
+     *
+     * @param strict when {@code true} (binding path) reject out-of-range values;
+     *               when {@code false} (context path) truncate to fit, matching
+     *               JLS §5.1.3 narrowing primitive conversion semantics.
+     */
+    private SymbolicValue parseWithType(String tok, PrimitiveSymType type, boolean strict) {
+        // Strip L/l suffix before integer parsing; float/double keep their own
+        // suffix because Float.parseFloat / Double.parseDouble handle F/D/f/d.
+        String intTok = stripIntegerSuffix(tok);
 
         return switch (type) {
-            case SHORT -> SymLiteral.of((short) parseIntegerLiteral(cleanTok, 16));
-            case BYTE -> SymLiteral.of((byte) parseIntegerLiteral(cleanTok, 8));
-            case LONG -> SymLiteral.of((long) parseIntegerLiteral(cleanTok, 64));
-            case FLOAT -> SymLiteral.of((float) Float.parseFloat(tok));
+            case BYTE -> {
+                long raw = parseRawLong(intTok);
+                if (strict && (raw < Byte.MIN_VALUE || raw > Byte.MAX_VALUE))
+                    throw new NumberFormatException("Value out of range for byte: " + tok);
+                // Truncate: keep low 8 bits, then sign-extend to byte — matches JVM.
+                yield SymLiteral.of((byte)(int) raw);
+            }
+            case SHORT -> {
+                long raw = parseRawLong(intTok);
+                if (strict && (raw < Short.MIN_VALUE || raw > Short.MAX_VALUE))
+                    throw new NumberFormatException("Value out of range for short: " + tok);
+                yield SymLiteral.of((short)(int) raw);
+            }
+            case CHAR -> {
+                // char literals come through CharacterLiteralHandler; a NumberLiteral
+                // with char binding can only arise from an explicit cast context.
+                long raw = parseRawLong(intTok);
+                if (strict && (raw < Character.MIN_VALUE || raw > Character.MAX_VALUE))
+                    throw new NumberFormatException("Value out of range for char: " + tok);
+                yield SymLiteral.of((char)(int) raw);
+            }
+            case INT -> {
+                long raw = parseRawLong(intTok);
+                if (strict && (raw < Integer.MIN_VALUE || raw > Integer.MAX_VALUE))
+                    throw new NumberFormatException("Value out of range for int: " + tok);
+                yield SymLiteral.of((int) raw);
+            }
+            case LONG   -> SymLiteral.of(parseRawLong(intTok));
+            case FLOAT  -> SymLiteral.of(Float.parseFloat(tok));
             case DOUBLE -> SymLiteral.of(Double.parseDouble(tok));
-            case INT -> SymLiteral.of((int) parseIntegerLiteral(cleanTok, 32));
             default -> throw new IllegalArgumentException("Unsupported primitive type: " + type);
         };
     }
 
+    // -------------------------------------------------------------------------
+    // Suffix / default inference  (no type information available)
+    // -------------------------------------------------------------------------
+
     private SymbolicValue parseBySuffixOrDefault(String tok) {
         String lower = tok.toLowerCase();
-        boolean isHex = lower.startsWith("0x");
-        boolean isBinary = lower.startsWith("0b");
-        boolean isOctal = !isHex && !isBinary && tok.matches("0[0-7]+");
+        char last = tok.charAt(tok.length() - 1);
 
-        char lastChar = tok.charAt(tok.length() - 1);
-        boolean isLong = (lastChar == 'L' || lastChar == 'l');
-
-        if (isHex || isBinary || isOctal) {
-            if (isLong) {
-                String numberPart = tok.substring(0, tok.length() - 1);
-                return SymLiteral.of((Long) parseIntegerLiteral(numberPart, 64));
-            } else {
-                return SymLiteral.of((Integer) parseIntegerLiteral(tok, 32));
-            }
-        }
-
-        boolean isFloat = (lastChar == 'F' || lastChar == 'f');
-        boolean isDouble = (lastChar == 'D' || lastChar == 'd');
+        boolean isLong   = (last == 'L' || last == 'l');
+        boolean isFloat  = (last == 'F' || last == 'f');
+        boolean isDouble = (last == 'D' || last == 'd');
 
         if (isLong) {
-            String numberPart = tok.substring(0, tok.length() - 1);
-            return SymLiteral.of((Long) parseIntegerLiteral(numberPart, 64));
+            return SymLiteral.of(parseRawLong(tok.substring(0, tok.length() - 1)));
         }
-        if (isFloat) {
-            return SymLiteral.of(Float.parseFloat(tok));
-        }
-        if (isDouble) {
-            return SymLiteral.of(Double.parseDouble(tok));
+        if (isFloat)  return SymLiteral.of(Float.parseFloat(tok));
+        if (isDouble) return SymLiteral.of(Double.parseDouble(tok));
+
+        // Hex / binary / octal integer — no suffix implies int unless too wide
+        boolean isHex    = lower.startsWith("0x");
+        boolean isBinary = lower.startsWith("0b");
+        boolean isOctal  = !isHex && !isBinary && tok.matches("0[0-7]+");
+
+        if (isHex || isBinary || isOctal) {
+            long raw = parseRawLong(tok);
+            // If the value fits in a signed int, produce int; otherwise long.
+            if (raw >= Integer.MIN_VALUE && raw <= Integer.MAX_VALUE)
+                return SymLiteral.of((int) raw);
+            return SymLiteral.of(raw);
         }
 
+        // Decimal: try int first, fall back to double for floating-point notation.
         try {
-            return SymLiteral.of((Integer) parseIntegerLiteral(tok, 32));
+            long raw = parseRawLong(tok);
+            if (raw >= Integer.MIN_VALUE && raw <= Integer.MAX_VALUE)
+                return SymLiteral.of((int) raw);
+            return SymLiteral.of(raw);
         } catch (NumberFormatException e) {
             return SymLiteral.of(Double.parseDouble(tok));
         }
     }
 
-    private String stripIntegerSuffix(String tok) {
-        char last = Character.toLowerCase(tok.charAt(tok.length() - 1));
-        if (last == 'l') {
-            return tok.substring(0, tok.length() - 1);
-        }
-        return tok;
+    // -------------------------------------------------------------------------
+    // Binding resolution
+    // -------------------------------------------------------------------------
+
+    /**
+     * Resolve the Java primitive type of this literal from the JDT type binding.
+     * Returns {@code null} when the binding is unavailable or the type is not a
+     * recognised primitive (which should not occur for a {@link NumberLiteral}).
+     *
+     * <p>{@code char} is intentionally absent: number literal nodes never have
+     * char type in the Java grammar — character literals use
+     * {@link org.eclipse.jdt.core.dom.CharacterLiteral} nodes instead.
+     */
+    private PrimitiveSymType resolveFromBinding(NumberLiteral node) {
+        var binding = node.resolveTypeBinding();
+        if (binding == null) return null;
+        return switch (binding.getName()) {
+            case "int"    -> PrimitiveSymType.INT;
+            case "short"  -> PrimitiveSymType.SHORT;
+            case "byte"   -> PrimitiveSymType.BYTE;
+            case "long"   -> PrimitiveSymType.LONG;
+            case "float"  -> PrimitiveSymType.FLOAT;
+            case "double" -> PrimitiveSymType.DOUBLE;
+            // "char" cannot appear on a NumberLiteral node (see Javadoc above).
+            // "boolean", "void", reference types: not valid literal types — ignore.
+            default -> null;
+        };
     }
 
-    private Number parseIntegerLiteral(String tok, int bitLength) throws NumberFormatException {
-        String cleaned = tok;
-        long value;
-        if (cleaned.startsWith("0b") || cleaned.startsWith("0B")) {
-            value = Long.parseLong(cleaned.substring(2), 2);
-        } else if (cleaned.startsWith("0x") || cleaned.startsWith("0X")) {
-            value = Long.parseLong(cleaned.substring(2), 16);
-        } else if (cleaned.matches("0[0-7]+")) {
-            value = Long.parseLong(cleaned, 8);
-        } else {
-            value = Long.parseLong(cleaned);
+    // -------------------------------------------------------------------------
+    // Low-level integer parsing
+    // -------------------------------------------------------------------------
+
+    /**
+     * Parse any integer token (decimal / hex / binary / octal, with or without
+     * L suffix already stripped) into a {@code long} without any range check.
+     * The caller is responsible for truncating or range-checking the result.
+     */
+    private long parseRawLong(String tok) {
+        // Strip trailing L/l if present (caller may or may not have stripped it)
+        String s = tok;
+        if (!s.isEmpty()) {
+            char last = s.charAt(s.length() - 1);
+            if (last == 'L' || last == 'l') s = s.substring(0, s.length() - 1);
         }
 
-        return switch (bitLength) {
-            case 8 -> {
-                if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE)
-                    throw new NumberFormatException("Value out of range for byte");
-                yield (byte) value;
-            }
-            case 16 -> {
-                if (value < Short.MIN_VALUE || value > Short.MAX_VALUE)
-                    throw new NumberFormatException("Value out of range for short");
-                yield (short) value;
-            }
-            case 32 -> {
-                if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE)
-                    throw new NumberFormatException("Value out of range for int");
-                yield (int) value;
-            }
-            case 64 -> value;
-            default -> throw new IllegalArgumentException("Invalid bitLength");
-        };
+        String lower = s.toLowerCase();
+        if (lower.startsWith("0x")) return Long.parseUnsignedLong(s.substring(2), 16);
+        if (lower.startsWith("0b")) return Long.parseLong(s.substring(2), 2);
+        if (s.matches("0[0-7]+"))   return Long.parseLong(s, 8);
+        return Long.parseLong(s);
+    }
+
+    private String stripIntegerSuffix(String tok) {
+        if (tok.isEmpty()) return tok;
+        char last = tok.charAt(tok.length() - 1);
+        return (last == 'L' || last == 'l') ? tok.substring(0, tok.length() - 1) : tok;
     }
 }
