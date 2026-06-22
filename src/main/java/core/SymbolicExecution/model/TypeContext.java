@@ -8,18 +8,50 @@ import core.SymbolicExecution.model.types.*;
 
 public class TypeContext {
 
-    private final Deque<SymType> stack = new ArrayDeque<>();
+    public enum ConversionKind {
+        ASSIGNMENT,
+        CAST
+    }
+
+    public record Entry(SymType type, ConversionKind kind) {}
+
+    private final Deque<Entry> stack = new ArrayDeque<>();
 
     public void push(SymType type) {
-        stack.push(Objects.requireNonNull(type));
+        push(type, ConversionKind.ASSIGNMENT);
+    }
+
+    public void push(SymType type, ConversionKind kind) {
+        stack.push(new Entry(
+                Objects.requireNonNull(type),
+                Objects.requireNonNull(kind)));
+    }
+
+    public void pushAssignment(SymType type) {
+        push(type, ConversionKind.ASSIGNMENT);
+    }
+
+    public void pushCast(SymType type) {
+        push(type, ConversionKind.CAST);
     }
 
     public SymType pop() {
-        return stack.poll();
+        Entry entry = stack.poll();
+        return entry == null ? null : entry.type();
     }
 
     public SymType peek() {
+        Entry entry = stack.peek();
+        return entry == null ? null : entry.type();
+    }
+
+    public Entry peekEntry() {
         return stack.peek();
+    }
+
+    public ConversionKind peekKind() {
+        Entry entry = stack.peek();
+        return entry == null ? null : entry.kind();
     }
 
     public boolean isEmpty() {

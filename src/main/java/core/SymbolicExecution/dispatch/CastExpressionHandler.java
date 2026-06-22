@@ -18,7 +18,7 @@ public class CastExpressionHandler implements AstHandler{
     public SymbolicValue eval(ASTNode node, SymbolicState state, AstDispatcher dispatcher) {
         CastExpression cast = (CastExpression) node;
         SymType targetType = SymTypeMap.convert(cast.getType());
-        state.getTypeContext().push(targetType);
+        state.getTypeContext().pushCast(targetType);
         try {
             SymbolicValue operand = dispatcher.eval(cast.getExpression(), state);
             return new SymCastOp(targetType, operand);

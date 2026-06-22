@@ -1,0 +1,6 @@
+.git\
+.settings\
+.vscode\
+.idea\
+target\
+batch-results-backup\
