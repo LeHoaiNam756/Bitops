@@ -422,6 +422,461 @@ public class SymbolicExecutionCastTest {
         SymbolicValue roundtrip = eq(back, SymLiteral.of(42));
         assertSatAll(List.of(xVal, roundtrip), Map.of("x", PrimitiveSymType.INT));
     }
+    @Test
+    public void identity_byte_to_byte() {
+        // (byte) b == b  must be SAT for any b
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, b);
+        assertSat(eq(cast, b), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    @Test
+    public void identity_short_to_short() {
+        SymVariable s = new SymVariable("s");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, s);
+        assertSat(eq(cast, s), Map.of("s", PrimitiveSymType.SHORT));
+    }
+
+    @Test
+    public void identity_char_to_char() {
+        SymVariable c = new SymVariable("c");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, c);
+        assertSat(eq(cast, c), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    @Test
+    public void identity_int_to_int() {
+        SymVariable x = new SymVariable("x");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, x);
+        assertSat(eq(cast, x), Map.of("x", PrimitiveSymType.INT));
+    }
+
+    @Test
+    public void identity_long_to_long() {
+        SymVariable x = new SymVariable("x");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, x);
+        assertSat(eq(cast, x), Map.of("x", PrimitiveSymType.LONG));
+    }
+
+    @Test
+    public void identity_float_to_float() {
+        SymVariable f = new SymVariable("f");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, f);
+        assertSat(eq(cast, f), Map.of("f", PrimitiveSymType.FLOAT));
+    }
+
+    @Test
+    public void identity_double_to_double() {
+        SymVariable d = new SymVariable("d");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.DOUBLE, d);
+        assertSat(eq(cast, d), Map.of("d", PrimitiveSymType.DOUBLE));
+    }
+
+    @Test
+    public void identity_boolean_to_boolean() {
+        // (boolean) b == b — SAT; boolean is a single-bit sort in the encoder
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BOOLEAN, b);
+        assertSat(eq(cast, b), Map.of("b", PrimitiveSymType.BOOLEAN));
+    }
+
+    // =========================================================================
+    // §5.1.2  Widening primitive conversions
+    // =========================================================================
+
+    // --- byte widening ---
+
+    @Test
+    public void widening_byte_to_short() {
+        // (short)(byte)-1 == -1  — sign extension: -1 stays -1
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, b);
+        SymbolicValue bVal   = eq(b, SymLiteral.of((byte) -1));
+        SymbolicValue castVal = eq(cast, SymLiteral.of((short) -1));
+        assertSatAll(List.of(bVal, castVal), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    @Test
+    public void widening_byte_to_int() {
+        // (int)(byte)100 == 100
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, b);
+        SymbolicValue bVal   = eq(b, SymLiteral.of((byte) 100));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(100));
+        assertSatAll(List.of(bVal, castVal), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    @Test
+    public void widening_byte_to_long() {
+        // (long)(byte)-128 == -128L
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, b);
+        SymbolicValue bVal   = eq(b, SymLiteral.of((byte) -128));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(-128L));
+        assertSatAll(List.of(bVal, castVal), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    @Test
+    public void widening_byte_to_float() {
+        // (float)(byte)64 == 64.0f
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, b);
+        SymbolicValue bVal   = eq(b, SymLiteral.of((byte) 64));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(64.0f));
+        assertSatAll(List.of(bVal, castVal), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    @Test
+    public void widening_byte_to_double() {
+        // (double)(byte)127 == 127.0
+        SymVariable b = new SymVariable("b");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.DOUBLE, b);
+        SymbolicValue bVal   = eq(b, SymLiteral.of((byte) 127));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(127.0));
+        assertSatAll(List.of(bVal, castVal), Map.of("b", PrimitiveSymType.BYTE));
+    }
+
+    // --- short widening ---
+
+    @Test
+    public void widening_short_to_int() {
+        // (int)(short)-32768 == -32768
+        SymVariable s = new SymVariable("s");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, s);
+        SymbolicValue sVal   = eq(s, SymLiteral.of(Short.MIN_VALUE));
+        SymbolicValue castVal = eq(cast, SymLiteral.of((int) Short.MIN_VALUE));
+        assertSatAll(List.of(sVal, castVal), Map.of("s", PrimitiveSymType.SHORT));
+    }
+
+    @Test
+    public void widening_short_to_long() {
+        // (long)(short)32767 == 32767L
+        SymVariable s = new SymVariable("s");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, s);
+        SymbolicValue sVal   = eq(s, SymLiteral.of(Short.MAX_VALUE));
+        SymbolicValue castVal = eq(cast, SymLiteral.of((long) Short.MAX_VALUE));
+        assertSatAll(List.of(sVal, castVal), Map.of("s", PrimitiveSymType.SHORT));
+    }
+
+    @Test
+    public void widening_short_to_float() {
+        // (float)(short)1000 == 1000.0f
+        SymVariable s = new SymVariable("s");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, s);
+        SymbolicValue sVal   = eq(s, SymLiteral.of((short) 1000));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(1000.0f));
+        assertSatAll(List.of(sVal, castVal), Map.of("s", PrimitiveSymType.SHORT));
+    }
+
+    @Test
+    public void widening_short_to_double() {
+        // (double)(short)-1 == -1.0
+        SymVariable s = new SymVariable("s");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.DOUBLE, s);
+        SymbolicValue sVal   = eq(s, SymLiteral.of((short) -1));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(-1.0));
+        assertSatAll(List.of(sVal, castVal), Map.of("s", PrimitiveSymType.SHORT));
+    }
+
+    // --- char widening ---
+
+    @Test
+    public void widening_char_to_int() {
+        // (int)'\uFFFF' == 65535  — zero-extension, not sign-extension
+        SymVariable c = new SymVariable("c");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, c);
+        SymbolicValue cVal   = eq(c, SymLiteral.of((char) 0xFFFF));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(65535));
+        assertSatAll(List.of(cVal, castVal), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    @Test
+    public void widening_char_to_long() {
+        // (long)'\u0041' == 65L  ('A')
+        SymVariable c = new SymVariable("c");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, c);
+        SymbolicValue cVal   = eq(c, SymLiteral.of('A'));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(65L));
+        assertSatAll(List.of(cVal, castVal), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    @Test
+    public void widening_char_to_float() {
+        // (float)'\u0064' == 100.0f  ('\u0064' = 'd' = 100)
+        SymVariable c = new SymVariable("c");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, c);
+        SymbolicValue cVal   = eq(c, SymLiteral.of((char) 100));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(100.0f));
+        assertSatAll(List.of(cVal, castVal), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    @Test
+    public void widening_char_to_double() {
+        // (double)'\u0000' == 0.0
+        SymVariable c = new SymVariable("c");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.DOUBLE, c);
+        SymbolicValue cVal   = eq(c, SymLiteral.of((char) 0));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(0.0));
+        assertSatAll(List.of(cVal, castVal), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    // --- int widening ---
+
+    @Test
+    public void widening_int_to_long() {
+        // (long) Integer.MAX_VALUE == 2147483647L
+        SymVariable x = new SymVariable("x");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, x);
+        SymbolicValue xVal   = eq(x, SymLiteral.of(Integer.MAX_VALUE));
+        SymbolicValue castVal = eq(cast, SymLiteral.of((long) Integer.MAX_VALUE));
+        assertSatAll(List.of(xVal, castVal), Map.of("x", PrimitiveSymType.INT));
+    }
+
+    @Test
+    public void widening_int_to_float() {
+        // (float)1024 == 1024.0f  (exact in float)
+        SymVariable x = new SymVariable("x");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, x);
+        SymbolicValue xVal   = eq(x, SymLiteral.of(1024));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(1024.0f));
+        assertSatAll(List.of(xVal, castVal), Map.of("x", PrimitiveSymType.INT));
+    }
+
+    // --- long widening ---
+
+    @Test
+    public void widening_long_to_float() {
+        // (float)256L == 256.0f
+        SymVariable x = new SymVariable("x");
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, x);
+        SymbolicValue xVal   = eq(x, SymLiteral.of(256L));
+        SymbolicValue castVal = eq(cast, SymLiteral.of(256.0f));
+        assertSatAll(List.of(xVal, castVal), Map.of("x", PrimitiveSymType.LONG));
+    }
+
+    // =========================================================================
+    // §5.1.3  Narrowing — short
+    // =========================================================================
+
+    @Test
+    public void narrowing_short_to_byte_truncates() {
+        // (byte)(short)256 == 0  (0x0100 → low byte = 0x00)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of((short) 256));
+        assertSat(eq(cast, SymLiteral.of((byte) 0)), Map.of());
+    }
+
+    @Test
+    public void narrowing_short_to_byte_negative() {
+        // (byte)(short)-1 == -1  (0xFFFF → low byte 0xFF = -1 signed)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of((short) -1));
+        assertSat(eq(cast, SymLiteral.of((byte) -1)), Map.of());
+    }
+
+    @Test
+    public void narrowing_short_to_char_positive() {
+        // (char)(short)65 == 'A'  (positive short fits in char unsigned range)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of((short) 65));
+        assertSat(eq(cast, SymLiteral.of('A')), Map.of());
+    }
+
+    @Test
+    public void narrowing_short_to_char_negativeWraps() {
+        // (char)(short)-1 == '\uFFFF'  (0xFFFF reinterpreted as unsigned = 65535)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of((short) -1));
+        assertSat(eq(cast, SymLiteral.of((char) 0xFFFF)), Map.of());
+    }
+
+    // =========================================================================
+    // §5.1.3  Narrowing — char
+    // =========================================================================
+
+    @Test
+    public void narrowing_char_to_byte_truncates() {
+        // (byte)'\u0180' == 0  (0x0180 → low byte 0x80 → signed = -128)
+        // Actually (byte)(char)0x0180 = (byte)0x80 = -128
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of((char) 0x0180));
+        assertSat(eq(cast, SymLiteral.of((byte) -128)), Map.of());
+    }
+
+    @Test
+    public void narrowing_char_to_byte_negativeResult() {
+        // (byte)'\u00FF' == -1  (0xFF → signed byte = -1)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of((char) 0x00FF));
+        assertSat(eq(cast, SymLiteral.of((byte) -1)), Map.of());
+    }
+
+    @Test
+    public void narrowing_char_to_short_truncates() {
+        // (short)'\uFFFF' == -1  (0xFFFF reinterpreted as signed 16-bit = -1)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of((char) 0xFFFF));
+        assertSat(eq(cast, SymLiteral.of((short) -1)), Map.of());
+    }
+
+    @Test
+    public void narrowing_char_to_short_negativeResult() {
+        // (short)'\u8000' == -32768  (0x8000 = Short.MIN_VALUE as signed)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of((char) 0x8000));
+        assertSat(eq(cast, SymLiteral.of(Short.MIN_VALUE)), Map.of());
+    }
+
+    // =========================================================================
+    // §5.1.3  Narrowing — long → short / char
+    // =========================================================================
+
+    @Test
+    public void narrowing_long_to_short_truncates() {
+        // (short)(long)0x1_0001L == 1  (low 16 bits of 0x10001 = 0x0001 = 1)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(0x1_0001L));
+        assertSat(eq(cast, SymLiteral.of((short) 1)), Map.of());
+    }
+
+    @Test
+    public void narrowing_long_to_short_negative() {
+        // (short)(-1L) == -1  (0xFFFF_FFFF_FFFF_FFFFL → low 16 bits = 0xFFFF = -1)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(-1L));
+        assertSat(eq(cast, SymLiteral.of((short) -1)), Map.of());
+    }
+
+    @Test
+    public void narrowing_long_to_char_truncates() {
+        // (char)(long)0x1_0041L == 'A'  (low 16 bits = 0x0041 = 65 = 'A')
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(0x1_0041L));
+        assertSat(eq(cast, SymLiteral.of('A')), Map.of());
+    }
+
+    @Test
+    public void narrowing_long_to_char_wraps() {
+        // (char)(-1L) == '\uFFFF'  (low 16 bits of 0xFFFF...FFFF = 0xFFFF)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(-1L));
+        assertSat(eq(cast, SymLiteral.of((char) 0xFFFF)), Map.of());
+    }
+
+    // =========================================================================
+    // §5.1.3  Narrowing — float → byte / short / char / long
+    // =========================================================================
+
+    @Test
+    public void narrowing_float_to_byte_truncatesTowardZero() {
+        // (byte)99.9f == 99  — truncate toward zero first (→int 99), then narrow to byte
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of(99.9f));
+        assertSat(eq(cast, SymLiteral.of((byte) 99)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_byte_outOfRange() {
+        // (byte)300.0f — JLS: convert to int (→300), then narrow to byte
+        // (byte)300 = 44  (0x12C → 0x2C = 44)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of(300.0f));
+        assertSat(eq(cast, SymLiteral.of((byte) 44)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_short_truncatesTowardZero() {
+        // (short)1000.7f == 1000
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(1000.7f));
+        assertSat(eq(cast, SymLiteral.of((short) 1000)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_short_outOfRange() {
+        // (short)70000.0f — first to int (70000), then (short)70000 = 4464
+        // 70000 = 0x11170 → low 16 bits = 0x1170 = 4464
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(70000.0f));
+        assertSat(eq(cast, SymLiteral.of((short) 70000)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_char_truncatesTowardZero() {
+        // (char)65.9f == 'A'  (truncate to 65)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(65.9f));
+        assertSat(eq(cast, SymLiteral.of('A')), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_char_negativeBecomesZero() {
+        // (char)(-1.0f) — negative float → int gives -1; (char)(-1) = '\uFFFF'
+        // JLS §5.1.3: float→int truncates toward zero (-1.0f → -1),
+        // then int→char reinterprets bits: (char)(-1) = '\uFFFF'
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(-1.0f));
+        assertSat(eq(cast, SymLiteral.of((char) 0xFFFF)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_long_truncatesTowardZero() {
+        // (long)9.99f == 9L
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, SymLiteral.of(9.99f));
+        assertSat(eq(cast, SymLiteral.of(9L)), Map.of());
+    }
+
+    @Test
+    public void narrowing_float_to_long_negative() {
+        // (long)(-3.7f) == -3L  (truncation toward zero, not floor)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.LONG, SymLiteral.of(-3.7f));
+        assertSat(eq(cast, SymLiteral.of(-3L)), Map.of());
+    }
+
+    // =========================================================================
+    // §5.1.3  Narrowing — double → byte / short / char
+    // =========================================================================
+
+    @Test
+    public void narrowing_double_to_byte_truncatesTowardZero() {
+        // (byte)100.9 == 100  (truncate to int 100, low byte = 100)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of(100.9));
+        assertSat(eq(cast, SymLiteral.of((byte) 100)), Map.of());
+    }
+
+    @Test
+    public void narrowing_double_to_byte_outOfRange() {
+        // (byte)384.0 == 128→ wait: (byte)(int)384 → 384 = 0x180 → low byte 0x80 = -128
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of(384.0));
+        assertSat(eq(cast, SymLiteral.of((byte) -128)), Map.of());
+    }
+
+    @Test
+    public void narrowing_double_to_short_truncatesTowardZero() {
+        // (short)(-500.9) == -500  (truncation toward zero)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(-500.9));
+        assertSat(eq(cast, SymLiteral.of((short) -500)), Map.of());
+    }
+
+    @Test
+    public void narrowing_double_to_short_outOfRange() {
+        // (short)100000.0 — int value 100000 = 0x186A0; low 16 bits = 0x86A0 = -31072
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.SHORT, SymLiteral.of(100000.0));
+        assertSat(eq(cast, SymLiteral.of((short) 100000)), Map.of());
+    }
+
+    @Test
+    public void narrowing_double_to_char_truncatesTowardZero() {
+        // (char)65.99 == 'A'  (truncate to int 65, then char)
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(65.99));
+        assertSat(eq(cast, SymLiteral.of('A')), Map.of());
+    }
+
+    @Test
+    public void narrowing_double_to_char_negativeBecomesZero() {
+        // (char)(-1.0) — double→int gives -1; (char)(-1) = '\uFFFF'
+        // Same JLS path as float: negative double truncates to -1,
+        // then int→char reinterprets as unsigned 0xFFFF.
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of(-1.0));
+        assertSat(eq(cast, SymLiteral.of((char) 0xFFFF)), Map.of());
+    }
+
+    // =========================================================================
+    // §5.1.4  Widening-and-narrowing — byte → char
+    //   byte is sign-extended to int, then truncated to 16-bit unsigned char.
+    // =========================================================================
+
+    @Test
+    public void wideningAndNarrowing_byte_to_char() {
+        // (char)(byte)-1 == '\uFFFF'
+        //   Step 1 — widening byte→int: -1 sign-extends to 0xFFFFFFFF
+        //   Step 2 — narrowing int→char:  low 16 bits = 0xFFFF
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of((byte) -1));
+        assertSat(eq(cast, SymLiteral.of((char) 0xFFFF)), Map.of());
+    }
+
 
     // =========================================================================
     // Helpers — constraint building
