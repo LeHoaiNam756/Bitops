@@ -153,7 +153,7 @@ public class VariableDeclarationStatementHandlerTest {
             handler.eval(vds, state, dispatcher);
 
             InOrder inOrder = inOrder(typeContext, dispatcher);
-            inOrder.verify(typeContext).push(eq(convertedType));
+            inOrder.verify(typeContext).pushAssignment(eq(convertedType));
             inOrder.verify(dispatcher).eval(eq(fragment.getInitializer()), eq(state));
         }
     }
@@ -180,7 +180,7 @@ public class VariableDeclarationStatementHandlerTest {
             handler.eval(vds, state, dispatcher);
 
             InOrder inOrder = inOrder(typeContext, dispatcher);
-            inOrder.verify(typeContext).push(eq(convertedType));
+            inOrder.verify(typeContext).pushAssignment(eq(convertedType));
             inOrder.verify(dispatcher).eval(eq(fragment.getInitializer()), eq(state));
             inOrder.verify(typeContext).pop();
         }
@@ -206,7 +206,7 @@ public class VariableDeclarationStatementHandlerTest {
 
             assertThrows(RuntimeException.class, () -> handler.eval(vds, state, dispatcher));
 
-            verify(typeContext).push(eq(convertedType));
+            verify(typeContext).pushAssignment(eq(convertedType));
         }
     }
 
@@ -255,7 +255,7 @@ public class VariableDeclarationStatementHandlerTest {
 
             handler.eval(vds, state, dispatcher);
 
-            verify(typeContext).push(eq(customType));
+            verify(typeContext).pushAssignment(eq(customType));
         }
     }
 
@@ -305,7 +305,7 @@ public class VariableDeclarationStatementHandlerTest {
 
             handler.eval(vds, state, dispatcher);
 
-            verify(typeContext).push(eq(UnknownSymType.INSTANCE));
+            verify(typeContext).pushAssignment(eq(UnknownSymType.INSTANCE));
             verify(memory).write(eq("x"), eq(SymLiteral.of(1)));
         }
     }
@@ -332,7 +332,7 @@ public class VariableDeclarationStatementHandlerTest {
 
             handler.eval(vds, state, dispatcher);
 
-            verify(typeContext).push(isA(SymType.class));
+            verify(typeContext).pushAssignment(isA(SymType.class));
             verify(typeContext).pop();
         }
     }

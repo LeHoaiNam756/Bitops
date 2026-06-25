@@ -26,7 +26,7 @@ public class VariableDeclarationStatementHandler implements AstHandler {
             String varName = vdf.getName().getIdentifier();
 
             if (vdf.getInitializer() != null) {
-                state.getTypeContext().push(declaredType);
+                state.getTypeContext().pushAssignment(declaredType);
                 try {
                     SymbolicValue val = dispatcher.eval(vdf.getInitializer(), state);
                     state.getMemoryModel().write(varName, val);

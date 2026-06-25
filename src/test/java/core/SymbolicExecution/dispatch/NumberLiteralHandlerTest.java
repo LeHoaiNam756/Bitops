@@ -37,8 +37,17 @@ public class NumberLiteralHandlerTest {
     private SymbolicState createState(SymType type) {
         TypeContext tc = new TypeContext();
         if (type != null) {
-            tc.push(type);
+            tc.pushAssignment(type);
         }
+        return SymbolicState.builder()
+                .memoryModel(new MemoryModel())
+                .typeContext(tc)
+                .build();
+    }
+
+    private SymbolicState createCastState(SymType type) {
+        TypeContext tc = new TypeContext();
+        tc.pushCast(type);
         return SymbolicState.builder()
                 .memoryModel(new MemoryModel())
                 .typeContext(tc)
@@ -184,5 +193,26 @@ public class NumberLiteralHandlerTest {
         SymbolicValue result = handler.eval(literal, state, new AstDispatcher());
         assertTrue(result instanceof SymLiteral);
         assertEquals((byte) 42, ((SymLiteral) result).value());
+    }
+
+    @Test
+    public void evalByteAssignmentContextAllowsRepresentableConstant() {
+        NumberLiteral literal = createUnboundLiteral("127");
+        SymbolicValue result = handler.eval(literal, createState(TypeContext.BYTE), new AstDispatcher());
+        assertEquals((byte) 127, ((SymLiteral) result).value());
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void evalByteAssignmentContextRejectsOutOfRangeConstant() {
+        handler.eval(createUnboundLiteral("128"), createState(TypeContext.BYTE), new AstDispatcher());
+    }
+
+    @Test
+    public void evalByteCastContextTruncatesOutOfRangeConstant() {
+        SymbolicValue result = handler.eval(
+                createUnboundLiteral("200"),
+                createCastState(TypeContext.BYTE),
+                new AstDispatcher());
+        assertEquals((byte) -56, ((SymLiteral) result).value());
     }
 }

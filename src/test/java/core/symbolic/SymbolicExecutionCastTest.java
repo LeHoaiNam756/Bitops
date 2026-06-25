@@ -153,6 +153,26 @@ public class SymbolicExecutionCastTest {
         assertSatAll(List.of(fVal, castVal), Map.of("f", PrimitiveSymType.FLOAT));
     }
 
+    @Test
+    public void widening_char_to_double_zeroExtends() {
+        SymVariable c = new SymVariable("c");
+        SymCastOp widened = new SymCastOp(PrimitiveSymType.DOUBLE, c);
+        assertSatAll(List.of(
+                eq(c, SymLiteral.of((char) 65535)),
+                eq(widened, SymLiteral.of(65535.0))
+        ), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
+    @Test
+    public void numericPromotion_char_to_double_zeroExtends() {
+        SymVariable c = new SymVariable("c");
+        SymBinaryOp sum = new SymBinaryOp(c, SymBinaryOp.Op.ADD, SymLiteral.of(0.0));
+        assertSatAll(List.of(
+                eq(c, SymLiteral.of((char) 65535)),
+                eq(sum, SymLiteral.of(65535.0))
+        ), Map.of("c", PrimitiveSymType.CHAR));
+    }
+
     // =========================================================================
     // §5.1.3  Narrowing primitive — integral (bit truncation)
     // =========================================================================
@@ -217,6 +237,12 @@ public class SymbolicExecutionCastTest {
         assertSat(eq(cast, SymLiteral.of((char) 0)), Map.of());
     }
 
+    @Test
+    public void wideningAndNarrowing_byte_to_char_signExtendsThenTruncates() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.CHAR, SymLiteral.of((byte) -1));
+        assertSat(eq(cast, SymLiteral.of((char) 65535)), Map.of());
+    }
+
     // =========================================================================
     // §5.1.3  Narrowing primitive — FP → integral (truncation toward zero)
     // =========================================================================
@@ -261,6 +287,36 @@ public class SymbolicExecutionCastTest {
         // (float) 1.5 == 1.5f — SAT (exact for this value)
         SymCastOp cast = new SymCastOp(PrimitiveSymType.FLOAT, SymLiteral.of(1.5));
         assertSat(eq(cast, SymLiteral.of(1.5f)), Map.of());
+    }
+
+    @Test
+    public void narrowing_doubleNaN_to_int_isZero() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, SymLiteral.of(Double.NaN));
+        assertSat(eq(cast, SymLiteral.of(0)), Map.of());
+    }
+
+    @Test
+    public void narrowing_doublePositiveInfinity_to_int_saturatesToMax() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, SymLiteral.of(Double.POSITIVE_INFINITY));
+        assertSat(eq(cast, SymLiteral.of(Integer.MAX_VALUE)), Map.of());
+    }
+
+    @Test
+    public void narrowing_doubleNegativeInfinity_to_int_saturatesToMin() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, SymLiteral.of(Double.NEGATIVE_INFINITY));
+        assertSat(eq(cast, SymLiteral.of(Integer.MIN_VALUE)), Map.of());
+    }
+
+    @Test
+    public void narrowing_doubleOutOfIntRange_to_int_saturatesToMax() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.INT, SymLiteral.of(1.0e40));
+        assertSat(eq(cast, SymLiteral.of(Integer.MAX_VALUE)), Map.of());
+    }
+
+    @Test
+    public void narrowing_doublePositiveInfinity_to_byte_saturatesThenTruncates() {
+        SymCastOp cast = new SymCastOp(PrimitiveSymType.BYTE, SymLiteral.of(Double.POSITIVE_INFINITY));
+        assertSat(eq(cast, SymLiteral.of((byte) -1)), Map.of());
     }
 
     // =========================================================================

@@ -115,7 +115,7 @@ public class VariableDeclarationExpressionHandlerTest {
             handler.eval(vde, state, dispatcher);
 
             InOrder inOrder = inOrder(typeContext, dispatcher);
-            inOrder.verify(typeContext).push(eq(PrimitiveSymType.INT));
+            inOrder.verify(typeContext).pushAssignment(eq(PrimitiveSymType.INT));
             inOrder.verify(dispatcher).eval(eq(fragment.getInitializer()), eq(state));
             inOrder.verify(typeContext).pop();
         }

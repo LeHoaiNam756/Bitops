@@ -360,9 +360,7 @@ public final class Z3Encoder {
 
             // FP → integral (§5.1.3): truncate toward zero (JLS mandates this)
             if (fromSort instanceof FPSort) {
-                // mkFPToBV(rounding, fp, bits, signed): signed=true for all Java integral types
-                return ctx.mkFPToBV(ctx.mkFPRoundTowardZero(), (FPExpr) operand,
-                                    targetWidth, true);
+                return jlsFpToIntegral((FPExpr) operand, (FPSort) fromSort, targetWidth);
             }
 
             // BV → BV: widening or narrowing
@@ -439,8 +437,8 @@ public final class Z3Encoder {
         if (isFPSort(resultSort) || isFPSort(leftSort) || isFPSort(rightSort)) {
             FPSort  targetFP = resultSort.equals(sorts.fp64Sort())
                                ? sorts.fp64Sort() : sorts.fp32Sort();
-            FPExpr  fpLeft   = coerceToFP(left,  leftSort,  targetFP);
-            FPExpr  fpRight  = coerceToFP(right, rightSort, targetFP);
+            FPExpr  fpLeft   = coerceToFP(left,  leftSort,  targetFP, leftJavaType);
+            FPExpr  fpRight  = coerceToFP(right, rightSort, targetFP, rightJavaType);
             return encodeFPBinary(b.op(), fpLeft, fpRight, b);
         }
 
@@ -466,17 +464,13 @@ public final class Z3Encoder {
                                        Expr<?> l, Expr<?> r,
                                        Sort leftSort, Sort rightSort,
                                        SymBinaryOp node) {
-        if (!sorts.isStringSort(leftSort) || !sorts.isStringSort(rightSort)) {
-            throw new EncodingException(
-                    "String operation requires both operands to have String sort", node);
-        }
+        Expr<SeqSort<CharSort>> leftString = asStringConversion(l, leftSort, node.left(), node);
+        Expr<SeqSort<CharSort>> rightString = asStringConversion(r, rightSort, node.right(), node);
 
         return switch (op) {
-            case ADD -> ctx.mkConcat(
-                    (Expr<SeqSort<CharSort>>) l,
-                    (Expr<SeqSort<CharSort>>) r);
-            case EQ  -> ctx.mkEq(l, r);
-            case NEQ -> ctx.mkNot(ctx.mkEq(l, r));
+            case ADD -> ctx.mkConcat(leftString, rightString);
+            case EQ  -> ctx.mkEq(leftString, rightString);
+            case NEQ -> ctx.mkNot(ctx.mkEq(leftString, rightString));
             default -> throw new EncodingException(
                     "Op '" + op + "' not supported in String domain", node);
         };
@@ -710,6 +704,22 @@ public final class Z3Encoder {
             throw new EncodingException("Expected String sort, got " + sort, source);
         }
         return (Expr<SeqSort<CharSort>>) expr;
+    }
+
+    private Expr<SeqSort<CharSort>> asStringConversion(
+            Expr<?> expr,
+            Sort sort,
+            SymbolicValue source,
+            SymbolicValue context) {
+        if (sorts.isStringSort(sort)) {
+            return (Expr<SeqSort<CharSort>>) expr;
+        }
+        if (source instanceof SymLiteral literal) {
+            return ctx.mkString(String.valueOf(literal.value()));
+        }
+        throw new EncodingException(
+                "String conversion for non-literal sort " + sort + " is not supported",
+                context);
     }
 
     // ── FP binary ───────────────────────────────────────────────────────────
@@ -980,7 +990,7 @@ public final class Z3Encoder {
      * FP (other sort) → mkFPToFP (widen or narrow)
      * BitVec          → mkFPToFP (signed BV → FP)
      */
-    private FPExpr coerceToFP(Expr<?> expr, Sort sort, FPSort target) {
+    private FPExpr coerceToFP(Expr<?> expr, Sort sort, FPSort target, SymType javaType) {
         if (sort.equals(target)) return (FPExpr) expr;
 
         if (sort instanceof FPSort) {
@@ -989,10 +999,47 @@ public final class Z3Encoder {
 
         if (sort instanceof BitVecSort) {
             // Signed BV → FP via mkFPToFP(rounding, bv, sort, signed=true)
-            return ctx.mkFPToFP(RNE, (BitVecExpr) expr, target, true);
+            return ctx.mkFPToFP(RNE, (BitVecExpr) expr, target, javaType != PrimitiveSymType.CHAR);
         }
 
         throw new IllegalArgumentException("Cannot coerce sort " + sort + " to FPSort");
+    }
+
+    private BitVecExpr jlsFpToIntegral(FPExpr fp, FPSort fromSort, int targetWidth) {
+        int conversionWidth = targetWidth < 32 ? 32 : targetWidth;
+        BitVecExpr converted = ctx.mkFPToBV(
+                ctx.mkFPRoundTowardZero(), fp, conversionWidth, true);
+
+        BitVecExpr zero = ctx.mkBV(0, conversionWidth);
+        BitVecExpr max = conversionWidth == 64
+                ? ctx.mkBV(Long.MAX_VALUE, 64)
+                : ctx.mkBV(Integer.MAX_VALUE, 32);
+        BitVecExpr min = conversionWidth == 64
+                ? ctx.mkBV(Long.MIN_VALUE, 64)
+                : ctx.mkBV(Integer.MIN_VALUE, 32);
+
+        BoolExpr isNaN = ctx.mkFPIsNaN(fp);
+        BoolExpr tooLarge = ctx.mkFPGt(fp, fpLiteralForSort(
+                conversionWidth == 64 ? (double) Long.MAX_VALUE : (double) Integer.MAX_VALUE,
+                fromSort));
+        BoolExpr tooSmall = ctx.mkFPLt(fp, fpLiteralForSort(
+                conversionWidth == 64 ? (double) Long.MIN_VALUE : (double) Integer.MIN_VALUE,
+                fromSort));
+
+        BitVecExpr saturated = (BitVecExpr) ctx.mkITE(isNaN, zero,
+                ctx.mkITE(tooLarge, max, ctx.mkITE(tooSmall, min, converted)));
+
+        if (targetWidth == conversionWidth) {
+            return saturated;
+        }
+        return ctx.mkExtract(targetWidth - 1, 0, saturated);
+    }
+
+    private FPExpr fpLiteralForSort(double value, FPSort sort) {
+        if (sort.equals(sorts.fp32Sort())) {
+            return (FPExpr) encodeLiteral(SymLiteral.of((float) value));
+        }
+        return (FPExpr) encodeLiteral(SymLiteral.of(value));
     }
 
     // =========================================================================

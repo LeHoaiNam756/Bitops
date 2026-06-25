@@ -138,6 +138,24 @@ public class Z3EncoderTest {
     }
 
     @Test
+    public void constraintSolver_stringConcatWithPrimitiveLiteral_appliesStringConversion() {
+        try (ConstraintSolver solver = ConstraintSolver.create(Map.of())) {
+            SymBinaryOp concat = new SymBinaryOp(
+                    SymLiteral.of("v="),
+                    SymBinaryOp.Op.ADD,
+                    SymLiteral.of(1));
+            SymBinaryOp constraint = new SymBinaryOp(
+                    concat,
+                    SymBinaryOp.Op.EQ,
+                    SymLiteral.of("v=1"));
+
+            SolverResult result = solver.check(List.of(constraint));
+
+            assertEquals(true, result.isSat());
+        }
+    }
+
+    @Test
     public void constraintSolver_stringEquality_extractsStringModel() {
         try (ConstraintSolver solver = ConstraintSolver.create(
                 Map.of("s", new ObjectSymType("java.lang.String")))) {

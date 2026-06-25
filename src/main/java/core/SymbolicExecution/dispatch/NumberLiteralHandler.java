@@ -3,6 +3,7 @@ package core.SymbolicExecution.dispatch;
 import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.TypeContext;
 import core.SymbolicExecution.model.types.PrimitiveSymType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.NumberLiteral;
@@ -38,12 +39,10 @@ public class NumberLiteralHandler implements AstHandler {
         // Fallback: no binding available (test environment, partial compilation).
         // Consult the type context pushed by the enclosing handler
         // (CastExpressionHandler, VariableDeclarationHandler, AssignmentHandler).
-        if (state.getTypeContext().peek() instanceof PrimitiveSymType contextType) {
-            // Context-driven narrowing: the source literal is written as an int
-            // (e.g. "byte b = 200") and the compiler applies a silent narrowing
-            // conversion.  Do NOT range-check — truncate instead, exactly as the
-            // JVM does.  200 as byte = (byte)(int)200 = -56.
-            return parseWithType(tok, contextType, false);
+        TypeContext.Entry context = state.getTypeContext().peekEntry();
+        if (context != null && context.type() instanceof PrimitiveSymType contextType) {
+            boolean strict = context.kind() != TypeContext.ConversionKind.CAST;
+            return parseWithType(tok, contextType, strict);
         }
 
         // No type information at all: infer from token suffix or parse as int/double.
