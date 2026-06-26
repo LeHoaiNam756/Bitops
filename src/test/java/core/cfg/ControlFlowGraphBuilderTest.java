@@ -815,4 +815,140 @@ public class ControlFlowGraphBuilderTest {
         }
         assertTrue("LOOP FALSE should target EXIT", falseToExit);
     }
+
+    @Test
+    public void testTryCatch_explicitThrowWiresExceptionEdgeToMatchingCatch() throws Exception {
+        String src = """
+            class Test {
+                int foo(int x) {
+                    try {
+                        if (x < 0) {
+                            throw new IllegalArgumentException();
+                        }
+                        return 1;
+                    } catch (IllegalArgumentException e) {
+                        return -1;
+                    }
+                }
+            }
+            """;
+        List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
+
+        ControlFlowGraph.Node throwNode = nodeContaining(cfg, "throw new IllegalArgumentException");
+        ControlFlowGraph.Node catchReturn = nodeContaining(cfg, "return -1");
+        assertNotNull(throwNode);
+        assertNotNull(catchReturn);
+
+        assertTrue("throw should flow to matching catch with EXCEPTION edge",
+                hasEdge(cfg, throwNode.getId(), catchReturn.getId(), CfgEdgeKind.EXCEPTION));
+    }
+
+    @Test
+    public void testTryCatch_unionCatchMatchesThrownType() throws Exception {
+        String src = """
+            class Test {
+                int foo(int x) {
+                    try {
+                        throw new IllegalStateException();
+                    } catch (IllegalArgumentException | IllegalStateException e) {
+                        return -1;
+                    }
+                }
+            }
+            """;
+        List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
+
+        ControlFlowGraph.Node throwNode = nodeContaining(cfg, "throw new IllegalStateException");
+        ControlFlowGraph.Node catchReturn = nodeContaining(cfg, "return -1");
+        assertNotNull(throwNode);
+        assertNotNull(catchReturn);
+
+        assertTrue("union catch should receive matching explicit throw",
+                hasEdge(cfg, throwNode.getId(), catchReturn.getId(), CfgEdgeKind.EXCEPTION));
+    }
+
+    @Test
+    public void testTryCatch_unmatchedThrowBubblesToExit() throws Exception {
+        String src = """
+            class Test {
+                int foo() {
+                    throw new IllegalArgumentException();
+                }
+            }
+            """;
+        List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
+
+        ControlFlowGraph.Node throwNode = nodeContaining(cfg, "throw new IllegalArgumentException");
+        ControlFlowGraph.Node exitNode = nodeWithKind(cfg, CfgNodeKind.EXIT);
+        assertNotNull(throwNode);
+        assertNotNull(exitNode);
+
+        assertTrue("unmatched throw should leave method via EXCEPTION edge",
+                hasEdge(cfg, throwNode.getId(), exitNode.getId(), CfgEdgeKind.EXCEPTION));
+    }
+
+    @Test
+    public void testTryCatch_nestedTryUsesNearestMatchingCatch() throws Exception {
+        String src = """
+            class Test {
+                int foo() {
+                    try {
+                        try {
+                            throw new IllegalStateException();
+                        } catch (IllegalStateException e) {
+                            return 1;
+                        }
+                    } catch (Exception e) {
+                        return 2;
+                    }
+                }
+            }
+            """;
+        List<ASTNode> methods = Parser.parseSourceToAstFuncList(src);
+        ControlFlowGraph cfg = new CfgBuilder().build((MethodDeclaration) methods.get(0));
+
+        ControlFlowGraph.Node throwNode = nodeContaining(cfg, "throw new IllegalStateException");
+        ControlFlowGraph.Node innerCatchReturn = nodeContaining(cfg, "return 1");
+        ControlFlowGraph.Node outerCatchReturn = nodeContaining(cfg, "return 2");
+        assertNotNull(throwNode);
+        assertNotNull(innerCatchReturn);
+        assertNotNull(outerCatchReturn);
+
+        assertTrue("inner catch should receive nested explicit throw",
+                hasEdge(cfg, throwNode.getId(), innerCatchReturn.getId(), CfgEdgeKind.EXCEPTION));
+        assertFalse("outer catch should not receive a throw already handled by inner catch",
+                hasEdge(cfg, throwNode.getId(), outerCatchReturn.getId(), CfgEdgeKind.EXCEPTION));
+    }
+
+    private static ControlFlowGraph.Node nodeContaining(ControlFlowGraph cfg, String content) {
+        for (int id : cfg.getNodes()) {
+            ControlFlowGraph.Node node = cfg.getNode(id);
+            if (node != null && node.getContent() != null && node.getContent().contains(content)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private static ControlFlowGraph.Node nodeWithKind(ControlFlowGraph cfg, CfgNodeKind kind) {
+        for (int id : cfg.getNodes()) {
+            ControlFlowGraph.Node node = cfg.getNode(id);
+            if (node != null && node.getKind() == kind) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasEdge(ControlFlowGraph cfg, int from, int to, CfgEdgeKind kind) {
+        for (ControlFlowGraph.Edge edge : cfg.outgoing(from)) {
+            if (edge.getTo() == to && edge.getKind() == kind) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

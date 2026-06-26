@@ -218,6 +218,48 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_tryCatchExplicitThrowCoversCatchReturn() throws Exception {
+        Path zip = createZipProject("TryCatchUnit.java", """
+                package sample;
+
+                public class TryCatchUnit {
+                    public static int classify(int x) {
+                        try {
+                            if (x < 0) {
+                                throw new IllegalArgumentException();
+                            }
+                            return 1;
+                        } catch (IllegalArgumentException e) {
+                            return -1;
+                        }
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "classify".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("x", 0);
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                new AllPathsFinder());
+
+        assertFalse(result.testDataList().isEmpty());
+        assertEquals("1", result.testDataList().get(0).output());
+        assertTrue(result.testDataList().stream()
+                .anyMatch(testData -> testData.input().get("x") instanceof Integer x
+                        && x < 0
+                        && "-1".equals(testData.output())));
+        assertEquals(0, result.fullCoverage().getUncovered().size());
+    }
+
+    @Test
     public void comparePathFinders_tn1BenchmarkSeq() throws Exception {
         Path zip = createZipProject("Scholarship.java", """
                 package sample;

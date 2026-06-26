@@ -184,6 +184,7 @@ public final class SourceEmitter {
         else if (stmt instanceof ForStatement fs) { emitFor(fs, ctx, sb); }
         else if (stmt instanceof WhileStatement ws){ emitWhile(ws, ctx, sb); }
         else if (stmt instanceof DoStatement ds)  { emitDo(ds, ctx, sb); }
+        else if (stmt instanceof TryStatement ts) { emitTry(ts, ctx, sb); }
         else                                       { emitNormal(stmt, ctx, sb); }
     }
 
@@ -255,6 +256,34 @@ public final class SourceEmitter {
         sb.append("} while (");
         emitCondition(ds.getExpression(), ctx, sb);
         sb.append(");\n");
+    }
+
+    // ── Try/Catch ───────────────────────────────────────────────────────────
+
+    private void emitTry(TryStatement ts, EmitContext ctx, StringBuilder sb) {
+        sb.append("try");
+        List<?> resources = ts.resources();
+        if (!resources.isEmpty()) {
+            sb.append(" (");
+            for (int i = 0; i < resources.size(); i++) {
+                if (i > 0) sb.append("; ");
+                sb.append(resources.get(i));
+            }
+            sb.append(")");
+        }
+        sb.append(" ");
+        emitBlock(ts.getBody(), ctx, sb);
+
+        for (Object rawCatch : ts.catchClauses()) {
+            CatchClause cc = (CatchClause) rawCatch;
+            sb.append("catch (").append(cc.getException()).append(") ");
+            emitBlock(cc.getBody(), ctx, sb);
+        }
+
+        if (ts.getFinally() != null) {
+            sb.append("finally ");
+            emitBlock(ts.getFinally(), ctx, sb);
+        }
     }
 
     // ── Normal (non-control-flow) statement ──────────────────────────────────
