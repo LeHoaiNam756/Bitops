@@ -116,6 +116,14 @@ public final class JsonArgParser {
                 yield arr;
             }
             case "byte" -> {
+                if (node.isTextual()) {
+                    try {
+                        yield java.util.Base64.getDecoder().decode(node.textValue());
+                    } catch (IllegalArgumentException e) {
+                        throw new ArgConversionException(paramName, typeName, node.toString(),
+                                "Expected a Base64-encoded string or JSON integer array for byte[]");
+                    }
+                }
                 byte[] arr = new byte[n];
                 for (int i = 0; i < n; i++)
                     arr[i] = (byte) convertScalar(paramName + "[" + i + "]", elem, node.get(i));

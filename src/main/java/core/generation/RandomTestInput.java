@@ -133,44 +133,66 @@ public final class RandomTestInput {
     // Primitive generation
     // -------------------------------------------------------------------------
 
+//    private static Object createRandomPrimitiveValue(PrimitiveType.Code code) {
+//        Random random = new Random();
+//
+//        if (PrimitiveType.INT.equals(code)) {
+//            int min = Setup.intMin;
+//            int max = Setup.intMax;
+//            validateBounds(min, max, "int");
+//            return min + random.nextInt((max - min) + 1);
+//        } else if (PrimitiveType.BOOLEAN.equals(code)) {
+//            return random.nextBoolean();
+//        } else if (PrimitiveType.BYTE.equals(code)) {
+//            byte[] bytes = new byte[1];
+//            random.nextBytes(bytes);
+//            return bytes[0];
+//
+//        } else if (PrimitiveType.SHORT.equals(code)) {
+//            return (short) random.nextInt();
+//
+//        } else if (PrimitiveType.CHAR.equals(code)) {
+//            return (char) random.nextInt(Character.MAX_VALUE + 1);
+//
+//        } else if (PrimitiveType.LONG.equals(code)) {
+//            return random.nextLong();
+//
+//        } else if (PrimitiveType.FLOAT.equals(code)) {
+//            float min = Setup.floatMin;
+//            float max = Setup.floatMax;
+//            validateBounds(min, max, "float");
+//            return min + random.nextFloat() * (max - min);
+//
+//        } else if (PrimitiveType.DOUBLE.equals(code)) {
+//            double min = Setup.doubleMin;
+//            double max = Setup.doubleMax;
+//            validateBounds(min, max, "double");
+//            return min + random.nextDouble() * (max - min);
+//
+//        } else if (PrimitiveType.VOID.equals(code)) {
+//            return null;
+//        }
+//
+//        throw new RuntimeException("Unsupported primitive type code: " + code);
+//    }
+
     private static Object createRandomPrimitiveValue(PrimitiveType.Code code) {
-        Random random = new Random();
-
         if (PrimitiveType.INT.equals(code)) {
-            int min = Setup.intMin;
-            int max = Setup.intMax;
-            validateBounds(min, max, "int");
-            return min + random.nextInt((max - min) + 1);
-
+            return 8;
         } else if (PrimitiveType.BOOLEAN.equals(code)) {
-            return random.nextBoolean();
-
+            return true;
         } else if (PrimitiveType.BYTE.equals(code)) {
-            byte[] bytes = new byte[1];
-            random.nextBytes(bytes);
-            return bytes[0];
-
+            return (byte) 8;
         } else if (PrimitiveType.SHORT.equals(code)) {
-            return (short) random.nextInt();
-
+            return (short) 8;
         } else if (PrimitiveType.CHAR.equals(code)) {
-            return (char) random.nextInt(Character.MAX_VALUE + 1);
-
+            return 'x';
         } else if (PrimitiveType.LONG.equals(code)) {
-            return random.nextLong();
-
+            return 8L;
         } else if (PrimitiveType.FLOAT.equals(code)) {
-            float min = Setup.floatMin;
-            float max = Setup.floatMax;
-            validateBounds(min, max, "float");
-            return min + random.nextFloat() * (max - min);
-
+            return 8.0f;
         } else if (PrimitiveType.DOUBLE.equals(code)) {
-            double min = Setup.doubleMin;
-            double max = Setup.doubleMax;
-            validateBounds(min, max, "double");
-            return min + random.nextDouble() * (max - min);
-
+            return 8.0;
         } else if (PrimitiveType.VOID.equals(code)) {
             return null;
         }

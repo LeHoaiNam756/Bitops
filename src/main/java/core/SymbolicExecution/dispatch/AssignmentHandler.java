@@ -266,7 +266,7 @@ public class AssignmentHandler implements AstHandler {
         Map.entry(Assignment.Operator.TIMES_ASSIGN, SymBinaryOp.Op.MUL),
         Map.entry(Assignment.Operator.DIVIDE_ASSIGN, SymBinaryOp.Op.DIV),
         Map.entry(Assignment.Operator.REMAINDER_ASSIGN, SymBinaryOp.Op.MOD),
-        Map.entry(Assignment.Op erator.BIT_AND_ASSIGN, SymBinaryOp.Op.BAND),
+        Map.entry(Assignment.Operator.BIT_AND_ASSIGN, SymBinaryOp.Op.BAND),
         Map.entry(Assignment.Operator.BIT_OR_ASSIGN, SymBinaryOp.Op.BOR),
         Map.entry(Assignment.Operator.BIT_XOR_ASSIGN, SymBinaryOp.Op.BXOR),
         Map.entry(Assignment.Operator.LEFT_SHIFT_ASSIGN, SymBinaryOp.Op.BLS),

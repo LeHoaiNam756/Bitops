@@ -286,7 +286,7 @@ public final class SourceEmitter {
      */
     private void emitCondition(Expression cond, EmitContext ctx, StringBuilder sb) {
         if (ctx.coverage == Coverage.STATEMENT) {
-            sb.append(cond);
+            sb.append(cond == null ? "" : cond.toString());
             return;
         }
 
@@ -304,14 +304,14 @@ public final class SourceEmitter {
 
         if (trueProbe.isEmpty() || falseProbe.isEmpty()) {
             // Untracked condition — emit verbatim
-            sb.append(cond);
+            sb.append(cond == null ? "" : cond.toString());
             return;
         }
 
         int trueId  = trueProbe.get().cfgNodeId();
         int falseId = falseProbe.get().cfgNodeId();
 
-        sb.append("((").append(cond)
+        sb.append("((").append(cond == null ? "" : cond.toString()).append(") ")
                 .append(") && TraceRecorder.mark(").append(trueId).append(", TraceKind.COND_T))")
                 .append(" || TraceRecorder.mark(").append(falseId).append(", TraceKind.COND_F)");
     }
