@@ -177,6 +177,40 @@ public class SourceEmitterTest {
                 FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
     }
 
+    @Test
+    public void statementCoverageEmitsMarkersInsideTryCatchBodies() {
+        CompilationUnit cu = parse("""
+                package sample;
+
+                class Example {
+                    int value(int x) {
+                        try {
+                            if (x < 0) {
+                                throw new IllegalArgumentException();
+                            }
+                            return 1;
+                        } catch (IllegalArgumentException e) {
+                            return -1;
+                        }
+                    }
+                }
+                """);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        ControlFlowGraph cfg = new CfgBuilder().build(method);
+        InstrumentationPlan plan = new InstrumentationPlanner().plan(cu, cfg, Coverage.STATEMENT);
+
+        String emitted = new SourceEmitter().emit(cu, plan, Coverage.STATEMENT, "cloned");
+
+        int catchStart = emitted.indexOf("catch (IllegalArgumentException e)");
+        int marker = emitted.indexOf("TraceRecorder.mark(", catchStart);
+        int catchReturn = emitted.indexOf("return -1", catchStart);
+
+        assertTrue("catch clause should be preserved", catchStart >= 0);
+        assertTrue("catch body should receive a statement marker", marker >= 0);
+        assertTrue("marker should appear before catch return", marker < catchReturn);
+    }
+
     private static CompilationUnit parse(String source) {
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);

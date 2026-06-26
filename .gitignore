@@ -39,6 +39,7 @@ build/
 
 ### Runtime-generated concolic artifacts ###
 /src/main/java/core/output/
+.local/
 docs/*
 AGENTS.md
 .worktrees/*
