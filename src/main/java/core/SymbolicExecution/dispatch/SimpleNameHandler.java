@@ -1,6 +1,8 @@
 package core.SymbolicExecution.dispatch;
 
 import core.SymbolicExecution.model.*;
+import core.SymbolicExecution.model.types.SymType;
+import core.SymbolicExecution.model.types.UnknownSymType;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.Optional;
@@ -48,13 +50,22 @@ public class SimpleNameHandler implements AstHandler{
             // model as select(this, fieldName) — same heap model as QualifiedName
             return new SymFieldAccess(
                     new SymVariable("this"),
-                    identifier
+                    identifier,
+                    resolveFieldType(vb)
             );
         }
 
         // 6. Unknown / unresolved — fresh symbolic variable
         //    covers: parameters not yet written, unresolved bindings, outer scope vars
         return new SymVariable(identifier);
+    }
+
+    private SymType resolveFieldType(IVariableBinding binding) {
+        ITypeBinding typeBinding = binding.getType();
+        if (typeBinding == null) {
+            return UnknownSymType.INSTANCE;
+        }
+        return core.SymbolicExecution.model.types.SymTypeMap.convertBinding(typeBinding);
     }
 
     private boolean isCompileTimeConstant(IVariableBinding vb) {

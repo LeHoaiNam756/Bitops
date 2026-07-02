@@ -29,4 +29,15 @@ public interface PathFinder {
             CoverageTracker tracker) {
         return Collections.emptyList();
     }
+
+    /**
+     * Returns additional complete paths when the preferred shortest suffixes
+     * are infeasible. Implementations may leave this empty.
+     */
+    default List<List<ControlFlowGraph.Edge>> findAlternativePaths(
+            ControlFlowGraph cfg,
+            int target,
+            CfgEdgeKind requiredExit) {
+        return Collections.emptyList();
+    }
 }

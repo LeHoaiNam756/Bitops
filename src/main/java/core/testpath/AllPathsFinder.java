@@ -112,6 +112,79 @@ public class AllPathsFinder implements PathFinder {
         return Collections.unmodifiableList(results);
     }
 
+    @Override
+    public List<List<ControlFlowGraph.Edge>> findAlternativePaths(
+            ControlFlowGraph cfg,
+            int target,
+            core.cfg.CfgEdgeKind requiredExit) {
+        int entryId = findNodeByKind(cfg, CfgNodeKind.ENTRY);
+        int exitId = findNodeByKind(cfg, CfgNodeKind.EXIT);
+        if (entryId == -1 || exitId == -1) return Collections.emptyList();
+
+        DfsState prefixes = new DfsState();
+        dfs(cfg, entryId, target, new ArrayDeque<>(), new HashMap<>(), prefixes);
+
+        List<List<ControlFlowGraph.Edge>> results = new ArrayList<>();
+        Set<List<ControlFlowGraph.Edge>> seen = new HashSet<>();
+        for (List<ControlFlowGraph.Edge> prefix : prefixes.paths) {
+            Map<Integer, Integer> visits = visitCounts(prefix);
+            ArrayDeque<ControlFlowGraph.Edge> path = new ArrayDeque<>(prefix);
+            dfsToExit(cfg, target, target, exitId, requiredExit, false,
+                    path, visits, results, seen);
+            if (results.size() >= MAX_PATHS) break;
+        }
+        results.sort(Comparator.comparingInt(List::size));
+        return Collections.unmodifiableList(results);
+    }
+
+    private Map<Integer, Integer> visitCounts(List<ControlFlowGraph.Edge> path) {
+        Map<Integer, Integer> counts = new HashMap<>();
+        if (path.isEmpty()) return counts;
+        counts.merge(path.get(0).getFrom(), 1, Integer::sum);
+        for (ControlFlowGraph.Edge edge : path) {
+            counts.merge(edge.getTo(), 1, Integer::sum);
+        }
+        return counts;
+    }
+
+    private void dfsToExit(
+            ControlFlowGraph cfg,
+            int current,
+            int target,
+            int exit,
+            core.cfg.CfgEdgeKind requiredExit,
+            boolean requiredExitTaken,
+            Deque<ControlFlowGraph.Edge> path,
+            Map<Integer, Integer> visits,
+            List<List<ControlFlowGraph.Edge>> results,
+            Set<List<ControlFlowGraph.Edge>> seen) {
+        if (results.size() >= MAX_PATHS || path.size() >= MAX_PATH_EDGES) return;
+
+        for (ControlFlowGraph.Edge edge : cfg.outgoing(current)) {
+            boolean exitTaken = requiredExitTaken
+                    || (current == target
+                    && (requiredExit == null || edge.getKind() == requiredExit));
+            int next = edge.getTo();
+            int nextVisits = visits.getOrDefault(next, 0);
+            if (next != exit && nextVisits >= MAX_NODE_VISITS) continue;
+
+            path.addLast(edge);
+            if (next == exit) {
+                if (requiredExit == null || exitTaken) {
+                    List<ControlFlowGraph.Edge> candidate = List.copyOf(path);
+                    if (seen.add(candidate)) results.add(candidate);
+                }
+            } else {
+                visits.put(next, nextVisits + 1);
+                dfsToExit(cfg, next, target, exit, requiredExit, exitTaken,
+                        path, visits, results, seen);
+                if (nextVisits == 0) visits.remove(next);
+                else visits.put(next, nextVisits);
+            }
+            path.removeLast();
+        }
+    }
+
     private List<ControlFlowGraph.Edge> pathViaRequiredExit(
             ControlFlowGraph cfg,
             int target,

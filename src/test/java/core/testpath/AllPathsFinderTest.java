@@ -512,6 +512,28 @@ public class AllPathsFinderTest {
     }
 
     @Test
+    public void alternativePaths_includeLongerLoopSuffix() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        int entry = addEntry(cfg);
+        int target = addStmt(cfg, "target");
+        int loop = addLoop(cfg, "loop");
+        int body = addStmt(cfg, "body");
+        int exit = addExit(cfg);
+        normal(cfg, entry, target);
+        normal(cfg, target, loop);
+        falseEdge(cfg, loop, exit);
+        trueEdge(cfg, loop, body);
+        normal(cfg, body, loop);
+
+        List<List<ControlFlowGraph.Edge>> result =
+                finder.findAlternativePaths(cfg, target, null);
+
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(path -> pathContainsNode(path, body)));
+        assertAllPathsBounded(result, entry, exit);
+    }
+
+    @Test
     public void loopWithInternalBranch_targetInTrueSide_isReachable() {
         // ENTRY → LOOP --TRUE--> BRANCH --TRUE-->  X(target) → LOOP
         //                                 --FALSE--> Y → LOOP

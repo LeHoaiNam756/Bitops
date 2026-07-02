@@ -198,12 +198,33 @@ public final class SortResolver {
             return symTypeToSort(cast.type());
         }
 
-        // ── Field access: fresh variable → bv32 ───────────────────────────
-        if (node instanceof SymFieldAccess) {
+        // ── Field access ─────────────────────────────────────────────────────
+        if (node instanceof SymFieldAccess f) {
+            if (f.fieldType() != null && !(f.fieldType() instanceof UnknownSymType)) {
+                return symTypeToSort(f.fieldType());
+            }
+            String key = fieldSortKey(f);
+            if (key != null) {
+                Sort s = varSorts.get(key);
+                if (s != null) return s;
+            }
+            System.err.println("[SortResolver] WARNING: no sort for field access '"
+                    + key + "' – defaulting to bv32Sort");
             return bv32Sort;
         }
 
         throw new IllegalArgumentException("Unsupported SymbolicValue: " + node);
+    }
+
+    private String fieldSortKey(SymFieldAccess f) {
+        String recvKey = receiverSortKey(f.receiver());
+        return recvKey == null ? null : recvKey + "__" + f.fieldName();
+    }
+
+    private String receiverSortKey(SymbolicValue receiver) {
+        if (receiver instanceof SymVariable v)      return v.name();
+        if (receiver instanceof SymFieldAccess fa)  return fieldSortKey(fa);
+        return null;   // unsupported receiver shape (e.g. array element, ITE) — can't build a stable key
     }
 
     // =========================================================================

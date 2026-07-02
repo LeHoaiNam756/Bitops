@@ -182,7 +182,7 @@ public final class ConstraintSolver implements AutoCloseable {
         Status status = z3Solver.check();
         Statistics statistics = z3Solver.getStatistics();
         Z3StatisticsRecorder.record(statistics);
-        printZ3Statistics(statistics);
+//        printZ3Statistics(statistics);
 
         return switch (status) {
 

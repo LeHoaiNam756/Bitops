@@ -215,9 +215,21 @@ final class LegacyZ3Encoder {
     private Expr<?> encodeFieldAccess(SymFieldAccess field,
                                       IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
                                       IdentityHashMap<SymbolicValue, Sort> sortCache) {
-        Expr<?> receiver = visit(field.receiver(), exprCache, sortCache);
-        String name = receiver.toString().replaceAll("[^a-zA-Z0-9_]", "_") + "__" + field.fieldName();
-        return ctx.mkIntConst(name);
+        String name = receiverKey(field.receiver(), exprCache, sortCache) + "__" + field.fieldName();
+        return ctx.mkConst(name, sorts.resolve(field, sortCache));
+    }
+
+    private String receiverKey(
+            SymbolicValue receiver,
+            IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+            IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (receiver instanceof SymVariable variable) return variable.name();
+        if (receiver instanceof SymFieldAccess field) {
+            return receiverKey(field.receiver(), exprCache, sortCache) + "__" + field.fieldName();
+        }
+        return visit(receiver, exprCache, sortCache)
+                .toString()
+                .replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
     private ArithExpr oneFor(Sort sort) {

@@ -219,6 +219,37 @@ public class ConcolicTesting {
                 }
 
                 if (!covered && tracker.isUncovered(uncoveredNodeId)) {
+                    List<List<ControlFlowGraph.Edge>> alternatives =
+                            pathFinder.findAlternativePaths(
+                                    cfg,
+                                    pathTargetNodeId,
+                                    tracker.requiredExitFor(uncoveredNodeId));
+                    for (List<ControlFlowGraph.Edge> path : alternatives) {
+                        SolverResult result = symbolicExecution.executePath(
+                                cfg, path, parameters, parameterTypes, encodingMode);
+                        if (!(result instanceof SolverResult.Sat sat)) continue;
+
+                        Map<String, Object> newInputs =
+                                extractInputsFromModel(sat.model(), paramInfos);
+                        try {
+                            TestData runResult = TestDriver.run(
+                                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                                    paramInfos,
+                                    newInputs,
+                                    Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
+                            allTestData.add(runResult);
+                            traceReader.applyTo(tracker);
+                        } catch (Exception e) {
+                            System.err.println(e.getMessage());
+                        }
+                        if (!tracker.isUncovered(uncoveredNodeId)) {
+                            covered = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!covered && tracker.isUncovered(uncoveredNodeId)) {
                     // Exhausted all paths without covering the node
                     tracker.markSkipped(uncoveredNodeId);
                 }

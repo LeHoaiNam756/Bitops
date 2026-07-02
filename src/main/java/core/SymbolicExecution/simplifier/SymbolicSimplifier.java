@@ -110,7 +110,7 @@ public class SymbolicSimplifier {
         }
         if (node instanceof SymFieldAccess f) {
             SymbolicValue receiver = visit(f.receiver(), memo);
-            return (receiver == f.receiver()) ? f : factory.fieldAccess(receiver, f.fieldName());
+            return (receiver == f.receiver()) ? f : factory.fieldAccess(receiver, f.fieldName(), f.fieldType());
         }
         if (node instanceof SymArraySelect as) {
             SymbolicValue arr = visit(as.arr(), memo);

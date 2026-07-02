@@ -16,7 +16,7 @@ public final class FilePath {
             "core.TestGeneration.path.MarkedPath.markOneStatement";
     public static final String TEST_DRIVER_FILE_PACKAGE_LOCATION = "core.output.testDriver";
     public static final String CLONED_PROJECT_ROOT_PACKAGE = "core.output.clone";
-    public static final String JCIA_PROJECT_ROOT_PATH = "/home/qu4ll12/Documents/CT4J";
+    public static final String JCIA_PROJECT_ROOT_PATH = "/home/lhnam/Src/CT4J/.worktrees/plan-2026-05-05-refactor";
     public static final String MAVEN_TARGET_CLASSES_FOLDER = Path.of("target", "classes").toString();
     public static final String PATH_TO_MAVEN_TARGET_CLASSES =
             Path.of(JCIA_PROJECT_ROOT_PATH, MAVEN_TARGET_CLASSES_FOLDER).toString();

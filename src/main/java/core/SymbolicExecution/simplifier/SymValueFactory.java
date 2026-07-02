@@ -112,7 +112,11 @@ public final class SymValueFactory {
     }
 
     public SymFieldAccess fieldAccess(SymbolicValue receiver, String field) {
-        return (SymFieldAccess) intern(new SymFieldAccess(receiver, field));
+        return fieldAccess(receiver, field, null);
+    }
+
+    public SymFieldAccess fieldAccess(SymbolicValue receiver, String field, core.SymbolicExecution.model.types.SymType fieldType) {
+        return (SymFieldAccess) intern(new SymFieldAccess(receiver, field, fieldType));
     }
 
     public SymArraySelect arraySelect(SymbolicValue arr, SymbolicValue index) {

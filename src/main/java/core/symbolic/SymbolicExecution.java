@@ -66,7 +66,9 @@ public class SymbolicExecution {
                 .typeContext(new TypeContext())
                 .build();
 
-        // --- 1. Declare parameters as symbolic variables --------------------
+        // --- 1. Materialize field initializers and declare parameters --------
+        initializeFields(enclosingMethod(parameters, cfg), state);
+
         for (ASTNode p : parameters) {
             if (p instanceof SingleVariableDeclaration svd) {
                 String name = svd.getName().getIdentifier();
@@ -98,6 +100,7 @@ public class SymbolicExecution {
                 }
             }
         }
+        constraints.addAll(state.getAssumptions());
 
         // --- 3. Simplify expressions (constant-fold, identities, normalise) -
         List<SymbolicValue> simplifiedConstraints = expressionSimplifier.simplifyAll(constraints);
@@ -106,6 +109,78 @@ public class SymbolicExecution {
         try (ConstraintSolver solver = ConstraintSolver.create(parameterTypes, encodingMode)) {
             return solver.check(simplifiedConstraints);
         }
+    }
+
+    private MethodDeclaration enclosingMethod(List<ASTNode> parameters, ControlFlowGraph cfg) {
+        if (!parameters.isEmpty()) {
+            ASTNode current = parameters.get(0);
+            while (current != null && !(current instanceof MethodDeclaration)) {
+                current = current.getParent();
+            }
+            if (current instanceof MethodDeclaration method) return method;
+        }
+
+        for (int nodeId : cfg.getNodes()) {
+            ASTNode current = cfg.getNode(nodeId).getAst();
+            while (current != null && !(current instanceof MethodDeclaration)) {
+                current = current.getParent();
+            }
+            if (current instanceof MethodDeclaration method) return method;
+        }
+        return null;
+    }
+
+    private void initializeFields(MethodDeclaration method, SymbolicState state) {
+        if (method == null) return;
+
+        ASTNode owner = method.getParent();
+        while (owner != null && !(owner instanceof AbstractTypeDeclaration)) {
+            owner = owner.getParent();
+        }
+        if (!(owner instanceof AbstractTypeDeclaration type)) return;
+
+        for (Object declaration : type.bodyDeclarations()) {
+            if (!(declaration instanceof FieldDeclaration field)) continue;
+
+            SymType fieldType = SymTypeMap.convert(field.getType());
+            for (Object fragmentObject : field.fragments()) {
+                VariableDeclarationFragment fragment = (VariableDeclarationFragment) fragmentObject;
+                Expression initializer = fragment.getInitializer();
+                if (initializer == null) continue;
+
+                String fieldName = fragment.getName().getIdentifier();
+                SymbolicValue value;
+                if (initializer instanceof ArrayInitializer arrayInitializer) {
+                    value = materializeArrayInitializer(fieldName, fieldType, arrayInitializer, state);
+                } else {
+                    state.getTypeContext().pushAssignment(fieldType);
+                    try {
+                        value = dispatcher.eval(initializer, state);
+                    } finally {
+                        state.getTypeContext().pop();
+                    }
+                }
+                if (value != null) state.getMemoryModel().write(fieldName, value);
+            }
+        }
+    }
+
+    private SymbolicValue materializeArrayInitializer(
+            String fieldName,
+            SymType fieldType,
+            ArrayInitializer initializer,
+            SymbolicState state) {
+        SymbolicValue array = new SymFieldAccess(
+                new SymVariable("this"), fieldName, fieldType);
+
+        @SuppressWarnings("unchecked")
+        List<Expression> expressions = initializer.expressions();
+        for (int i = 0; i < expressions.size(); i++) {
+            SymbolicValue element = dispatcher.eval(expressions.get(i), state);
+            array = new SymArrayStore(array, SymLiteral.of(i), element);
+        }
+        state.rememberArrayLength(array, expressions.size());
+        return array;
     }
 
     // ------------------------------------------------------------------

@@ -129,6 +129,43 @@ public final class SymTypeMap {
         return UnknownSymType.INSTANCE;
     }
 
+    /**
+     * Converts a resolved JDT {@link ITypeBinding} to a {@link SymType}.
+     * This is the binding-based counterpart to {@link #convert(Type)}.
+     */
+    public static SymType convertBinding(ITypeBinding binding) {
+        if (binding == null) {
+            return UnknownSymType.INSTANCE;
+        }
+
+        if (binding.isPrimitive()) {
+            return switch (binding.getName()) {
+                case "byte" -> PrimitiveSymType.BYTE;
+                case "short" -> PrimitiveSymType.SHORT;
+                case "char" -> PrimitiveSymType.CHAR;
+                case "int" -> PrimitiveSymType.INT;
+                case "long" -> PrimitiveSymType.LONG;
+                case "float" -> PrimitiveSymType.FLOAT;
+                case "double" -> PrimitiveSymType.DOUBLE;
+                case "boolean" -> PrimitiveSymType.BOOLEAN;
+                default -> UnknownSymType.INSTANCE;
+            };
+        }
+
+        if (binding.isArray()) {
+            return new ArraySymType(convertBinding(binding.getElementType()), binding.getDimensions());
+        }
+
+        String qualified = binding.getQualifiedName();
+        if ("java.lang.String".equals(qualified) || "String".equals(binding.getName())) {
+            return new ObjectSymType("java.lang.String");
+        }
+
+        return new ObjectSymType(qualified == null || qualified.isBlank()
+                ? binding.getName()
+                : qualified);
+    }
+
     // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------

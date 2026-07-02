@@ -918,16 +918,23 @@ public final class Z3Encoder {
     // =========================================================================
 
     private Expr<?> encodeFieldAccess(SymFieldAccess f,
-                                       IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
-                                       IdentityHashMap<SymbolicValue, Sort>    sortCache) {
-        Expr<?> recv     = visit(f.receiver(), exprCache, sortCache);
-        String freshName = receiverKey(recv) + "__" + f.fieldName();
-        return ctx.mkBVConst(freshName, 32);
+                                      IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+                                      IdentityHashMap<SymbolicValue, Sort>    sortCache) {
+        String freshName = receiverKey(f.receiver(), exprCache, sortCache) + "__" + f.fieldName();
+        return ctx.mkConst(freshName, sorts.resolve(f, sortCache));
     }
 
-    /** Derive a stable, SMT-LIB-safe string key from an encoded receiver expression. */
-    private static String receiverKey(Expr<?> recv) {
-        return recv.toString().replaceAll("[^a-zA-Z0-9_]", "_");
+    private String receiverKey(
+            SymbolicValue receiver,
+            IdentityHashMap<SymbolicValue, Expr<?>> exprCache,
+            IdentityHashMap<SymbolicValue, Sort> sortCache) {
+        if (receiver instanceof SymVariable variable) return variable.name();
+        if (receiver instanceof SymFieldAccess field) {
+            return receiverKey(field.receiver(), exprCache, sortCache) + "__" + field.fieldName();
+        }
+        return visit(receiver, exprCache, sortCache)
+                .toString()
+                .replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
     // =========================================================================

@@ -109,6 +109,61 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_bmpSetFindCodePointReachesFullCoverage() throws Exception {
+        Path zip = createZipProject("BMPSet.java", """
+                public class BMPSet {
+                    int[] list = {0, 4, 110000};
+
+                    int findCodePoint(int c, int lo, int hi) {
+                        if (c < list[lo]) {
+                            return lo;
+                        }
+                        if (lo >= hi || c >= list[hi - 1]) {
+                            return hi;
+                        }
+                        for (;;) {
+                            int i = (lo + hi) >>> 1;
+                            if (i == lo) {
+                                break;
+                            } else if (c < list[i]) {
+                                hi = i;
+                            } else {
+                                lo = i;
+                            }
+                        }
+                        return hi;
+                    }
+                }
+                """);
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "findCodePoint".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("c", 0);
+        seedInput.put("lo", 0);
+        seedInput.put("hi", 0);
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                new AllPathsFinder());
+
+        assertFalse(result.testDataList().isEmpty());
+        assertFalse(result.testDataList().stream().anyMatch(testData ->
+                testData.output() != null
+                        && testData.output().startsWith("EXCEPTION:")));
+        assertEquals(7, result.fullCoverage().getCovered().size());
+        assertEquals(0, result.fullCoverage().getUncovered().size());
+        assertEquals(0, result.fullCoverage().getSkipped().size());
+    }
+
+    @Test
     public void generate_publicSolutionFromLeetCodeStyleFileKeepsMethodNamedResultJson() throws Exception {
         Path zip = createZipProject("0191-number-of-1-bits.java", """
                 public class Solution {

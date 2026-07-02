@@ -7,6 +7,7 @@ import core.SymbolicExecution.model.SymVariable;
 import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.TypeContext;
+import core.SymbolicExecution.model.types.UnknownSymType;
 import org.eclipse.jdt.core.dom.*;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -233,6 +234,7 @@ public class QualifiedNameHandlerTest {
         when(vb.isField()).thenReturn(true);
         when(vb.getModifiers()).thenReturn(0);
         when(vb.getConstantValue()).thenReturn(null);
+        when(vb.getType()).thenReturn(null);
 
         // --- qualifier: "obj" SimpleName, unresolved → SymVariable("obj") ---
         SimpleName qualifier = mock(SimpleName.class);
@@ -254,7 +256,7 @@ public class QualifiedNameHandlerTest {
 
         SymbolicValue result = handler.eval(qn, state, createDispatcher());
 
-        assertEquals(new SymFieldAccess(new SymVariable("obj"), "field"), result);
+        assertEquals(new SymFieldAccess(new SymVariable("obj"), "field", UnknownSymType.INSTANCE), result);
     }
 
 

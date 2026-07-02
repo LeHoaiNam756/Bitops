@@ -89,7 +89,10 @@ final class LegacySortResolver {
         if (node instanceof SymArrayStore store) {
             return resolve(store.arr(), memo);
         }
-        if (node instanceof SymFieldAccess) {
+        if (node instanceof SymFieldAccess field) {
+            if (field.fieldType() != null && !(field.fieldType() instanceof UnknownSymType)) {
+                return symTypeToSort(field.fieldType());
+            }
             return intSort;
         }
         if (node instanceof SymStringOp) {

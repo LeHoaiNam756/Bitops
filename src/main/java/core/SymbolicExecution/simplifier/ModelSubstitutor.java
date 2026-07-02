@@ -136,7 +136,7 @@ public final class ModelSubstitutor {
             SymbolicValue recv = rewrite(f.receiver(), model, memo);
             return recv == f.receiver()
                     ? f
-                    : factory.fieldAccess(recv, f.fieldName());
+                    : factory.fieldAccess(recv, f.fieldName(), f.fieldType());
         }
 
         if (node instanceof SymArraySelect s) {

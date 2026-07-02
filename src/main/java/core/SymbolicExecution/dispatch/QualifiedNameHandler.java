@@ -1,6 +1,9 @@
 package core.SymbolicExecution.dispatch;
 
 import core.SymbolicExecution.model.*;
+import core.SymbolicExecution.model.types.SymType;
+import core.SymbolicExecution.model.types.SymTypeMap;
+import core.SymbolicExecution.model.types.UnknownSymType;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.Optional;
@@ -44,13 +47,21 @@ public class QualifiedNameHandler implements AstHandler {
             if (vb.isField()) {
                 SymbolicValue receiver = dispatcher.eval(qn.getQualifier(), state);
                 String field = qn.getName().getIdentifier();
-                return new SymFieldAccess(receiver, field);
+                return new SymFieldAccess(receiver, field, resolveFieldType(vb));
             }
         }
 
         // 3. Binding unavailable (no classpath, generated code, etc.)
         // Fall back: treat the whole dotted name as a flat symbolic variable
         return new SymVariable(fullName);
+    }
+
+    private SymType resolveFieldType(IVariableBinding binding) {
+        ITypeBinding typeBinding = binding.getType();
+        if (typeBinding == null) {
+            return UnknownSymType.INSTANCE;
+        }
+        return SymTypeMap.convertBinding(typeBinding);
     }
 
     private boolean isCompileTimeConstant(IVariableBinding vb) {

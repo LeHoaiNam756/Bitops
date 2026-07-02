@@ -172,7 +172,7 @@ public class AssignmentHandler implements AstHandler {
         String fieldName = fieldAccess.getName().getIdentifier();
         String key = receiver.toString() + "__" + fieldName;
         SymbolicValue old = state.getMemoryModel().read(key)
-                .orElse(new SymFieldAccess(receiver, fieldName));
+                .orElse(new SymFieldAccess(receiver, fieldName, lhsType.orElse(UnknownSymType.INSTANCE)));
         SymbolicValue rhs = dispatcher.eval(rhsExpression, state);
         SymbolicValue value = applyCompoundAssignmentConversion(
                 new SymBinaryOp(old, mapOp(operator), rhs), lhsType.or(() -> inferType(old)));
