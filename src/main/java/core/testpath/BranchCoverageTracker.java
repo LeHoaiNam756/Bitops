@@ -18,6 +18,9 @@ public class BranchCoverageTracker extends CoverageTracker {
         return cfg.getNodes().stream()
             .filter(nodeId -> (cfg.getNode(nodeId).getKind() == CfgNodeKind.BRANCH
                     || cfg.getNode(nodeId).getKind() == CfgNodeKind.LOOP))
+            // Synthetic control-flow nodes (for example the implicit "true"
+            // condition in for (;;)) have no source AST and cannot be probed.
+            .filter(nodeId -> cfg.getNode(nodeId).getAst() != null)
             .flatMap(nodeId -> Stream.of(nodeId * 2, nodeId * 2 + 1))
             .collect(Collectors.toCollection(HashSet::new));
     }

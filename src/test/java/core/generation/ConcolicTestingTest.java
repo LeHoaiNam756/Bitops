@@ -150,7 +150,7 @@ public class ConcolicTestingTest {
         var result = ConcolicTesting.getInstance().generate(
                 method,
                 project.getRootAST(method),
-                Coverage.STATEMENT,
+                Coverage.BRANCH,
                 seedInput,
                 new AllPathsFinder());
 
@@ -158,7 +158,7 @@ public class ConcolicTestingTest {
         assertFalse(result.testDataList().stream().anyMatch(testData ->
                 testData.output() != null
                         && testData.output().startsWith("EXCEPTION:")));
-        assertEquals(7, result.fullCoverage().getCovered().size());
+        assertEquals(8, result.fullCoverage().getCovered().size());
         assertEquals(0, result.fullCoverage().getUncovered().size());
         assertEquals(0, result.fullCoverage().getSkipped().size());
     }

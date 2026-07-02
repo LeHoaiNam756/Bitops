@@ -3,6 +3,8 @@ package core.testpath;
 import core.cfg.CfgEdgeKind;
 import core.cfg.CfgNodeKind;
 import core.cfg.ControlFlowGraph;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.Expression;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class BranchCoverageTrackerTest {
         ControlFlowGraph cfg = new ControlFlowGraph();
         int entry = cfg.addNode(CfgNodeKind.ENTRY, null, "entry");
         int statement = cfg.addNode(CfgNodeKind.STMT, null, "x = 1");
-        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "x > 0");
-        int loop = cfg.addNode(CfgNodeKind.LOOP, null, "i < 10");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");
+        int loop = cfg.addNode(CfgNodeKind.LOOP, condition(), "i < 10");
 
         BranchCoverageTracker tracker = new BranchCoverageTracker(cfg);
 
@@ -34,7 +36,7 @@ public class BranchCoverageTrackerTest {
     @Test
     public void movesOutcomesBetweenUncoveredCoveredAndSkipped() {
         ControlFlowGraph cfg = new ControlFlowGraph();
-        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "x > 0");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");
         int trueOutcome = branch * 2;
         int falseOutcome = branch * 2 + 1;
 
@@ -60,7 +62,7 @@ public class BranchCoverageTrackerTest {
     @Test(expected = UnsupportedOperationException.class)
     public void coverageSetsAreReadOnly() {
         ControlFlowGraph cfg = new ControlFlowGraph();
-        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "x > 0");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");
 
         new BranchCoverageTracker(cfg).getUncovered().remove(branch * 2);
     }
@@ -68,7 +70,7 @@ public class BranchCoverageTrackerTest {
     @Test
     public void mapsBranchOutcomeIdsBackToCfgNodeTargetsForPathFinding() {
         ControlFlowGraph cfg = new ControlFlowGraph();
-        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "x > 0");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");
 
         BranchCoverageTracker tracker = new BranchCoverageTracker(cfg);
 
@@ -80,7 +82,7 @@ public class BranchCoverageTrackerTest {
     public void findsPathsThroughTheRequestedBranchOutcome() {
         ControlFlowGraph cfg = new ControlFlowGraph();
         int entry = cfg.addNode(CfgNodeKind.ENTRY, null, "entry");
-        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "x > 0");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");
         int trueNode = cfg.addNode(CfgNodeKind.STMT, null, "true");
         int falseNode = cfg.addNode(CfgNodeKind.STMT, null, "false");
         int exit = cfg.addNode(CfgNodeKind.EXIT, null, "exit");
@@ -101,5 +103,18 @@ public class BranchCoverageTrackerTest {
             assertTrue(path.stream().anyMatch(edge -> edge.getFrom() == branch && edge.getKind() == CfgEdgeKind.FALSE));
             assertFalse(path.stream().anyMatch(edge -> edge.getFrom() == branch && edge.getKind() == CfgEdgeKind.TRUE));
         }
+    }
+
+    @Test
+    public void ignoresSyntheticBranchNodesWithoutSourceAst() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        cfg.addNode(CfgNodeKind.LOOP, null, "true");
+
+        assertTrue(new BranchCoverageTracker(cfg).getUncovered().isEmpty());
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Expression condition() {
+        return AST.newAST(AST.JLS8).newBooleanLiteral(true);
     }
 }

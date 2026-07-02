@@ -314,12 +314,18 @@ public final class SourceEmitter {
      * For statement coverage the condition is emitted verbatim (no wrapping).
      */
     private void emitCondition(Expression cond, EmitContext ctx, StringBuilder sb) {
-        if (ctx.coverage == Coverage.STATEMENT) {
-            sb.append(cond == null ? "" : cond.toString());
+        // A classic infinite for-loop has no condition: for (;;). JDT models
+        // the omitted expression as null, so there is no AST node (or branch)
+        // to instrument.
+        if (cond == null) {
             return;
         }
 
-        // BRANCH / MCDC
+        if (ctx.coverage == Coverage.STATEMENT) {
+            sb.append(cond);
+            return;
+        }
+
         if (ctx.coverage == Coverage.MCDC) {
             emitMcdcCondition(cond, ctx, sb);
         } else {
@@ -333,15 +339,15 @@ public final class SourceEmitter {
 
         if (trueProbe.isEmpty() || falseProbe.isEmpty()) {
             // Untracked condition — emit verbatim
-            sb.append(cond == null ? "" : cond.toString());
+            sb.append(cond);
             return;
         }
 
         int trueId  = trueProbe.get().cfgNodeId();
         int falseId = falseProbe.get().cfgNodeId();
 
-        sb.append("((").append(cond == null ? "" : cond.toString()).append(") ")
-                .append(") && TraceRecorder.mark(").append(trueId).append(", TraceKind.COND_T))")
+        sb.append("((").append(cond).append(")")
+                .append(" && TraceRecorder.mark(").append(trueId).append(", TraceKind.COND_T))")
                 .append(" || TraceRecorder.mark(").append(falseId).append(", TraceKind.COND_F)");
     }
 

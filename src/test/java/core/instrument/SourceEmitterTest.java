@@ -137,6 +137,16 @@ public class SourceEmitterTest {
     }
 
     @Test
+    public void branchCoveragePreservesForLoopWithOmittedCondition() {
+        assertForLoopWithOmittedConditionIsPreserved(Coverage.BRANCH);
+    }
+
+    @Test
+    public void mcdcCoveragePreservesForLoopWithOmittedCondition() {
+        assertForLoopWithOmittedConditionIsPreserved(Coverage.MCDC);
+    }
+
+    @Test
     public void preservesStaticInitializersThatAssignBlankFinalFields() throws Exception {
         CompilationUnit cu = parse("""
                 package com.xk72.charles.gui;
@@ -216,5 +226,31 @@ public class SourceEmitterTest {
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(source.toCharArray());
         return (CompilationUnit) parser.createAST(null);
+    }
+
+    private static void assertForLoopWithOmittedConditionIsPreserved(Coverage coverage) {
+        CompilationUnit cu = parse("""
+                class Example {
+                    int value(int x) {
+                        for (;;) {
+                            if (x > 0) {
+                                break;
+                            }
+                            x++;
+                        }
+                        return x;
+                    }
+                }
+                """);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        ControlFlowGraph cfg = new CfgBuilder().build(method);
+        InstrumentationPlan plan = new InstrumentationPlanner().plan(cu, cfg, coverage);
+
+        String emitted = new SourceEmitter().emit(cu, plan, coverage, "cloned");
+
+        assertTrue("for-loop should retain an empty condition", emitted.contains("for (; ; )"));
+        assertTrue("nested condition should still be instrumented", emitted.contains("TraceKind.COND_T"));
+        assertTrue("nested condition should still be instrumented", emitted.contains("TraceKind.COND_F"));
     }
 }
