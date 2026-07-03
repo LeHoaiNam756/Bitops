@@ -139,6 +139,54 @@ public class NumberLiteralHandlerTest {
     }
 
     @Test
+    public void evalHexIntWithSignBitSet() {
+        NumberLiteral literal = parseLiteral("int x = 0x80000000;");
+        SymbolicValue result = handler.eval(literal, createState(null), new AstDispatcher());
+        assertEquals(Integer.MIN_VALUE, ((SymLiteral) result).value());
+    }
+
+    @Test
+    public void evalHexIntWithAllBitsSet() {
+        NumberLiteral literal = parseLiteral("int x = 0xffffffff;");
+        SymbolicValue result = handler.eval(literal, createState(null), new AstDispatcher());
+        assertEquals(-1, ((SymLiteral) result).value());
+    }
+
+    @Test
+    public void evalBinaryIntWithSignBitSet() {
+        NumberLiteral literal = parseLiteral(
+                "int x = 0b10000000000000000000000000000000;");
+        SymbolicValue result = handler.eval(literal, createState(null), new AstDispatcher());
+        assertEquals(Integer.MIN_VALUE, ((SymLiteral) result).value());
+    }
+
+    @Test
+    public void evalUnboundHexIntWithSignBitSet() {
+        SymbolicValue result = handler.eval(
+                createUnboundLiteral("0x80000000"),
+                createState(null),
+                new AstDispatcher());
+        assertEquals(Integer.MIN_VALUE, ((SymLiteral) result).value());
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void evalIntContextRejectsMoreThan32Bits() {
+        handler.eval(
+                createUnboundLiteral("0x100000000"),
+                createState(TypeContext.INT),
+                new AstDispatcher());
+    }
+
+    @Test
+    public void evalIntCastContextTruncatesMoreThan32Bits() {
+        SymbolicValue result = handler.eval(
+                createUnboundLiteral("0x100000001"),
+                createCastState(TypeContext.INT),
+                new AstDispatcher());
+        assertEquals(1, ((SymLiteral) result).value());
+    }
+
+    @Test
     public void evalOctalLiteral() {
         NumberLiteral literal = parseLiteral("int x = 077;");
         SymbolicValue result = handler.eval(literal, createState(null), new AstDispatcher());

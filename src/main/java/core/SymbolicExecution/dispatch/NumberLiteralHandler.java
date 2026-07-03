@@ -88,7 +88,7 @@ public class NumberLiteralHandler implements AstHandler {
                 yield SymLiteral.of((char)(int) raw);
             }
             case INT -> {
-                long raw = parseRawLong(intTok);
+                long raw = parseRawInt(intTok, strict);
                 if (strict && (raw < Integer.MIN_VALUE || raw > Integer.MAX_VALUE))
                     throw new NumberFormatException("Value out of range for int: " + tok);
                 yield SymLiteral.of((int) raw);
@@ -125,8 +125,9 @@ public class NumberLiteralHandler implements AstHandler {
 
         if (isHex || isBinary || isOctal) {
             long raw = parseRawLong(tok);
-            // If the value fits in a signed int, produce int; otherwise long.
-            if (raw >= Integer.MIN_VALUE && raw <= Integer.MAX_VALUE)
+            // An unsuffixed non-decimal literal whose bit pattern fits in 32 bits
+            // is an int, including patterns whose high bit is set (JLS §3.10.1).
+            if (Long.compareUnsigned(raw, 0xffff_ffffL) <= 0)
                 return SymLiteral.of((int) raw);
             return SymLiteral.of(raw);
         }
@@ -190,9 +191,32 @@ public class NumberLiteralHandler implements AstHandler {
 
         String lower = s.toLowerCase();
         if (lower.startsWith("0x")) return Long.parseUnsignedLong(s.substring(2), 16);
-        if (lower.startsWith("0b")) return Long.parseLong(s.substring(2), 2);
-        if (s.matches("0[0-7]+"))   return Long.parseLong(s, 8);
+        if (lower.startsWith("0b")) return Long.parseUnsignedLong(s.substring(2), 2);
+        if (s.matches("0[0-7]+"))   return Long.parseUnsignedLong(s, 8);
         return Long.parseLong(s);
+    }
+
+    /**
+     * Parse a token using Java's rules for an {@code int} literal. Decimal
+     * literals use signed magnitude; hex, binary, and octal literals may use
+     * all 32 bits and are interpreted as a two's-complement bit pattern.
+     */
+    private long parseRawInt(String tok, boolean strict) {
+        long raw = parseRawLong(tok);
+        String lower = tok.toLowerCase();
+        boolean isHex = lower.startsWith("0x");
+        boolean isBinary = lower.startsWith("0b");
+        boolean isOctal = !isHex && !isBinary && tok.matches("0[0-7]+");
+
+        if (isHex || isBinary || isOctal) {
+            if (strict && Long.compareUnsigned(raw, 0xffff_ffffL) > 0) {
+                throw new NumberFormatException("Value out of range for int: " + tok);
+            }
+            if (Long.compareUnsigned(raw, 0xffff_ffffL) <= 0) {
+                return (int) raw;
+            }
+        }
+        return raw;
     }
 
     private String stripIntegerSuffix(String tok) {
