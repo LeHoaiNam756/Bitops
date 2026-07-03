@@ -11,6 +11,7 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.SymLiteral;
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Optional;
 
@@ -94,17 +95,17 @@ final class PrimitiveArrayExtractor {
             for (int i = 0; i < length; i++) {
                 Expr<?> val = evalElement(model, array, i);
                 if (!(val instanceof BitVecNum bvn)) return Optional.empty();
-                values[i] = bvn.getLong();
+                values[i] = bvn.getBigInteger().longValue();
             }
             return Optional.of(new SymLiteral(values));
         } else {
-            // bv32: getLong() returns a sign-extended 64-bit value; truncate to int
-            // to recover the correct signed 32-bit Java int value.
+            // BitVecNum is unsigned; truncating its low bits restores the signed
+            // two's-complement Java int value.
             int[] ints = new int[length];
             for (int i = 0; i < length; i++) {
                 Expr<?> val = evalElement(model, array, i);
                 if (!(val instanceof BitVecNum bvn)) return Optional.empty();
-                ints[i] = (int) bvn.getLong();   // signed two's-complement truncation
+                ints[i] = bvn.getBigInteger().intValue();
             }
             return Optional.of(new SymLiteral(ints));
         }
@@ -166,10 +167,15 @@ final class PrimitiveArrayExtractor {
         for (int i = 0; i < length; i++) {
             Expr<?> val = evalElement(model, array, i);
             if (val instanceof IntNum intNum) {
-                values[i] = intNum.getInt64();
+                BigInteger integer = intNum.getBigInteger();
+                if (integer.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0
+                        || integer.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+                    return Optional.empty();
+                }
+                values[i] = integer.longValue();
             } else if (val instanceof BitVecNum bvn) {
                 // Defensive: solver may simplify to BV even when sort is Int
-                values[i] = bvn.getLong();
+                values[i] = bvn.getBigInteger().longValue();
             } else {
                 return Optional.empty();
             }

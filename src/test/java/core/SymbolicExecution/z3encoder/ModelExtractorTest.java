@@ -14,6 +14,48 @@ import static org.junit.Assert.assertTrue;
 public class ModelExtractorTest {
 
     @Test
+    public void extract_readsSignedLongFromUnsignedBv64Numeral() {
+        try (Context ctx = new Context(Map.of())) {
+            BitVecExpr value = ctx.mkBVConst("value", 64);
+            var solver = ctx.mkSolver();
+            solver.add(ctx.mkEq(value, ctx.mkBV(-1L, 64)));
+
+            assertEquals(Status.SATISFIABLE, solver.check());
+            ModelExtractor extractor = new ModelExtractor(new SortResolver(ctx, Map.of()));
+
+            SymLiteral literal = extractor.extract(solver.getModel())
+                    .lookup("value")
+                    .orElseThrow();
+
+            assertEquals(-1L, literal.value());
+        }
+    }
+
+    @Test
+    public void extract_readsSignedLongArrayFromUnsignedBv64Numerals() {
+        try (Context ctx = new Context(Map.of())) {
+            BitVecSort bv64 = ctx.mkBitVecSort(64);
+            ArrayExpr<IntSort, BitVecSort> values =
+                    ctx.mkArrayConst("values", ctx.getIntSort(), bv64);
+            IntExpr length = ctx.mkIntConst("values__length");
+            var solver = ctx.mkSolver();
+            solver.add(ctx.mkEq(length, ctx.mkInt(2)));
+            solver.add(ctx.mkEq(ctx.mkSelect(values, ctx.mkInt(0)), ctx.mkBV(Long.MIN_VALUE, 64)));
+            solver.add(ctx.mkEq(ctx.mkSelect(values, ctx.mkInt(1)), ctx.mkBV(-1L, 64)));
+
+            assertEquals(Status.SATISFIABLE, solver.check());
+            ModelExtractor extractor = new ModelExtractor(new SortResolver(ctx, Map.of()));
+
+            SymLiteral literal = extractor.extract(solver.getModel())
+                    .lookup("values")
+                    .orElseThrow();
+
+            assertTrue(literal.value() instanceof long[]);
+            assertArrayEquals(new long[] {Long.MIN_VALUE, -1L}, (long[]) literal.value());
+        }
+    }
+
+    @Test
     public void extract_readsIntArrayElementsUsingLengthBinding() {
         try (Context ctx = new Context(Map.of())) {
             ArrayExpr<IntSort, IntSort> nums = ctx.mkArrayConst("nums", ctx.getIntSort(), ctx.getIntSort());

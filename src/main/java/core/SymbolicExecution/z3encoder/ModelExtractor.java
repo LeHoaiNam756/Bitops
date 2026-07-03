@@ -3,6 +3,7 @@ package core.SymbolicExecution.z3encoder;
 import com.microsoft.z3.*;
 import core.SymbolicExecution.model.SymLiteral;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,7 +112,12 @@ public final class ModelExtractor {
         // Note: array-index expressions never appear as model *constants*; this
         // branch handles the scalar mis-declaration case exclusively.
         if (expr instanceof IntNum intNum) {
-            long val = intNum.getInt64();
+            BigInteger integer = intNum.getBigInteger();
+            if (integer.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0
+                    || integer.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+                return java.util.Optional.empty();
+            }
+            long val = integer.longValue();
             if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
                 return java.util.Optional.of(SymLiteral.of((int) val));
             }
@@ -121,7 +127,10 @@ public final class ModelExtractor {
         // ── BitVec (all Java integral types) ──────────────────────────────────
         if (expr instanceof BitVecNum bv) {
             int width = ((BitVecSort) sort).getSize();
-            long val  = bv.getLong();   // signed two's-complement interpretation
+            // BitVecNum is an unsigned numeral. getLong() throws when a bv64 has
+            // bit 63 set, which is exactly how negative Java longs are modelled.
+            // longValue() keeps the low 64 bits and restores two's complement.
+            long val = bv.getBigInteger().longValue();
             if (width <= 32)
                 return java.util.Optional.of(SymLiteral.of((int) val));
             return java.util.Optional.of(SymLiteral.of(val));
