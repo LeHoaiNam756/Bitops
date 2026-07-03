@@ -315,6 +315,60 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_toCompactValueReachesFullBranchAndMcdcCoverage() throws Exception {
+        Path zip = createZipProject("CompactValue.java", """
+                public class CompactValue {
+                    private static final long LONG_MASK = 0xffffffffL;
+                    private static final long INFLATED = Long.MIN_VALUE;
+
+                    public static long toCompactValue(int intLen, int sign, int[] mag) {
+                        if (intLen == 0 || sign == 0)
+                            return 0L;
+                        int len = mag.length;
+                        int d = mag[0];
+                        if (len > 2 || (d < 0 && len == 2))
+                            return INFLATED;
+                        long v = (len == 2)
+                            ? ((mag[1] & LONG_MASK) | (d & LONG_MASK) << 32)
+                            : d & LONG_MASK;
+                        return sign == -1 ? -v : v;
+                    }
+                }
+                """);
+
+        for (Coverage coverage : List.of(Coverage.BRANCH, Coverage.MCDC)) {
+            Project project = new Project(zip);
+            MethodDeclaration method = project.getMethods().stream()
+                    .filter(m -> "toCompactValue".equals(m.getName().getIdentifier()))
+                    .findFirst()
+                    .orElseThrow();
+            Map<String, Object> seedInput = new LinkedHashMap<>();
+            seedInput.put("intLen", 1);
+            seedInput.put("sign", 1);
+            seedInput.put("mag", new int[]{1, 2, 3});
+
+            var result = ConcolicTesting.getInstance().generate(
+                    method,
+                    project.getRootAST(method),
+                    coverage,
+                    seedInput,
+                    new AllPathsFinder());
+
+            assertEquals(coverage + " uncovered", 0,
+                    result.fullCoverage().getUncovered().size());
+            assertEquals(coverage + " skipped", 0,
+                    result.fullCoverage().getSkipped().size());
+            assertEquals(coverage + " covered outcomes",
+                    coverage == Coverage.BRANCH ? 4 : 8,
+                    result.fullCoverage().getCovered().size());
+            assertFalse(coverage + " generated an exceptional input",
+                    result.testDataList().stream().anyMatch(testData ->
+                            testData.output() != null
+                                    && testData.output().startsWith("EXCEPTION:")));
+        }
+    }
+
+    @Test
     public void comparePathFinders_tn1BenchmarkSeq() throws Exception {
         Path zip = createZipProject("Scholarship.java", """
                 package sample;
