@@ -369,6 +369,54 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_divWordCompletes() throws Exception {
+        Path zip = createZipProject("DivWord.java", """
+                public class DivWord {
+                    private static final long LONG_MASK = 0xffffffffL;
+
+                    static long divWord(long n, int d) {
+                        long dLong = d & LONG_MASK;
+                        long r;
+                        long q;
+                        if (dLong == 1) {
+                            q = (int) n;
+                            r = 0;
+                            return (r << 32) | (q & LONG_MASK);
+                        }
+                        q = (n >>> 1) / (dLong >>> 1);
+                        r = n - q * dLong;
+                        while (r < 0) {
+                            r += dLong;
+                            q--;
+                        }
+                        while (r >= dLong) {
+                            r -= dLong;
+                            q++;
+                        }
+                        return (r << 32) | (q & LONG_MASK);
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "divWord".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("n", 0L);
+        seedInput.put("d", 1);
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.STATEMENT,
+                seedInput,
+                new AllPathsFinder());
+
+        assertFalse(result.testDataList().isEmpty());
+    }
+
+    @Test
     public void comparePathFinders_tn1BenchmarkSeq() throws Exception {
         Path zip = createZipProject("Scholarship.java", """
                 package sample;

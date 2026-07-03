@@ -66,6 +66,8 @@ import java.util.Map;
  */
 public final class ConstraintSolver implements AutoCloseable {
 
+    private static final int DEFAULT_TIMEOUT_MILLIS = 1_000;
+
     // =========================================================================
     // Z3 infrastructure
     // =========================================================================
@@ -103,9 +105,15 @@ public final class ConstraintSolver implements AutoCloseable {
         // Z3 solver with incremental push/pop support
         this.z3Solver = ctx.mkSolver();
 
-        // Set a default timeout (5 seconds) to prevent runaway queries
+        // Bound individual queries. Keep this configurable because nonlinear
+        // bit-vector constraints can otherwise dominate an entire generation run.
         Params params = ctx.mkParams();
-        params.add("timeout", 5_000);  // milliseconds
+        int timeoutMillis = Integer.getInteger(
+                "ct4j.z3.timeout.millis", DEFAULT_TIMEOUT_MILLIS);
+        if (timeoutMillis < 1) {
+            timeoutMillis = DEFAULT_TIMEOUT_MILLIS;
+        }
+        params.add("timeout", timeoutMillis);
         z3Solver.setParameters(params);
 
         // Build both pipelines from the caller's SymType map. Only one is used
@@ -168,7 +176,6 @@ public final class ConstraintSolver implements AutoCloseable {
             z3Constraints = encodingMode == Z3EncodingMode.LEGACY_INT_REAL
                     ? legacyEncoder.encodeAll(live)
                     : encoder.encodeAll(live);
-            System.out.println(z3Constraints);
         } catch (EncodingException e) {
             // Encoding failure: report as UNKNOWN (conservative, not UNSAT)
             System.err.println("[ConstraintSolver] Encoding failed: " + e.getMessage());

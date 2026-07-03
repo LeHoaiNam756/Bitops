@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,8 @@ import java.util.regex.Pattern;
  * 4 = missing/wrong-typed parameter, 5 = invocation failure.
  */
 public final class TestDriver {
+
+    private static final long DEFAULT_TIMEOUT_SECONDS = 5L;
 
     private TestDriver() {}
 
@@ -176,15 +180,15 @@ public final class TestDriver {
                     driverFqn,
                     "--input="  + inputFile.toAbsolutePath(),
                     "--output=" + outputFile.toAbsolutePath())
+                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                     .redirectErrorStream(false)
                     .start();
 
-            String stderr   = new String(proc.getErrorStream().readAllBytes(),
-                                         StandardCharsets.UTF_8);
-            int    exitCode = proc.waitFor();
+            CompletableFuture<String> stderr = readStderr(proc);
+            int exitCode = waitFor(proc, inputMap);
 
             if (exitCode != 0) {
-                throw new DriverException(i, exitCode, stderr);
+                throw new DriverException(i, exitCode, stderr.join());
             }
 
             // ── 3. Read result JSON → TestData ────────────────────────────────
@@ -228,19 +232,50 @@ public final class TestDriver {
                 driverFqn,
                 "--input="  + inputFile.toAbsolutePath(),
                 "--output=" + outputFile.toAbsolutePath())
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                 .redirectErrorStream(false)
                 .start();
 
-        String stderr   = new String(proc.getErrorStream().readAllBytes(),
-                StandardCharsets.UTF_8);
-        int    exitCode = proc.waitFor();
+        CompletableFuture<String> stderr = readStderr(proc);
+        int exitCode = waitFor(proc, inputs);
 
         if (exitCode != 0) {
-            throw new DriverExceptionSimple(exitCode, stderr);
+            throw new DriverExceptionSimple(exitCode, stderr.join());
         }
 
         // ── 3. Read result JSON → TestData ────────────────────────────────
         return TestData.fromJson(outputFile, params);
+    }
+
+    private static CompletableFuture<String> readStderr(Process process) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                return "Failed to read driver stderr: " + e.getMessage();
+            }
+        });
+    }
+
+    private static int waitFor(Process process, Map<String, Object> inputs)
+            throws InterruptedException {
+        long timeoutSeconds = Long.getLong(
+                "ct4j.driver.timeout.seconds", DEFAULT_TIMEOUT_SECONDS);
+        if (timeoutSeconds < 1L) {
+            timeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
+        }
+        try {
+            if (process.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
+                return process.exitValue();
+            }
+        } catch (InterruptedException e) {
+            process.destroyForcibly();
+            throw e;
+        }
+
+        process.destroyForcibly();
+        process.waitFor();
+        throw new DriverTimeoutException(timeoutSeconds, inputs);
     }
     // -----------------------------------------------------------------------
     // DriverException
@@ -272,6 +307,12 @@ public final class TestDriver {
             this.exitCode = exitCode;
         }
         public int exitCode() { return exitCode; }
+    }
+
+    public static final class DriverTimeoutException extends RuntimeException {
+        private DriverTimeoutException(long timeoutSeconds, Map<String, Object> inputs) {
+            super("Driver run timed out after " + timeoutSeconds + "s for inputs " + inputs);
+        }
     }
 
     // -----------------------------------------------------------------------

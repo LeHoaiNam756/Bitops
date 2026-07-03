@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.dom.Type;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,6 +135,7 @@ public class ConcolicTesting {
         List<ASTNode> parameters = new ArrayList<>(methodDeclaration.parameters());
 
         SymbolicExecution symbolicExecution = new SymbolicExecution();
+        Map<List<ControlFlowGraph.Edge>, SolverResult> solverCache = new HashMap<>();
 
         // --- 7. Concolic loop -----------------------------------------------
         List<List<ControlFlowGraph.Edge>> uncoveredBatch =
@@ -149,8 +151,9 @@ public class ConcolicTesting {
                     exhaustedBatch = false;
                     break;
                 }
-                SolverResult result = symbolicExecution.executePath(
-                        cfg, path, parameters, parameterTypes, encodingMode);
+                SolverResult result = executePath(
+                        symbolicExecution, solverCache, cfg, path,
+                        parameters, parameterTypes, encodingMode);
 
                 if (result instanceof SolverResult.Sat sat) {
                     Map<String, Object> newInputs =
@@ -165,6 +168,10 @@ public class ConcolicTesting {
                         allTestData.add(runResult);
                         // Ingest traces from this run
                         traceReader.applyTo(tracker);
+                    } catch (TestDriver.DriverTimeoutException e) {
+                        System.err.println(e.getMessage());
+                        exhaustedBatch = false;
+                        break;
                     } catch (Exception e) {
                         System.err.println(e.getMessage());
                     }
@@ -190,9 +197,17 @@ public class ConcolicTesting {
                                 tracker);
 
                 boolean covered = false;
+                boolean driverTimedOut = false;
+                boolean solverTimedOut = false;
                 for (List<ControlFlowGraph.Edge> path : paths) {
-                    SolverResult result = symbolicExecution.executePath(
-                            cfg, path, parameters, parameterTypes, encodingMode);
+                    SolverResult result = executePath(
+                            symbolicExecution, solverCache, cfg, path,
+                            parameters, parameterTypes, encodingMode);
+
+                    if (isTimeout(result)) {
+                        solverTimedOut = true;
+                        break;
+                    }
 
                     if (result instanceof SolverResult.Sat sat) {
                         Map<String, Object> newInputs =
@@ -207,6 +222,10 @@ public class ConcolicTesting {
                             allTestData.add(runResult);
                             // Ingest traces from this run
                             traceReader.applyTo(tracker);
+                        } catch (TestDriver.DriverTimeoutException e) {
+                            System.err.println(e.getMessage());
+                            driverTimedOut = true;
+                            break;
                         } catch (Exception e) {
                             System.err.println(e.getMessage());
                         }
@@ -218,15 +237,17 @@ public class ConcolicTesting {
                     }
                 }
 
-                if (!covered && tracker.isUncovered(uncoveredNodeId)) {
+                if (!covered && !driverTimedOut && !solverTimedOut
+                        && tracker.isUncovered(uncoveredNodeId)) {
                     List<List<ControlFlowGraph.Edge>> alternatives =
                             pathFinder.findAlternativePaths(
                                     cfg,
                                     pathTargetNodeId,
                                     tracker.requiredExitFor(uncoveredNodeId));
                     for (List<ControlFlowGraph.Edge> path : alternatives) {
-                        SolverResult result = symbolicExecution.executePath(
-                                cfg, path, parameters, parameterTypes, encodingMode);
+                        SolverResult result = executePath(
+                                symbolicExecution, solverCache, cfg, path,
+                                parameters, parameterTypes, encodingMode);
                         if (!(result instanceof SolverResult.Sat sat)) continue;
 
                         Map<String, Object> newInputs =
@@ -239,6 +260,10 @@ public class ConcolicTesting {
                                     Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
                             allTestData.add(runResult);
                             traceReader.applyTo(tracker);
+                        } catch (TestDriver.DriverTimeoutException e) {
+                            System.err.println(e.getMessage());
+                            driverTimedOut = true;
+                            break;
                         } catch (Exception e) {
                             System.err.println(e.getMessage());
                         }
@@ -288,6 +313,26 @@ public class ConcolicTesting {
     // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------
+
+    private static SolverResult executePath(
+            SymbolicExecution symbolicExecution,
+            Map<List<ControlFlowGraph.Edge>, SolverResult> solverCache,
+            ControlFlowGraph cfg,
+            List<ControlFlowGraph.Edge> path,
+            List<ASTNode> parameters,
+            Map<String, SymType> parameterTypes,
+            Z3EncodingMode encodingMode) {
+        List<ControlFlowGraph.Edge> cacheKey = List.copyOf(path);
+        return solverCache.computeIfAbsent(cacheKey, ignored ->
+                symbolicExecution.executePath(
+                        cfg, cacheKey, parameters, parameterTypes, encodingMode));
+    }
+
+    private static boolean isTimeout(SolverResult result) {
+        return result instanceof SolverResult.Unknown unknown
+                && unknown.reason() != null
+                && unknown.reason().toLowerCase(java.util.Locale.ROOT).contains("timeout");
+    }
 
     /**
      * Builds a map of parameter name → {@link SymType} from the JDT method
