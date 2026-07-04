@@ -219,7 +219,7 @@ public final class ConstraintSolver implements AutoCloseable {
         // ── Step 4: Invoke Z3 ─────────────────────────────────────────────────
         Status status = z3Solver.check();
         Statistics statistics = z3Solver.getStatistics();
-        Z3StatisticsRecorder.record(statistics);
+        Z3StatisticsRecorder.record(statistics, z3Solver.getAssertions());
 //        printZ3Statistics(statistics);
 
         return switch (status) {

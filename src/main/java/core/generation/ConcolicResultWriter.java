@@ -29,7 +29,7 @@ public final class ConcolicResultWriter {
     public static Path write(MethodDeclaration method,
                              TestResult result,
                              Coverage coverage,
-                             List<Map<String, String>> z3Statistics) throws IOException {
+                             List<? extends Map<String, ?>> z3Statistics) throws IOException {
         Path outputDir = Path.of(FilePath.PATH_TO_TOOL_OUTPUT, "concolic-results");
         Files.createDirectories(outputDir);
 
@@ -43,7 +43,7 @@ public final class ConcolicResultWriter {
     private static Map<String, Object> toJson(MethodDeclaration method,
                                               TestResult result,
                                               Coverage coverage,
-                                              List<Map<String, String>> z3Statistics) {
+                                              List<? extends Map<String, ?>> z3Statistics) {
         Map<String, Object> json = new LinkedHashMap<>();
         json.put("methodName", method.getName().getIdentifier());
         json.put("coverageType", coverage.name());

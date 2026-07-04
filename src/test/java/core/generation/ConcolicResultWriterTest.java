@@ -54,7 +54,9 @@ public class ConcolicResultWriterTest {
                 """);
         TestResult result = resultWithCoverage();
 
-        ConcolicResultWriter.write(method, result, Coverage.STATEMENT, List.of());
+        ConcolicResultWriter.write(method, result, Coverage.STATEMENT, List.of(Map.of(
+                "variableCount", 2,
+                "expressionCount", 8)));
         ConcolicResultWriter.write(method, result, Coverage.BRANCH, List.of());
 
         JsonNode root = MAPPER.readTree(outputFile.toFile());
@@ -64,6 +66,9 @@ public class ConcolicResultWriterTest {
         assertEquals("STATEMENT", root.get(0).path("coverageType").asText());
         assertEquals("BRANCH", root.get(1).path("coverageType").asText());
         assertEquals(250L, root.get(0).path("executionTimeMs").asLong());
+        assertEquals(2, root.get(0).path("z3Statistics").get(0).path("variableCount").asInt());
+        assertEquals(8, root.get(0).path("z3Statistics").get(0).path("expressionCount").asInt());
+        assertTrue(root.get(0).path("z3Statistics").get(0).path("variableCount").isInt());
     }
 
     @Test
