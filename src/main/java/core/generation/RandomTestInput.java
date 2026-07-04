@@ -72,12 +72,28 @@ public final class RandomTestInput {
             Map<String, Object> seed = new LinkedHashMap<>();
             for (int parameterIndex = 0; parameterIndex < parameters.size(); parameterIndex++) {
                 List<Object> values = valuesByParameter.get(parameterIndex);
-                Object value = values.get(Math.min(scenario, values.size() - 1));
+                int valueIndex = boundaryValueIndex(
+                        scenario, parameterIndex, scenarioCount, values.size());
+                Object value = values.get(valueIndex);
                 seed.put(parameters.get(parameterIndex).getName().getIdentifier(), value);
             }
             seeds.add(seed);
         }
         return List.copyOf(seeds);
+    }
+
+    private static int boundaryValueIndex(
+            int scenario, int parameterIndex, int scenarioCount, int valueCount) {
+        // Numeric primitive portfolios contain five values: 0, 1, -1, MIN, MAX.
+        // Rotate later parameters so extrema are exercised against different
+        // values instead of only (MIN, MIN) and (MAX, MAX). This remains bounded
+        // at five scenarios while adding witnesses such as (MIN, -1), which is
+        // required for signed-multiplication overflow.
+        if (scenarioCount == 5 && valueCount == 5 && parameterIndex > 0) {
+            int rotation = parameterIndex % valueCount;
+            return Math.floorMod(scenario - rotation, valueCount);
+        }
+        return Math.min(scenario, valueCount - 1);
     }
 
     private static List<Object> boundaryValuesForType(Type type, int extraDimensions) {

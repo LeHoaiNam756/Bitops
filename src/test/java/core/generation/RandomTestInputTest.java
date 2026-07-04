@@ -58,4 +58,17 @@ public class RandomTestInputTest {
         assertEquals("", seeds.get(0).get("text"));
         assertEquals("a", seeds.get(1).get("text"));
     }
+
+    @Test
+    public void createBoundaryTestData_crossesNumericExtremaAcrossParameters() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "void target(long a, long b) {}"
+        ).get(0);
+
+        List<Map<String, Object>> seeds = RandomTestInput.createBoundaryTestData(method);
+
+        assertTrue(seeds.stream().anyMatch(seed ->
+                Long.valueOf(Long.MIN_VALUE).equals(seed.get("a"))
+                        && Long.valueOf(-1L).equals(seed.get("b"))));
+    }
 }

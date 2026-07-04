@@ -123,6 +123,9 @@ public final class ConstantFoldingStrategy implements SimplificationStrategy {
             case PLUS       -> lit;
             case INC        -> foldAddInt(val,  1);
             case DEC        -> foldAddInt(val, -1);
+            case LONG_NUMBER_OF_LEADING_ZEROS -> val instanceof Number number
+                    ? SymLiteral.of(Long.numberOfLeadingZeros(number.longValue()))
+                    : u;
         };
     }
 

@@ -155,6 +155,7 @@ public final class SortResolver {
             return switch (u.op()) {
                 case NOT -> boolSort;
                 case NEG, PLUS, INC, DEC, COMPLIMENT -> resolve(u.operand(), memo);
+                case LONG_NUMBER_OF_LEADING_ZEROS -> bv32Sort;
             };
         }
 

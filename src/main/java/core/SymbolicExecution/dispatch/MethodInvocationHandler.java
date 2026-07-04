@@ -46,6 +46,9 @@ public class MethodInvocationHandler implements AstHandler {
             case "highestOneBit" -> isIntegerHighestOneBit(m)
                     ? highestOneBit(args.get(0))
                     : unknownCall(name, m);
+            case "numberOfLeadingZeros" -> isLongNumberOfLeadingZeros(m)
+                    ? new SymUnaryOp(SymUnaryOp.Op.LONG_NUMBER_OF_LEADING_ZEROS, args.get(0))
+                    : unknownCall(name, m);
             default -> unknownCall(name, m);
         };
     }
@@ -64,6 +67,18 @@ public class MethodInvocationHandler implements AstHandler {
                 ? ""
                 : invocation.getExpression().toString();
         return "Integer".equals(receiver) || "java.lang.Integer".equals(receiver);
+    }
+
+    private boolean isLongNumberOfLeadingZeros(MethodInvocation invocation) {
+        if (invocation.resolveMethodBinding() != null
+                && invocation.resolveMethodBinding().getDeclaringClass() != null) {
+            return "java.lang.Long".equals(
+                    invocation.resolveMethodBinding().getDeclaringClass().getQualifiedName());
+        }
+        String receiver = invocation.getExpression() == null
+                ? ""
+                : invocation.getExpression().toString();
+        return "Long".equals(receiver) || "java.lang.Long".equals(receiver);
     }
 
     /** Exact 32-bit equivalent of {@link Integer#highestOneBit(int)}. */

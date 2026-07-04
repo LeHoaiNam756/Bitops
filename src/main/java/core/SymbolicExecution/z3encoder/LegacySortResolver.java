@@ -71,6 +71,7 @@ final class LegacySortResolver {
             return switch (unary.op()) {
                 case NOT -> boolSort;
                 case NEG, PLUS, INC, DEC, COMPLIMENT -> resolve(unary.operand(), memo);
+                case LONG_NUMBER_OF_LEADING_ZEROS -> intSort;
             };
         }
         if (node instanceof SymBinaryOp binary) {

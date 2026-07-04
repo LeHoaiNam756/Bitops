@@ -94,6 +94,8 @@ final class LegacyZ3Encoder {
             case INC -> ctx.mkAdd(asArith(operand, unary), oneFor(operandSort));
             case DEC -> ctx.mkSub(asArith(operand, unary), oneFor(operandSort));
             case COMPLIMENT -> ctx.mkUnaryMinus(ctx.mkAdd(asArith(operand, unary), oneFor(operandSort)));
+            case LONG_NUMBER_OF_LEADING_ZEROS -> throw new EncodingException(
+                    "Legacy Original Concolic does not support Long.numberOfLeadingZeros", unary);
         };
     }
 

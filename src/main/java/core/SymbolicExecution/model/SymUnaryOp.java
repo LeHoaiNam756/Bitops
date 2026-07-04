@@ -5,6 +5,6 @@ public record SymUnaryOp(
         SymbolicValue operand
 ) implements SymbolicValue {
     public enum Op {
-        NEG, NOT, INC, DEC, COMPLIMENT, PLUS
+        NEG, NOT, INC, DEC, COMPLIMENT, PLUS, LONG_NUMBER_OF_LEADING_ZEROS
     }
 }

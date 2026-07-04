@@ -275,7 +275,45 @@ public final class Z3Encoder {
                 BitVecExpr bv = (BitVecExpr) operand;
                 yield ctx.mkBVSub(bv, ctx.mkBV(1, bv.getSortSize()));
             }
+
+            case LONG_NUMBER_OF_LEADING_ZEROS ->
+                    encodeLongNumberOfLeadingZeros((BitVecExpr) operand);
         };
+    }
+
+    /** Exact bit-vector encoding of {@link Long#numberOfLeadingZeros(long)}. */
+    private BitVecExpr encodeLongNumberOfLeadingZeros(BitVecExpr operand) {
+        BitVecExpr value = matchWidth(operand, 64);
+        BitVecExpr working = value;
+        BitVecExpr count = ctx.mkBV(0, 32);
+        BitVecExpr zero64 = ctx.mkBV(0, 64);
+
+        for (int distance : new int[]{32, 16, 8, 4, 2}) {
+            BoolExpr upperBitsAreZero = ctx.mkEq(
+                    ctx.mkBVLSHR(working, ctx.mkBV(64 - distance, 64)),
+                    zero64);
+            count = (BitVecExpr) ctx.mkITE(
+                    upperBitsAreZero,
+                    ctx.mkBVAdd(count, ctx.mkBV(distance, 32)),
+                    count);
+            working = (BitVecExpr) ctx.mkITE(
+                    upperBitsAreZero,
+                    ctx.mkBVSHL(working, ctx.mkBV(distance, 64)),
+                    working);
+        }
+
+        BoolExpr topBitIsZero = ctx.mkEq(
+                ctx.mkBVLSHR(working, ctx.mkBV(63, 64)),
+                zero64);
+        count = (BitVecExpr) ctx.mkITE(
+                topBitIsZero,
+                ctx.mkBVAdd(count, ctx.mkBV(1, 32)),
+                count);
+
+        return (BitVecExpr) ctx.mkITE(
+                ctx.mkEq(value, zero64),
+                ctx.mkBV(64, 32),
+                count);
     }
 
     // =========================================================================
