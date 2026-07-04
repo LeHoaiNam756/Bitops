@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -254,6 +255,36 @@ public class TestDriverEmitterTest {
 
         assertEquals("6", data.output());
         assertTrue(data.coveredNodeIds().contains(104));
+    }
+
+    @Test
+    public void generatedDriverRoundTripsCharArrayInput() throws Exception {
+        String source = """
+                package sample;
+
+                public class CharArraySubject {
+                    public char first(char[] table) {
+                        return table[0];
+                    }
+                }
+                """;
+
+        MethodDeclaration method = compileAndGenerateDriver(
+                "CharArraySubject",
+                source,
+                candidate -> "first".equals(candidate.getName().getIdentifier())
+        );
+        char[] table = {'A', '\0', 'Z'};
+
+        TestData data = TestDriver.run(
+                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                TestDriver.extractParams(method),
+                Map.of("table", table),
+                Files.createTempDirectory("ct4j-driver-run")
+        );
+
+        assertEquals("A", data.output());
+        assertArrayEquals(table, (char[]) data.input().get("table"));
     }
 
     private static CompilationUnit parse(String source) {

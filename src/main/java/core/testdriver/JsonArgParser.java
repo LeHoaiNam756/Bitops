@@ -88,6 +88,14 @@ public final class JsonArgParser {
     // -----------------------------------------------------------------------
 
     static Object convert1DArray(String paramName, String typeName, JsonNode node) {
+        // Jackson's default serializer represents char[] as a JSON string,
+        // unlike every other primitive array. Accept that canonical form in
+        // addition to an explicit JSON array so values written by TestDriver
+        // can be read by both DriverMain and TestData.
+        if ("char[]".equals(typeName) && node.isTextual()) {
+            return node.textValue().toCharArray();
+        }
+
         if (!node.isArray()) {
             throw new ArgConversionException(paramName, typeName, node.toString(),
                     "Expected a JSON array");
