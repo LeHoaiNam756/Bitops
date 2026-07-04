@@ -5,6 +5,7 @@ import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.TypeContext;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 
 import java.util.Map;
@@ -21,7 +22,14 @@ public class InfixExpressionHandler implements AstHandler{
         SymbolicValue left = dispatcher.eval(infixExpression.getLeftOperand(), state);
         SymbolicValue right = dispatcher.eval(infixExpression.getRightOperand(), state);
         SymBinaryOp.Op op = InfixExpressionHandler.mapOp(infixExpression.getOperator());
-        return new SymBinaryOp(left, op, right);
+        SymbolicValue result = new SymBinaryOp(left, op, right);
+        for (Object operand : infixExpression.extendedOperands()) {
+            result = new SymBinaryOp(
+                    result,
+                    op,
+                    dispatcher.eval((Expression) operand, state));
+        }
+        return result;
     }
 
     private static final Map<InfixExpression.Operator, SymBinaryOp.Op> OP_MAP =

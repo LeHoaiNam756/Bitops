@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -113,12 +112,11 @@ public class BatchRunner {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 Future<?> future = executor.submit(() -> {
                     try {
-                        Map<String, Object> randomInput = RandomTestInput.createRandomTestData(finalMethod);
                         ConcolicTesting.getInstance().generate(
                                 finalMethod,
                                 finalCu,
                                 finalCoverage,
-                                randomInput,
+                                RandomTestInput.createBoundaryTestData(finalMethod),
                                 new AllPathsFinder(),
                                 finalMode
                         );

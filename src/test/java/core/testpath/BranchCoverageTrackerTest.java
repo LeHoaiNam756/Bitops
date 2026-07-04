@@ -68,6 +68,25 @@ public class BranchCoverageTrackerTest {
     }
 
     @Test
+    public void distinguishesInfeasibleFromUnknownAndComputesFeasibleCoverage() {
+        CoverageTracker tracker = new CoverageTracker(Set.of(1, 2, 3, 4));
+
+        tracker.markCovered(1);
+        tracker.markCovered(2);
+        tracker.markInfeasible(3, "unsat");
+        tracker.markUnknown(4, "timeout");
+
+        assertEquals(Set.of(3), tracker.getInfeasible());
+        assertEquals(Set.of(4), tracker.getUnknown());
+        assertEquals(Set.of(3, 4), tracker.getSkipped());
+        assertEquals("unsat", tracker.getInfeasibleReasons().get(3));
+        assertEquals("timeout", tracker.getUnknownReasons().get(4));
+        assertEquals(50.0, tracker.rawCoveragePercent(), 0.0001);
+        assertEquals(200.0 / 3.0, tracker.feasibleCoveragePercent(), 0.0001);
+        assertTrue(tracker.isComplete());
+    }
+
+    @Test
     public void mapsBranchOutcomeIdsBackToCfgNodeTargetsForPathFinding() {
         ControlFlowGraph cfg = new ControlFlowGraph();
         int branch = cfg.addNode(CfgNodeKind.BRANCH, condition(), "x > 0");

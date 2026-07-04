@@ -402,18 +402,31 @@ public class ConcolicTestingTest {
                 .filter(m -> "divWord".equals(m.getName().getIdentifier()))
                 .findFirst()
                 .orElseThrow();
-        Map<String, Object> seedInput = new LinkedHashMap<>();
-        seedInput.put("n", 0L);
-        seedInput.put("d", 1);
+        List<Map<String, Object>> seedInputs = List.of(
+                Map.of("n", 0L, "d", 1),
+                Map.of("n", -1L, "d", -2),
+                Map.of("n", -1L, "d", -1));
 
-        var result = ConcolicTesting.getInstance().generate(
-                method,
-                project.getRootAST(method),
-                Coverage.STATEMENT,
-                seedInput,
-                new AllPathsFinder());
+        for (Coverage coverage : Coverage.values()) {
+            var result = ConcolicTesting.getInstance().generate(
+                    method,
+                    project.getRootAST(method),
+                    coverage,
+                    seedInputs,
+                    new AllPathsFinder());
 
-        assertFalse(result.testDataList().isEmpty());
+            assertTrue(coverage + " seed executions",
+                    result.testDataList().size() >= seedInputs.size());
+            assertTrue(coverage + " covered no obligations",
+                    !result.fullCoverage().getCovered().isEmpty());
+            assertTrue(coverage + " left obligations unclassified",
+                    result.fullCoverage().getUncovered().isEmpty());
+            if (coverage == Coverage.STATEMENT) {
+                assertTrue(result.fullCoverage().getCovered().size() >= 11);
+                assertTrue(result.fullCoverage().getUnknown().size()
+                        + result.fullCoverage().getInfeasible().size() <= 2);
+            }
+        }
     }
 
     @Test

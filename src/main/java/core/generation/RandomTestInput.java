@@ -9,6 +9,8 @@ import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleType;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,100 @@ public final class RandomTestInput {
             result.put(name, value);
         }
         return result;
+    }
+
+    /**
+     * Creates a bounded boundary-value portfolio without a Cartesian-product
+     * explosion. Parameters advance through their own boundary lists together,
+     * producing at most five seed inputs for one method.
+     */
+    public static List<Map<String, Object>> createBoundaryTestData(
+            MethodDeclaration methodDeclaration) {
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
+        if (parameters.isEmpty()) {
+            return List.of(Map.of());
+        }
+
+        List<List<Object>> valuesByParameter = new ArrayList<>(parameters.size());
+        int scenarioCount = 1;
+        for (SingleVariableDeclaration parameter : parameters) {
+            List<Object> values = boundaryValuesForType(
+                    parameter.getType(), parameter.getExtraDimensions());
+            valuesByParameter.add(values);
+            scenarioCount = Math.max(scenarioCount, values.size());
+        }
+        scenarioCount = Math.min(scenarioCount, 5);
+
+        List<Map<String, Object>> seeds = new ArrayList<>(scenarioCount);
+        for (int scenario = 0; scenario < scenarioCount; scenario++) {
+            Map<String, Object> seed = new LinkedHashMap<>();
+            for (int parameterIndex = 0; parameterIndex < parameters.size(); parameterIndex++) {
+                List<Object> values = valuesByParameter.get(parameterIndex);
+                Object value = values.get(Math.min(scenario, values.size() - 1));
+                seed.put(parameters.get(parameterIndex).getName().getIdentifier(), value);
+            }
+            seeds.add(seed);
+        }
+        return List.copyOf(seeds);
+    }
+
+    private static List<Object> boundaryValuesForType(Type type, int extraDimensions) {
+        if (extraDimensions > 0 || type.isArrayType()) {
+            return boundaryArrayValues(type, extraDimensions);
+        }
+        if (isStringType(type)) {
+            return List.of("", "a");
+        }
+        if (!type.isPrimitiveType()) {
+            return List.of(createRandomValueForType(type, extraDimensions));
+        }
+
+        PrimitiveType.Code code = ((PrimitiveType) type).getPrimitiveTypeCode();
+        if (PrimitiveType.BOOLEAN.equals(code)) {
+            return List.of(false, true);
+        } else if (PrimitiveType.BYTE.equals(code)) {
+            return List.of((byte) 0, (byte) 1, (byte) -1, Byte.MIN_VALUE, Byte.MAX_VALUE);
+        } else if (PrimitiveType.SHORT.equals(code)) {
+            return List.of((short) 0, (short) 1, (short) -1, Short.MIN_VALUE, Short.MAX_VALUE);
+        } else if (PrimitiveType.CHAR.equals(code)) {
+            return List.of((char) 0, (char) 1, 'a', Character.MAX_VALUE);
+        } else if (PrimitiveType.INT.equals(code)) {
+            return List.of(0, 1, -1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        } else if (PrimitiveType.LONG.equals(code)) {
+            return List.of(0L, 1L, -1L, Long.MIN_VALUE, Long.MAX_VALUE);
+        } else if (PrimitiveType.FLOAT.equals(code)) {
+            return List.of(0.0f, 1.0f, -1.0f, -Float.MAX_VALUE, Float.MAX_VALUE);
+        } else if (PrimitiveType.DOUBLE.equals(code)) {
+            return List.of(0.0, 1.0, -1.0, -Double.MAX_VALUE, Double.MAX_VALUE);
+        }
+        return List.of(createRandomPrimitiveValue(code));
+    }
+
+    private static List<Object> boundaryArrayValues(Type type, int extraDimensions) {
+        Type baseType = type;
+        int dimensions = extraDimensions;
+        if (type instanceof ArrayType arrayType) {
+            baseType = arrayType.getElementType();
+            dimensions += arrayType.getDimensions();
+        }
+
+        Class<?> componentType;
+        if (baseType.isPrimitiveType()) {
+            componentType = primitiveCodeToClass(
+                    ((PrimitiveType) baseType).getPrimitiveTypeCode());
+        } else if (isStringType(baseType)) {
+            componentType = String.class;
+        } else {
+            return List.of(createRandomValueForType(type, extraDimensions));
+        }
+
+        int[] emptyDimensions = new int[dimensions];
+        int[] singletonDimensions = new int[dimensions];
+        Arrays.fill(singletonDimensions, 1);
+        return List.of(
+                Array.newInstance(componentType, emptyDimensions),
+                Array.newInstance(componentType, singletonDimensions));
     }
 
     // -------------------------------------------------------------------------

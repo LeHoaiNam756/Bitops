@@ -307,7 +307,7 @@ public class ToolView {
                     loc.methodDeclaration,
                     rootAst,
                     coverage,
-                    RandomTestInput.createRandomTestData(loc.methodDeclaration),
+                    RandomTestInput.createBoundaryTestData(loc.methodDeclaration),
                     getSelectedPathFinder(),
                     getSelectedEncodingMode()
             );
@@ -352,7 +352,10 @@ public class ToolView {
             return;
         }
         if (fullCoverageLabel != null) {
-            fullCoverageLabel.setText(String.format("%.2f%%", calculateCoveragePercent(result)));
+            fullCoverageLabel.setText(String.format(
+                    "%.2f%% raw / %.2f%% feasible",
+                    result.fullCoverage().rawCoveragePercent(),
+                    result.fullCoverage().feasibleCoveragePercent()));
         }
         if (memoryUsageLabel != null) {
             memoryUsageLabel.setText(String.format("%.2f MB", result.memoryUsageBytes() / (1024.0 * 1024.0)));
@@ -399,7 +402,8 @@ public class ToolView {
         Set<Integer> covered = row.coveredNodeIds();
         Set<Integer> uncovered = new HashSet<>(currentInstrumentationPlan.nodeIds());
         uncovered.removeAll(covered);
-        applyCoverageHighlight(covered, uncovered, Collections.emptySet());
+        applyCoverageHighlight(
+                covered, uncovered, Collections.emptySet(), Collections.emptySet());
     }
 
     private void highlightFullCoverage() {
@@ -409,13 +413,15 @@ public class ToolView {
         applyCoverageHighlight(
                 currentTestResult.fullCoverage().getCovered(),
                 currentTestResult.fullCoverage().getUncovered(),
-                currentTestResult.fullCoverage().getSkipped()
+                currentTestResult.fullCoverage().getInfeasible(),
+                currentTestResult.fullCoverage().getUnknown()
         );
     }
 
     private void applyCoverageHighlight(Set<Integer> coveredNodeIds,
                                         Set<Integer> uncoveredNodeIds,
-                                        Set<Integer> skippedNodeIds) {
+                                        Set<Integer> infeasibleNodeIds,
+                                        Set<Integer> unknownNodeIds) {
         if (currentMethodLocation != null && (currentFile == null || !currentFile.equals(currentMethodLocation.file))) {
             showFile(currentMethodLocation.file);
         }
@@ -423,7 +429,9 @@ public class ToolView {
         highlightedCoverageLines.clear();
         highlightedCoverageLines.put(LineCoverageState.COVERED, linesForNodeIds(coveredNodeIds));
         highlightedCoverageLines.put(LineCoverageState.UNCOVERED, linesForNodeIds(uncoveredNodeIds));
-        highlightedCoverageLines.put(LineCoverageState.SKIPPED, linesForNodeIds(skippedNodeIds));
+        highlightedCoverageLines.put(
+                LineCoverageState.INFEASIBLE, linesForNodeIds(infeasibleNodeIds));
+        highlightedCoverageLines.put(LineCoverageState.UNKNOWN, linesForNodeIds(unknownNodeIds));
 
         sourceList.getSelectionModel().clearSelection();
         sourceList.refresh();
@@ -453,8 +461,13 @@ public class ToolView {
     }
 
     private LineCoverageState coverageStateForLine(int lineIndex) {
-        if (highlightedCoverageLines.getOrDefault(LineCoverageState.SKIPPED, Collections.emptySet()).contains(lineIndex)) {
-            return LineCoverageState.SKIPPED;
+        if (highlightedCoverageLines.getOrDefault(
+                LineCoverageState.UNKNOWN, Collections.emptySet()).contains(lineIndex)) {
+            return LineCoverageState.UNKNOWN;
+        }
+        if (highlightedCoverageLines.getOrDefault(
+                LineCoverageState.INFEASIBLE, Collections.emptySet()).contains(lineIndex)) {
+            return LineCoverageState.INFEASIBLE;
         }
         if (highlightedCoverageLines.getOrDefault(LineCoverageState.UNCOVERED, Collections.emptySet()).contains(lineIndex)) {
             return LineCoverageState.UNCOVERED;
@@ -485,7 +498,8 @@ public class ToolView {
     private enum LineCoverageState {
         COVERED("-fx-background-color: #c8e6c9; -fx-text-fill: black;"),
         UNCOVERED("-fx-background-color: #ffcdd2; -fx-text-fill: black;"),
-        SKIPPED("-fx-background-color: #fff3cd; -fx-text-fill: black;");
+        INFEASIBLE("-fx-background-color: #e0e0e0; -fx-text-fill: black;"),
+        UNKNOWN("-fx-background-color: #fff3cd; -fx-text-fill: black;");
 
         private final String style;
 
@@ -529,14 +543,6 @@ public class ToolView {
         public Set<Integer> coveredNodeIds() {
             return coveredNodeIds;
         }
-    }
-
-    private double calculateCoveragePercent(TestResult result) {
-        int covered = result.fullCoverage().getCovered().size();
-        int total = covered
-                + result.fullCoverage().getUncovered().size()
-                + result.fullCoverage().getSkipped().size();
-        return total == 0 ? 100 : covered * 100.0 / total;
     }
 
     private String formatValue(Object value) {

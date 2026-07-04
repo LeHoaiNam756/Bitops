@@ -94,14 +94,24 @@ public final class ConcolicResultWriter {
     private static Map<String, Object> totalCoverage(CoverageTracker tracker) {
         int covered = tracker.getCovered().size();
         int uncovered = tracker.getUncovered().size();
-        int skipped = tracker.getSkipped().size();
-        int total = covered + uncovered + skipped;
+        int infeasible = tracker.getInfeasible().size();
+        int unknown = tracker.getUnknown().size();
+        int skipped = infeasible + unknown;
+        int total = tracker.totalObligations();
 
         Map<String, Object> json = coverage(covered, total);
+        json.put("rawPercent", tracker.rawCoveragePercent());
+        json.put("feasiblePercent", tracker.feasibleCoveragePercent());
         json.put("uncoveredNodes", uncovered);
+        json.put("infeasibleNodes", infeasible);
+        json.put("unknownNodes", unknown);
         json.put("skippedNodes", skipped);
         json.put("coveredNodeIds", tracker.getCovered());
         json.put("uncoveredNodeIds", tracker.getUncovered());
+        json.put("infeasibleNodeIds", tracker.getInfeasible());
+        json.put("unknownNodeIds", tracker.getUnknown());
+        json.put("infeasibleReasons", tracker.getInfeasibleReasons());
+        json.put("unknownReasons", tracker.getUnknownReasons());
         json.put("skippedNodeIds", tracker.getSkipped());
         return json;
     }
@@ -115,7 +125,7 @@ public final class ConcolicResultWriter {
     }
 
     private static int totalCoverageNodes(CoverageTracker tracker) {
-        return tracker.getCovered().size() + tracker.getUncovered().size() + tracker.getSkipped().size();
+        return tracker.totalObligations();
     }
 
     private static Set<Integer> coveredNodeIds(TestData data) {

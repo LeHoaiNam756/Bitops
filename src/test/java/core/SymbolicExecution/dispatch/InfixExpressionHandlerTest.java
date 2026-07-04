@@ -130,6 +130,26 @@ public class InfixExpressionHandlerTest {
         inOrder.verify(dispatcher).eval(eq(node.getRightOperand()), eq(state));
     }
 
+    @Test
+    public void eval_foldsExtendedOperandsFromLeftToRight() {
+        InfixExpression node = parseInfixExpression("int x = 1 + 2 + 3;");
+        AstDispatcher dispatcher = new AstDispatcher()
+                .register(new NumberLiteralHandler());
+        SymbolicState state = SymbolicState.builder().build();
+        SymbolicValue one = SymLiteral.of(1);
+        SymbolicValue two = SymLiteral.of(2);
+        SymbolicValue three = SymLiteral.of(3);
+
+        SymbolicValue result = handler.eval(node, state, dispatcher);
+
+        assertEquals(
+                new SymBinaryOp(
+                        new SymBinaryOp(one, SymBinaryOp.Op.ADD, two),
+                        SymBinaryOp.Op.ADD,
+                        three),
+                result);
+    }
+
     // ─── eval() — Operator propagation ───────────────────────────────────────
 
     @Test

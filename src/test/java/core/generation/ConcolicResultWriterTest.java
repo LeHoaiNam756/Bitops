@@ -66,6 +66,33 @@ public class ConcolicResultWriterTest {
         assertEquals(250L, root.get(0).path("executionTimeMs").asLong());
     }
 
+    @Test
+    public void writeSeparatesRawFeasibleInfeasibleAndUnknownCoverage() throws Exception {
+        MethodDeclaration method = parseMethod("""
+                class Sample {
+                    int same(int x) { return x; }
+                }
+                """);
+        CoverageTracker tracker = new CoverageTracker(Set.of(1, 2, 3, 4));
+        tracker.markCovered(1);
+        tracker.markCovered(2);
+        tracker.markInfeasible(3, "unsat");
+        tracker.markUnknown(4, "timeout");
+
+        ConcolicResultWriter.write(method,
+                new TestResult(List.of(), tracker, 0, 0),
+                Coverage.BRANCH,
+                List.of());
+
+        JsonNode coverage = MAPPER.readTree(outputFile.toFile()).get(0).path("totalCoverage");
+        assertEquals(50.0, coverage.path("rawPercent").asDouble(), 0.0001);
+        assertEquals(200.0 / 3.0, coverage.path("feasiblePercent").asDouble(), 0.0001);
+        assertEquals(1, coverage.path("infeasibleNodes").asInt());
+        assertEquals(1, coverage.path("unknownNodes").asInt());
+        assertEquals("unsat", coverage.path("infeasibleReasons").path("3").asText());
+        assertEquals("timeout", coverage.path("unknownReasons").path("4").asText());
+    }
+
     private static TestResult resultWithCoverage() {
         CoverageTracker tracker = new CoverageTracker(Set.of(1, 2));
         tracker.markCovered(1);

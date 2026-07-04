@@ -77,7 +77,7 @@ public class ConcolicTesting {
                 methodDeclaration,
                 cu,
                 coverage,
-                RandomTestInput.createRandomTestData(methodDeclaration),
+                RandomTestInput.createBoundaryTestData(methodDeclaration),
                 new AllPathsFinder());
     }
 
@@ -86,7 +86,8 @@ public class ConcolicTesting {
                                Coverage coverage,
                                Map<String, Object> randomInput,
                                PathFinder pathFinder) throws Exception {
-        return generate(methodDeclaration, cu, coverage, randomInput, pathFinder, Z3EncodingMode.BITVECTOR);
+        return generate(methodDeclaration, cu, coverage, List.of(randomInput), pathFinder,
+                Z3EncodingMode.BITVECTOR);
     }
 
     public TestResult generate(MethodDeclaration methodDeclaration,
@@ -95,6 +96,27 @@ public class ConcolicTesting {
                                Map<String, Object> randomInput,
                                PathFinder pathFinder,
                                Z3EncodingMode encodingMode) throws Exception {
+        return generate(methodDeclaration, cu, coverage, List.of(randomInput), pathFinder, encodingMode);
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               List<Map<String, Object>> seedInputs,
+                               PathFinder pathFinder) throws Exception {
+        return generate(methodDeclaration, cu, coverage, seedInputs, pathFinder,
+                Z3EncodingMode.BITVECTOR);
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               List<Map<String, Object>> seedInputs,
+                               PathFinder pathFinder,
+                               Z3EncodingMode encodingMode) throws Exception {
+        if (seedInputs == null || seedInputs.isEmpty()) {
+            throw new IllegalArgumentException("seedInputs must contain at least one input");
+        }
         long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
@@ -113,20 +135,22 @@ public class ConcolicTesting {
         List<TestDriver.ParamInfo> paramInfos =
                 TestDriver.extractParams(methodDeclaration);
 
-        // --- 4. Random seed run ---------------------------------------------
+        // --- 4. Seed runs ----------------------------------------------------
         List<TestData> allTestData = new ArrayList<>();
         TraceReader traceReader = new TraceReader(product.trackPath());
-        try {
-            TestData seedResult = TestDriver.run(
-                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
-                    paramInfos,
-                    randomInput,
-                    Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-            allTestData.add(seedResult);
-            // --- 5. Ingest traces from the seed run -----------------------------
-            traceReader.applyTo(tracker);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        for (Map<String, Object> seedInput : seedInputs) {
+            try {
+                TestData seedResult = TestDriver.run(
+                        Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                        paramInfos,
+                        seedInput,
+                        Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
+                allTestData.add(seedResult);
+                // --- 5. Ingest traces from the seed run ---------------------
+                traceReader.applyTo(tracker);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         // --- 6. Prepare symbolic-execution context --------------------------
@@ -181,7 +205,7 @@ public class ConcolicTesting {
 
             if (exhaustedBatch && !tracker.isComplete()) {
                 for (int nodeId : new HashSet<>(tracker.getUncovered())) {
-                    tracker.markSkipped(nodeId);
+                    tracker.markUnknown(nodeId, "batch-paths-exhausted-without-proof");
                 }
             }
         } else {
@@ -199,17 +223,31 @@ public class ConcolicTesting {
                 boolean covered = false;
                 boolean driverTimedOut = false;
                 boolean solverTimedOut = false;
+                boolean sawSat = false;
+                boolean sawUnknown = false;
+                String unknownReason = null;
+                int solverResultCount = 0;
                 for (List<ControlFlowGraph.Edge> path : paths) {
                     SolverResult result = executePath(
                             symbolicExecution, solverCache, cfg, path,
                             parameters, parameterTypes, encodingMode);
+                    solverResultCount++;
 
                     if (isTimeout(result)) {
                         solverTimedOut = true;
+                        sawUnknown = true;
+                        unknownReason = ((SolverResult.Unknown) result).reason();
                         break;
                     }
 
+                    if (result instanceof SolverResult.Unknown unknown) {
+                        sawUnknown = true;
+                        unknownReason = unknown.reason();
+                        continue;
+                    }
+
                     if (result instanceof SolverResult.Sat sat) {
+                        sawSat = true;
                         Map<String, Object> newInputs =
                                 extractInputsFromModel(sat.model(), paramInfos);
 
@@ -248,8 +286,19 @@ public class ConcolicTesting {
                         SolverResult result = executePath(
                                 symbolicExecution, solverCache, cfg, path,
                                 parameters, parameterTypes, encodingMode);
+                        solverResultCount++;
+                        if (result instanceof SolverResult.Unknown unknown) {
+                            sawUnknown = true;
+                            unknownReason = unknown.reason();
+                            if (isTimeout(result)) {
+                                solverTimedOut = true;
+                                break;
+                            }
+                            continue;
+                        }
                         if (!(result instanceof SolverResult.Sat sat)) continue;
 
+                        sawSat = true;
                         Map<String, Object> newInputs =
                                 extractInputsFromModel(sat.model(), paramInfos);
                         try {
@@ -275,12 +324,28 @@ public class ConcolicTesting {
                 }
 
                 if (!covered && tracker.isUncovered(uncoveredNodeId)) {
-                    // Exhausted all paths without covering the node
-                    tracker.markSkipped(uncoveredNodeId);
+                    if (driverTimedOut) {
+                        tracker.markUnknown(uncoveredNodeId, "generated-driver-timeout");
+                    } else if (solverTimedOut || sawUnknown) {
+                        tracker.markUnknown(uncoveredNodeId,
+                                unknownReason == null ? "solver-unknown" : unknownReason);
+                    } else if (sawSat) {
+                        tracker.markUnknown(uncoveredNodeId,
+                                "satisfiable-model-did-not-cover-target");
+                    } else if (solverResultCount > 0) {
+                        tracker.markInfeasible(uncoveredNodeId,
+                                "all-candidate-paths-proved-unsatisfiable");
+                    } else {
+                        tracker.markUnknown(uncoveredNodeId, "no-candidate-path-produced");
+                    }
                 }
 
                 iteration++;
             }
+        }
+
+        for (int nodeId : new HashSet<>(tracker.getUncovered())) {
+            tracker.markUnknown(nodeId, "generation-iteration-limit");
         }
 
         // --- 8. Assemble result ---------------------------------------------

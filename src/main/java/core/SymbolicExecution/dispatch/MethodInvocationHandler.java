@@ -43,8 +43,48 @@ public class MethodInvocationHandler implements AstHandler {
             case "min"  -> new SymITE(
                     new SymBinaryOp(args.get(0), SymBinaryOp.Op.SLE, args.get(1)),
                     args.get(0), args.get(1));
-            default -> new SymVariable("__call_" + name + "_" + System.identityHashCode(m));
+            case "highestOneBit" -> isIntegerHighestOneBit(m)
+                    ? highestOneBit(args.get(0))
+                    : unknownCall(name, m);
+            default -> unknownCall(name, m);
         };
+    }
+
+    private SymbolicValue unknownCall(String name, MethodInvocation invocation) {
+        return new SymVariable("__call_" + name + "_" + System.identityHashCode(invocation));
+    }
+
+    private boolean isIntegerHighestOneBit(MethodInvocation invocation) {
+        if (invocation.resolveMethodBinding() != null
+                && invocation.resolveMethodBinding().getDeclaringClass() != null) {
+            return "java.lang.Integer".equals(
+                    invocation.resolveMethodBinding().getDeclaringClass().getQualifiedName());
+        }
+        String receiver = invocation.getExpression() == null
+                ? ""
+                : invocation.getExpression().toString();
+        return "Integer".equals(receiver) || "java.lang.Integer".equals(receiver);
+    }
+
+    /** Exact 32-bit equivalent of {@link Integer#highestOneBit(int)}. */
+    private SymbolicValue highestOneBit(SymbolicValue value) {
+        SymbolicValue smeared = value;
+        for (int distance : new int[]{1, 2, 4, 8, 16}) {
+            smeared = new SymBinaryOp(
+                    smeared,
+                    SymBinaryOp.Op.BOR,
+                    new SymBinaryOp(
+                            smeared,
+                            SymBinaryOp.Op.BRS,
+                            SymLiteral.of(distance)));
+        }
+        return new SymBinaryOp(
+                smeared,
+                SymBinaryOp.Op.SUB,
+                new SymBinaryOp(
+                        smeared,
+                        SymBinaryOp.Op.BURS,
+                        SymLiteral.of(1)));
     }
 
     private SymStringOp.Op mapStringOp(String name) {
