@@ -88,6 +88,20 @@ public final class JsonArgParser {
     // -----------------------------------------------------------------------
 
     static Object convert1DArray(String paramName, String typeName, JsonNode node) {
+        // Jackson serializes byte[] as a Base64 JSON string rather than as a
+        // JSON array. Handle that representation before the generic array
+        // shape check below.
+        if ("byte[]".equals(typeName) && (node.isTextual() || node.isBinary())) {
+            try {
+                return node.isBinary()
+                        ? node.binaryValue()
+                        : java.util.Base64.getDecoder().decode(node.textValue());
+            } catch (java.io.IOException | IllegalArgumentException e) {
+                throw new ArgConversionException(paramName, typeName, node.toString(),
+                        "Expected a Base64-encoded string or JSON integer array for byte[]");
+            }
+        }
+
         // Jackson's default serializer represents char[] as a JSON string,
         // unlike every other primitive array. Accept that canonical form in
         // addition to an explicit JSON array so values written by TestDriver
@@ -124,14 +138,6 @@ public final class JsonArgParser {
                 yield arr;
             }
             case "byte" -> {
-                if (node.isTextual()) {
-                    try {
-                        yield java.util.Base64.getDecoder().decode(node.textValue());
-                    } catch (IllegalArgumentException e) {
-                        throw new ArgConversionException(paramName, typeName, node.toString(),
-                                "Expected a Base64-encoded string or JSON integer array for byte[]");
-                    }
-                }
                 byte[] arr = new byte[n];
                 for (int i = 0; i < n; i++)
                     arr[i] = (byte) convertScalar(paramName + "[" + i + "]", elem, node.get(i));

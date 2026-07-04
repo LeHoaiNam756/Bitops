@@ -20,6 +20,40 @@ public class JsonArgParserTest {
     }
 
     @Test
+    public void convertsJacksonBase64RepresentationOfByteArray() {
+        byte[] value = {0, 1, -1, 127, -128};
+
+        Object converted = JsonArgParser.convert(
+                "bytes", "byte[]", MAPPER.valueToTree(value));
+
+        assertArrayEquals(value, (byte[]) converted);
+    }
+
+    @Test
+    public void convertsEmptyBase64StringToEmptyByteArray() throws Exception {
+        Object converted = JsonArgParser.convert(
+                "bytes", "byte[]", MAPPER.readTree("\"\""));
+
+        assertArrayEquals(new byte[0], (byte[]) converted);
+    }
+
+    @Test
+    public void convertsBase64JsonStringToByteArray() throws Exception {
+        Object converted = JsonArgParser.convert(
+                "bytes", "byte[]", MAPPER.readTree("\"AA==\""));
+
+        assertArrayEquals(new byte[] {0}, (byte[]) converted);
+    }
+
+    @Test
+    public void stillConvertsExplicitJsonArrayToByteArray() throws Exception {
+        Object converted = JsonArgParser.convert(
+                "bytes", "byte[]", MAPPER.readTree("[0, 1, -1, 127, -128]"));
+
+        assertArrayEquals(new byte[] {0, 1, -1, 127, -128}, (byte[]) converted);
+    }
+
+    @Test
     public void stillConvertsExplicitJsonArrayToCharArray() throws Exception {
         Object converted = JsonArgParser.convert(
                 "table", "char[]", MAPPER.readTree("[65, \"B\", 0]"));
