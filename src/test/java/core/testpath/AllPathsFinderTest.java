@@ -245,6 +245,25 @@ public class AllPathsFinderTest {
     }
 
     @Test
+    public void requiredBranchOutcomeWithUnmodelledDownstream_returnsConstraintPrefix() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        int entry = addEntry(cfg);
+        int target = addBranch(cfg, "condition");
+        int sink = addStmt(cfg, "unmodelled-returning-construct");
+        addExit(cfg);
+        normal(cfg, entry, target);
+        falseEdge(cfg, target, sink);
+
+        List<List<ControlFlowGraph.Edge>> paths =
+                finder.findPath(cfg, target, CfgEdgeKind.FALSE);
+
+        assertEquals(1, paths.size());
+        assertEquals(List.of(entry, target, sink), nodeIds(paths.get(0)));
+        assertEquals(CfgEdgeKind.FALSE,
+                paths.get(0).get(paths.get(0).size() - 1).getKind());
+    }
+
+    @Test
     public void disconnectedTarget_returnsEmpty() {
         // ENTRY → EXIT   TARGET (isolated – neither reachable from ENTRY nor linked to EXIT)
         ControlFlowGraph cfg = new ControlFlowGraph();

@@ -369,6 +369,78 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_powReachesFullMcdcCoverage() throws Exception {
+        Path zip = createZipProject("LongMathUnit.java", """
+                public class LongMathUnit {
+                    public long pow(long b, int k) {
+                        if (k < 0) {
+                            throw new IllegalArgumentException("exponent (" + k + ") must be >= 0");
+                        }
+                        if (-2 <= b && b <= 2) {
+                            switch ((int) b) {
+                                case 0:
+                                    return (k == 0) ? 1 : 0;
+                                case 1:
+                                    return 1;
+                                case -1:
+                                    return ((k & 1) == 0) ? 1 : -1;
+                                case 2:
+                                    return (k < Long.SIZE) ? 1L << k : 0;
+                                case -2:
+                                    if (k < Long.SIZE) {
+                                        return ((k & 1) == 0) ? 1L << k : -(1L << k);
+                                    } else {
+                                        return 0;
+                                    }
+                                default:
+                                    throw new AssertionError();
+                            }
+                        }
+                        for (long accum = 1; ; k >>= 1) {
+                            switch (k) {
+                                case 0:
+                                    return accum;
+                                case 1:
+                                    return accum * b;
+                                default:
+                                    accum *= ((k & 1) == 0) ? 1 : b;
+                                    b *= b;
+                            }
+                        }
+                    }
+                }
+                """);
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "pow".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("b", 0L);
+        seedInput.put("k", 0);
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.MCDC,
+                seedInput,
+                new AllPathsFinder());
+
+        assertEquals(result.fullCoverage().getUnknownReasons().toString(), 0,
+                result.fullCoverage().getUncovered().size());
+        assertEquals(result.fullCoverage().getUnknownReasons().toString(), 0,
+                result.fullCoverage().getUnknown().size());
+        assertEquals(result.fullCoverage().getInfeasibleReasons().toString(), 0,
+                result.fullCoverage().getInfeasible().size());
+        assertEquals(6, result.fullCoverage().getCovered().size());
+        assertTrue(result.testDataList().stream().anyMatch(test ->
+                test.input().get("b") instanceof Long b && b > 2));
+        assertTrue(result.testDataList().stream().anyMatch(test ->
+                test.input().get("b") instanceof Long b && b < -2));
+    }
+
+    @Test
     public void generate_divWordCompletes() throws Exception {
         Path zip = createZipProject("DivWord.java", """
                 public class DivWord {

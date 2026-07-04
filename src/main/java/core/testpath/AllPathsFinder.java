@@ -7,7 +7,10 @@ import lombok.Setter;
 import java.util.*;
 
 /**
- * Finds all complete paths:  ENTRY ──(all paths, cycle-limited)──► target ──(shortest)──► EXIT
+ * Finds all complete paths:  ENTRY ──(all paths, cycle-limited)──► target ──(shortest)──► EXIT.
+ * When a requested branch outcome cannot reach the modelled EXIT, it returns
+ * the constraint prefix through that outcome; this still suffices to generate
+ * a concrete input for coverage of partially modelled control-flow constructs.
  *
  * <h3>Cycle / loop handling</h3>
  * {@link #MAX_LOOP_ITERATIONS} controls how many full loop iterations are
@@ -92,7 +95,16 @@ public class AllPathsFinder implements PathFinder {
                 ? bfsPath(cfg, target, exitId)
                 : pathViaRequiredExit(cfg, target, exitId, requiredExit);
         if (targetToExit == null) {
-            return Collections.emptyList(); // target can never reach EXIT
+            // A coverage constraint only needs the prefix through the requested
+            // branch outcome. Some partially modelled constructs (currently
+            // switch statements) can hide a real return from the CFG, making
+            // EXIT appear unreachable even though the concrete method exits.
+            // Preserve the required branch edge so symbolic execution can still
+            // solve an input for that outcome.
+            targetToExit = requiredExit == null
+                    ? null
+                    : requiredExitOnly(cfg, target, requiredExit);
+            if (targetToExit == null) return Collections.emptyList();
         }
 
         // Phase 2 — all DFS paths: ENTRY → target  (explosion-safe)
@@ -199,6 +211,16 @@ public class AllPathsFinder implements PathFinder {
                 path.addAll(rest);
                 return path;
             }
+        }
+        return null;
+    }
+
+    private List<ControlFlowGraph.Edge> requiredExitOnly(
+            ControlFlowGraph cfg,
+            int target,
+            core.cfg.CfgEdgeKind requiredExit) {
+        for (ControlFlowGraph.Edge edge : cfg.outgoing(target)) {
+            if (edge.getKind() == requiredExit) return List.of(edge);
         }
         return null;
     }
