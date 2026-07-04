@@ -441,6 +441,53 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_saturatedMultiplyReachesFullBranchCoverage() throws Exception {
+        Path zip = createZipProject("LongMathUnit.java", """
+                public class LongMathUnit {
+                    public long saturatedMultiply(long a, long b) {
+                        int leadingZeros =
+                            Long.numberOfLeadingZeros(a)
+                                + Long.numberOfLeadingZeros(~a)
+                                + Long.numberOfLeadingZeros(b)
+                                + Long.numberOfLeadingZeros(~b);
+                        if (leadingZeros > Long.SIZE + 1) {
+                            return a * b;
+                        }
+                        long limit = Long.MAX_VALUE + ((a ^ b) >>> (Long.SIZE - 1));
+                        if (leadingZeros < Long.SIZE | (a < 0 & b == Long.MIN_VALUE)) {
+                            return limit;
+                        }
+                        long result = a * b;
+                        if (a == 0 || result / a == b) {
+                            return result;
+                        }
+                        return limit;
+                    }
+                }
+                """);
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "saturatedMultiply".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.BRANCH,
+                RandomTestInput.createBoundaryTestData(method),
+                new AllPathsFinder());
+
+        assertEquals(result.fullCoverage().getUnknownReasons().toString(), 0,
+                result.fullCoverage().getUncovered().size());
+        assertEquals(result.fullCoverage().getUnknownReasons().toString(), 0,
+                result.fullCoverage().getUnknown().size());
+        assertEquals(result.fullCoverage().getInfeasibleReasons().toString(), 0,
+                result.fullCoverage().getInfeasible().size());
+    }
+
+    @Test
     public void generate_divWordCompletes() throws Exception {
         Path zip = createZipProject("DivWord.java", """
                 public class DivWord {
