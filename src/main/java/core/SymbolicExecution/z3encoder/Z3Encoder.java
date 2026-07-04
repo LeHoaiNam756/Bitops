@@ -805,8 +805,9 @@ public final class Z3Encoder {
         }
 
         return switch (op) {
-            case AND -> ctx.mkAnd((BoolExpr) l, (BoolExpr) r);
-            case OR  -> ctx.mkOr((BoolExpr)  l, (BoolExpr) r);
+            case AND, BAND -> ctx.mkAnd((BoolExpr) l, (BoolExpr) r);
+            case OR, BOR   -> ctx.mkOr((BoolExpr)  l, (BoolExpr) r);
+            case BXOR      -> ctx.mkXor((BoolExpr) l, (BoolExpr) r);
             default  -> throw new EncodingException(
                     "Op '" + op + "' not a bool-result binary op", node);
         };

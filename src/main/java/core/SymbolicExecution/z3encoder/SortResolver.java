@@ -29,7 +29,8 @@ import java.util.Map;
  *  SymBinaryOp
  *    comparison ops  (EQ NEQ SGT SLT SGE SLE UGT UGE UGT UGT ULE UGE)  →  BoolSort
  *    logical ops     (AND OR)                                            →  BoolSort
- *    bitwise ops     (BAND BOR BXOR BLS BRS BURS)                       →  BitVecSort (widened)
+ *    overloaded ops  (BAND BOR BXOR) on boolean operands                →  BoolSort
+ *    bitwise ops     (BAND BOR BXOR BLS BRS BURS) on integral operands  →  BitVecSort (widened)
  *    arithmetic ops  →  widened sort of operands (int32+int64→int64, int+FP→FP, etc.)
  *
  *  SymUnaryOp
@@ -250,10 +251,14 @@ public final class SortResolver {
                 yield widenArithmetic(ls, rs);
             }
 
-            // Bitwise (non-shift) → symmetric widened BV sort
+            // JLS §15.22: &, |, and ^ are overloaded for integral and boolean operands.
+            // Comparisons therefore remain Bool when combined with non-short-circuit operators.
             case BAND, BOR, BXOR -> {
                 Sort ls = resolve(b.left(),  memo);
                 Sort rs = resolve(b.right(), memo);
+                if (ls.equals(boolSort) && rs.equals(boolSort)) {
+                    yield boolSort;
+                }
                 yield widenBitVec(ls, rs);
             }
 

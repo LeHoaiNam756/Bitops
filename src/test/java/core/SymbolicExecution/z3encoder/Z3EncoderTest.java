@@ -110,6 +110,56 @@ public class Z3EncoderTest {
     }
 
     @Test
+    public void encodeAll_nonShortCircuitOrBetweenLongComparisons_encodesBoolConstraint() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of(
+                    "a", ctx.mkBitVecSort(64),
+                    "b", ctx.mkBitVecSort(64)
+            ));
+            Z3Encoder encoder = new Z3Encoder(resolver);
+            SymBinaryOp difference = new SymBinaryOp(
+                    new SymVariable("a"), SymBinaryOp.Op.SUB, new SymVariable("b"));
+            SymBinaryOp sameInputSigns = new SymBinaryOp(
+                    new SymBinaryOp(new SymVariable("a"), SymBinaryOp.Op.BXOR, new SymVariable("b")),
+                    SymBinaryOp.Op.SGE,
+                    SymLiteral.of(0L));
+            SymBinaryOp sameResultSign = new SymBinaryOp(
+                    new SymBinaryOp(
+                            new SymVariable("a"),
+                            SymBinaryOp.Op.BXOR,
+                            difference),
+                    SymBinaryOp.Op.SGE,
+                    SymLiteral.of(0L));
+            SymBinaryOp constraint = new SymBinaryOp(
+                    sameInputSigns, SymBinaryOp.Op.BOR, sameResultSign);
+
+            List<BoolExpr> encoded = encoder.encodeAll(List.of(constraint));
+
+            assertEquals(1, encoded.size());
+            assertEquals(ctx.getBoolSort(), encoded.get(0).getSort());
+        }
+    }
+
+    @Test
+    public void encode_booleanBitwiseOperators_useBoolSort() {
+        try (Context ctx = new Context(Map.of())) {
+            SortResolver resolver = new SortResolver(ctx, Map.of(
+                    "a", ctx.getBoolSort(),
+                    "b", ctx.getBoolSort()
+            ));
+            Z3Encoder encoder = new Z3Encoder(resolver);
+
+            for (SymBinaryOp.Op op : List.of(
+                    SymBinaryOp.Op.BAND, SymBinaryOp.Op.BOR, SymBinaryOp.Op.BXOR)) {
+                Expr<?> encoded = encoder.encode(new SymBinaryOp(
+                        new SymVariable("a"), op, new SymVariable("b")));
+
+                assertEquals(ctx.getBoolSort(), encoded.getSort());
+            }
+        }
+    }
+
+    @Test
     public void encode_stringLiteral_usesZ3StringSort() {
         try (Context ctx = new Context(Map.of())) {
             SortResolver resolver = new SortResolver(ctx, Map.of());
