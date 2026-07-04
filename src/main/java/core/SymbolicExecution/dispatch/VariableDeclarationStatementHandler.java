@@ -19,11 +19,15 @@ public class VariableDeclarationStatementHandler implements AstHandler {
     @Override
     public SymbolicValue eval(ASTNode node, SymbolicState state, AstDispatcher dispatcher) {
         VariableDeclarationStatement vds = (VariableDeclarationStatement) node;
-        SymType declaredType = SymTypeMap.convert(vds.getType());
+        SymType declarationType = SymTypeMap.convert(vds.getType());
 
         for (Object o : vds.fragments()) {
             VariableDeclarationFragment vdf = (VariableDeclarationFragment) o;
             String varName = vdf.getName().getIdentifier();
+            int extraDimensions = vdf.getExtraDimensions();
+            SymType declaredType = extraDimensions == 0
+                    ? declarationType
+                    : SymTypeMap.addArrayDimensions(declarationType, extraDimensions);
 
             if (vdf.getInitializer() != null) {
                 state.getTypeContext().pushAssignment(declaredType);

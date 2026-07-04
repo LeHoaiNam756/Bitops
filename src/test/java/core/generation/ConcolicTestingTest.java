@@ -728,11 +728,13 @@ public class ConcolicTestingTest {
     public void extractInputsFromModel_defaultsInvalidArrayLengthToZero() throws Exception {
         Z3ModelBindings bindings = new Z3ModelBindings(Map.of(
                 "ints__length", SymLiteral.of(-1),
-                "longs__length", new SymLiteral("bad")
+                "longs__length", new SymLiteral("bad"),
+                "bytes__length", SymLiteral.of(Integer.MAX_VALUE)
         ));
         List<TestDriver.ParamInfo> params = List.of(
                 new TestDriver.ParamInfo("ints", "int[]"),
                 new TestDriver.ParamInfo("longs", "long[]"),
+                new TestDriver.ParamInfo("bytes", "byte[]"),
                 new TestDriver.ParamInfo("missing", "double[]")
         );
 
@@ -740,6 +742,7 @@ public class ConcolicTestingTest {
 
         assertArrayEquals(new int[0], (int[]) inputs.get("ints"));
         assertArrayEquals(new long[0], (long[]) inputs.get("longs"));
+        assertArrayEquals(new byte[0], (byte[]) inputs.get("bytes"));
         assertArrayEquals(new double[0], (double[]) inputs.get("missing"), 0.0);
     }
 

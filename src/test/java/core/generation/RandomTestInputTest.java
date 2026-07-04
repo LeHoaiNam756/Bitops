@@ -26,6 +26,18 @@ public class RandomTestInputTest {
     }
 
     @Test
+    public void createRandomTestData_sizesArrayForLargestConstantIndex() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "int check(int[] w) { return w[35] ^ w[64]; }"
+        ).get(0);
+
+        Map<String, Object> input = RandomTestInput.createRandomTestData(method);
+
+        assertTrue(input.get("w") instanceof int[]);
+        assertTrue(((int[]) input.get("w")).length >= 65);
+    }
+
+    @Test
     public void createBoundaryTestData_isBoundedAndIncludesPrimitiveExtrema() {
         MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
                 "void target(int i, long l, boolean enabled) {}"

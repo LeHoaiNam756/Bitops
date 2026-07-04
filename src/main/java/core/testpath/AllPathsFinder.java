@@ -109,7 +109,9 @@ public class AllPathsFinder implements PathFinder {
 
         // Phase 2 — all DFS paths: ENTRY → target  (explosion-safe)
         DfsState state = new DfsState();
-        dfs(cfg, entryId, target, new ArrayDeque<>(), new HashMap<>(), state);
+        boolean targetIsCyclic = isOnCycle(cfg, target);
+        dfs(cfg, entryId, target, targetIsCyclic,
+                new ArrayDeque<>(), new HashMap<>(), state);
 
         // Phase 3 — stitch prefix + suffix
         List<List<ControlFlowGraph.Edge>> results = new ArrayList<>(state.paths.size());
@@ -134,7 +136,9 @@ public class AllPathsFinder implements PathFinder {
         if (entryId == -1 || exitId == -1) return Collections.emptyList();
 
         DfsState prefixes = new DfsState();
-        dfs(cfg, entryId, target, new ArrayDeque<>(), new HashMap<>(), prefixes);
+        boolean targetIsCyclic = isOnCycle(cfg, target);
+        dfs(cfg, entryId, target, targetIsCyclic,
+                new ArrayDeque<>(), new HashMap<>(), prefixes);
 
         List<List<ControlFlowGraph.Edge>> results = new ArrayList<>();
         Set<List<ControlFlowGraph.Edge>> seen = new HashSet<>();
@@ -243,6 +247,7 @@ public class AllPathsFinder implements PathFinder {
             ControlFlowGraph cfg,
             int current,
             int target,
+            boolean targetIsCyclic,
             Deque<ControlFlowGraph.Edge> pathEdges,
             Map<Integer, Integer> visitCount,
             DfsState state) {
@@ -267,9 +272,13 @@ public class AllPathsFinder implements PathFinder {
                     state.limitReached = true;
                 }
             }
-            // ↓ IMPORTANT: do NOT return — keep exploring outgoing edges so that
-            // paths that pass *through* target (e.g. target is inside a loop and
-            // will be visited again after another iteration) are also discovered.
+            // An acyclic target cannot be reached again. Traversing its suffix
+            // would enumerate every later branch without producing another
+            // prefix, which is exponential wasted work for long if-chains.
+            if (!targetIsCyclic) {
+                restoreVisitCount(visitCount, current);
+                return;
+            }
         }
 
         // Explore outgoing edges regardless of whether current == target,
@@ -277,15 +286,39 @@ public class AllPathsFinder implements PathFinder {
         if (!state.limitReached) {
             for (ControlFlowGraph.Edge edge : cfg.outgoing(current)) {
                 pathEdges.addLast(edge);
-                dfs(cfg, edge.getTo(), target, pathEdges, visitCount, state);
+                dfs(cfg, edge.getTo(), target, targetIsCyclic,
+                        pathEdges, visitCount, state);
                 pathEdges.removeLast();
             }
         }
 
         // Backtrack: restore visit count for this node
-        int after = visitCount.get(current) - 1;
-        if (after == 0) visitCount.remove(current);
-        else            visitCount.put(current, after);
+        restoreVisitCount(visitCount, current);
+    }
+
+    private void restoreVisitCount(Map<Integer, Integer> visitCount, int node) {
+        int after = visitCount.get(node) - 1;
+        if (after == 0) visitCount.remove(node);
+        else            visitCount.put(node, after);
+    }
+
+    /** Returns true when a non-empty path leads from {@code node} back to itself. */
+    private boolean isOnCycle(ControlFlowGraph cfg, int node) {
+        Deque<Integer> queue = new ArrayDeque<>();
+        Set<Integer> visited = new HashSet<>();
+        for (ControlFlowGraph.Edge edge : cfg.outgoing(node)) {
+            if (edge.getTo() == node) return true;
+            if (visited.add(edge.getTo())) queue.addLast(edge.getTo());
+        }
+
+        while (!queue.isEmpty()) {
+            int current = queue.removeFirst();
+            for (ControlFlowGraph.Edge edge : cfg.outgoing(current)) {
+                if (edge.getTo() == node) return true;
+                if (visited.add(edge.getTo())) queue.addLast(edge.getTo());
+            }
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------

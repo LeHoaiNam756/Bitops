@@ -307,7 +307,7 @@ public class ToolView {
                     loc.methodDeclaration,
                     rootAst,
                     coverage,
-                    RandomTestInput.createBoundaryTestData(loc.methodDeclaration),
+                    RandomTestInput.createRandomTestData(loc.methodDeclaration),
                     getSelectedPathFinder(),
                     getSelectedEncodingMode()
             );

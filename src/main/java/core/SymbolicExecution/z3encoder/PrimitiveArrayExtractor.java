@@ -10,6 +10,7 @@ import com.microsoft.z3.IntNum;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import core.SymbolicExecution.model.SymLiteral;
+import core.utils.ConcolicLimits;
 
 import java.math.BigInteger;
 import java.util.Map;
@@ -78,7 +79,9 @@ final class PrimitiveArrayExtractor {
             return Optional.empty();
 
         long length = number.longValue();
-        if (length < 0 || length > Integer.MAX_VALUE) return Optional.empty();
+        if (length < 0 || length > ConcolicLimits.maxGeneratedArrayLength()) {
+            return Optional.empty();
+        }
         return Optional.of((int) length);
     }
 

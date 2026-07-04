@@ -130,6 +130,26 @@ public final class SymTypeMap {
     }
 
     /**
+     * Adds array dimensions declared after a variable name, as in
+     * {@code int values[]} or {@code int[] matrix[]}.
+     *
+     * <p>JDT stores these dimensions on the variable declaration rather than
+     * on its {@link Type}, so {@link #convert(Type)} alone cannot see them.</p>
+     */
+    public static SymType addArrayDimensions(SymType type, int extraDimensions) {
+        if (extraDimensions < 0) {
+            throw new IllegalArgumentException("extraDimensions must be >= 0");
+        }
+        if (extraDimensions == 0) return type;
+        if (type instanceof ArraySymType arrayType) {
+            return new ArraySymType(
+                    arrayType.elementType(),
+                    arrayType.dimensions() + extraDimensions);
+        }
+        return new ArraySymType(type, extraDimensions);
+    }
+
+    /**
      * Converts a resolved JDT {@link ITypeBinding} to a {@link SymType}.
      * This is the binding-based counterpart to {@link #convert(Type)}.
      */

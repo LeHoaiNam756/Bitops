@@ -142,9 +142,13 @@ public class SymbolicExecution {
         for (Object declaration : type.bodyDeclarations()) {
             if (!(declaration instanceof FieldDeclaration field)) continue;
 
-            SymType fieldType = SymTypeMap.convert(field.getType());
+            SymType declarationType = SymTypeMap.convert(field.getType());
             for (Object fragmentObject : field.fragments()) {
                 VariableDeclarationFragment fragment = (VariableDeclarationFragment) fragmentObject;
+                int extraDimensions = fragment.getExtraDimensions();
+                SymType fieldType = extraDimensions == 0
+                        ? declarationType
+                        : SymTypeMap.addArrayDimensions(declarationType, extraDimensions);
                 Expression initializer = fragment.getInitializer();
                 if (initializer == null) continue;
 

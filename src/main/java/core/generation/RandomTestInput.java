@@ -1,11 +1,17 @@
 package core.generation;
 
+import core.utils.ConcolicLimits;
 import core.utils.Setup;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 
 import java.lang.reflect.Array;
@@ -38,7 +44,9 @@ public final class RandomTestInput {
         Map<String, Object> result = new LinkedHashMap<>();
         for (SingleVariableDeclaration param : parameters) {
             String name = param.getName().getIdentifier();
-            Object value = createRandomValueForType(param.getType(), param.getExtraDimensions());
+            int minimumArrayLength = minimumArrayLength(methodDeclaration, name);
+            Object value = createRandomValueForType(
+                    param.getType(), param.getExtraDimensions(), minimumArrayLength);
             result.put(name, value);
         }
         return result;
@@ -166,13 +174,18 @@ public final class RandomTestInput {
      *                        e.g. {@code int a[]} has extraDimensions = 1.
      */
     private static Object createRandomValueForType(Type type, int extraDimensions) {
+        return createRandomValueForType(type, extraDimensions, 0);
+    }
+
+    private static Object createRandomValueForType(
+            Type type, int extraDimensions, int minimumArrayLength) {
         // Extra dimensions (e.g. "int a[]") wrap the base type in array layers.
         if (extraDimensions > 0) {
-            return createRandomArrayValue(type, extraDimensions);
+            return createRandomArrayValue(type, extraDimensions, minimumArrayLength);
         }
 
         if (type.isArrayType()) {
-            return createRandomArrayValue((ArrayType) type);
+            return createRandomArrayValue((ArrayType) type, minimumArrayLength);
         }
 
         if (type.isPrimitiveType()) {
@@ -193,10 +206,15 @@ public final class RandomTestInput {
 
     /** Handles a proper {@link ArrayType} node (e.g. {@code int[]}, {@code int[][]}). */
     private static Object createRandomArrayValue(ArrayType arrayType) {
+        return createRandomArrayValue(arrayType, 0);
+    }
+
+    private static Object createRandomArrayValue(
+            ArrayType arrayType, int minimumArrayLength) {
         // Peel off one dimension level; generate elements for the element type.
         Type elementType = arrayType.getElementType();
         int dimensions = arrayType.getDimensions();
-        return createRandomArrayValue(elementType, dimensions);
+        return createRandomArrayValue(elementType, dimensions, minimumArrayLength);
     }
 
     /**
@@ -204,8 +222,13 @@ public final class RandomTestInput {
      * described by {@code baseType} and whose depth is {@code dimensions}.
      */
     private static Object createRandomArrayValue(Type baseType, int dimensions) {
+        return createRandomArrayValue(baseType, dimensions, 0);
+    }
+
+    private static Object createRandomArrayValue(
+            Type baseType, int dimensions, int minimumArrayLength) {
         Random random = new Random();
-        int length = 1 + random.nextInt(5);
+        int length = Math.max(minimumArrayLength, 1 + random.nextInt(5));
 
         if (dimensions == 1) {
             // Base case: 1-D array of primitives or String.
@@ -232,11 +255,11 @@ public final class RandomTestInput {
 
         // Recursive case: array of arrays.
         // We need a representative element to determine the component class.
-        Object sample = createRandomArrayValue(baseType, dimensions - 1);
+        Object sample = createRandomArrayValue(baseType, dimensions - 1, 0);
         Object array = Array.newInstance(sample.getClass(), length);
         Array.set(array, 0, sample);
         for (int i = 1; i < length; i++) {
-            Array.set(array, i, createRandomArrayValue(baseType, dimensions - 1));
+            Array.set(array, i, createRandomArrayValue(baseType, dimensions - 1, 0));
         }
         return array;
     }
@@ -330,6 +353,56 @@ public final class RandomTestInput {
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * Finds the largest constant index used on a parameter in this method.
+     * A seed that is shorter than this cannot reach the first real branch.
+     */
+    private static int minimumArrayLength(MethodDeclaration method, String parameterName) {
+        int[] minimum = {0};
+        method.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(ArrayAccess node) {
+                if (!parameterName.equals(arrayBaseName(node.getArray()))) {
+                    return true;
+                }
+                Integer index = constantInt(node.getIndex());
+                if (index != null && index >= 0 && index < Integer.MAX_VALUE) {
+                    int required = Math.min(
+                            index + 1, ConcolicLimits.maxGeneratedArrayLength());
+                    minimum[0] = Math.max(minimum[0], required);
+                }
+                return true;
+            }
+        });
+        return minimum[0];
+    }
+
+    private static String arrayBaseName(Expression expression) {
+        Expression current = expression;
+        while (current instanceof ArrayAccess nested) {
+            current = nested.getArray();
+        }
+        return current instanceof SimpleName name ? name.getIdentifier() : null;
+    }
+
+    private static Integer constantInt(Expression expression) {
+        Object constant = expression.resolveConstantExpressionValue();
+        if (constant instanceof Number number) {
+            long value = number.longValue();
+            return value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE
+                    ? (int) value
+                    : null;
+        }
+        if (expression instanceof NumberLiteral literal) {
+            try {
+                return Integer.decode(literal.getToken().replace("_", ""));
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
+    }
 
     /** Maps a JDT {@link PrimitiveType.Code} to its Java {@link Class}. */
     private static Class<?> primitiveCodeToClass(PrimitiveType.Code code) {

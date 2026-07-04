@@ -116,7 +116,7 @@ public class BatchRunner {
                                 finalMethod,
                                 finalCu,
                                 finalCoverage,
-                                RandomTestInput.createBoundaryTestData(finalMethod),
+                                RandomTestInput.createRandomTestData(finalMethod),
                                 new AllPathsFinder(),
                                 finalMode
                         );

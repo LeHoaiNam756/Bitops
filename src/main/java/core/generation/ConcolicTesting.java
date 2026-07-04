@@ -19,6 +19,7 @@ import core.testpath.AllPathsFinder;
 import core.testpath.CoverageTracker;
 import core.testpath.PathFinder;
 import core.testpath.TraceReader;
+import core.utils.ConcolicLimits;
 import core.utils.FilePath;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -77,7 +78,7 @@ public class ConcolicTesting {
                 methodDeclaration,
                 cu,
                 coverage,
-                RandomTestInput.createBoundaryTestData(methodDeclaration),
+                RandomTestInput.createRandomTestData(methodDeclaration),
                 new AllPathsFinder());
     }
 
@@ -533,7 +534,8 @@ public class ConcolicTesting {
                 .filter(Number.class::isInstance)
                 .map(Number.class::cast)
                 .map(Number::intValue)
-                .filter(length -> length >= 0)
+                .filter(length -> length >= 0
+                        && length <= ConcolicLimits.maxGeneratedArrayLength())
                 .orElse(0);
     }
 

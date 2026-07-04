@@ -766,6 +766,35 @@ public class AllPathsFinderTest {
         assertAllPathsBounded(result, entry, exit);
     }
 
+    @Test(timeout = 1000)
+    public void acyclicTarget_beforeLongBranchChain_doesNotExploreTargetSuffix() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        int entry = addEntry(cfg);
+        int target = addStmt(cfg, "target");
+        int exit = addExit(cfg);
+        normal(cfg, entry, target);
+
+        int previous = target;
+        for (int i = 0; i < 30; i++) {
+            int branch = addBranch(cfg, "branch" + i);
+            int whenTrue = addStmt(cfg, "true" + i);
+            int whenFalse = addStmt(cfg, "false" + i);
+            int merge = addStmt(cfg, "merge" + i);
+            normal(cfg, previous, branch);
+            trueEdge(cfg, branch, whenTrue);
+            falseEdge(cfg, branch, whenFalse);
+            normal(cfg, whenTrue, merge);
+            normal(cfg, whenFalse, merge);
+            previous = merge;
+        }
+        normal(cfg, previous, exit);
+
+        List<List<ControlFlowGraph.Edge>> result = finder.findPath(cfg, target);
+
+        assertEquals(1, result.size());
+        assertAllPathsBounded(result, entry, exit);
+    }
+
     @Test
     public void maxPathEdgesGuard_chainOf600Stmts_returnsEmpty() {
         // Chain length 600 > MAX_PATH_EDGES 512 → DFS prunes before reaching target.

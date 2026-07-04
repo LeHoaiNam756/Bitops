@@ -4,8 +4,10 @@ import com.microsoft.z3.*;
 
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.types.SymType;
+import core.SymbolicExecution.model.types.ArraySymType;
 import core.SymbolicExecution.simplifier.DeadConstraintStrategy;
 import core.SymbolicExecution.simplifier.SymValueFactory;
+import core.utils.ConcolicLimits;
 
 import java.util.List;
 import java.util.Map;
@@ -81,6 +83,7 @@ public final class ConstraintSolver implements AutoCloseable {
     private final LegacyZ3Encoder legacyEncoder;
     private final LegacyModelExtractor legacyExtractor;
     private final Z3EncodingMode encodingMode;
+    private final List<BoolExpr> generatedArrayLengthBounds;
 
     // =========================================================================
     // Construction
@@ -125,6 +128,34 @@ public final class ConstraintSolver implements AutoCloseable {
         this.legacySortResolver = new LegacySortResolver(ctx, varTypes);
         this.legacyEncoder      = new LegacyZ3Encoder(legacySortResolver);
         this.legacyExtractor    = new LegacyModelExtractor(legacySortResolver);
+
+        this.generatedArrayLengthBounds = generatedArrayLengthBounds(varTypes);
+        generatedArrayLengthBounds.forEach(z3Solver::add);
+    }
+
+    /**
+     * Keep solver-generated arrays small enough to execute as test inputs.
+     * Java array lengths are non-negative signed ints; without these bounds Z3
+     * may satisfy an array-access path with a hundreds-of-megabytes model.
+     */
+    private List<BoolExpr> generatedArrayLengthBounds(Map<String, SymType> varTypes) {
+        int maxLength = ConcolicLimits.maxGeneratedArrayLength();
+        java.util.ArrayList<BoolExpr> bounds = new java.util.ArrayList<>();
+        for (Map.Entry<String, SymType> entry : varTypes.entrySet()) {
+            if (!(entry.getValue() instanceof ArraySymType)) continue;
+
+            String lengthName = entry.getKey() + "__length";
+            if (encodingMode == Z3EncodingMode.LEGACY_INT_REAL) {
+                IntExpr length = ctx.mkIntConst(lengthName);
+                bounds.add(ctx.mkGe(length, ctx.mkInt(0)));
+                bounds.add(ctx.mkLe(length, ctx.mkInt(maxLength)));
+            } else {
+                BitVecExpr length = ctx.mkBVConst(lengthName, 32);
+                bounds.add(ctx.mkBVSGE(length, ctx.mkBV(0, 32)));
+                bounds.add(ctx.mkBVSLE(length, ctx.mkBV(maxLength, 32)));
+            }
+        }
+        return List.copyOf(bounds);
     }
 
     /**
@@ -228,7 +259,10 @@ public final class ConstraintSolver implements AutoCloseable {
      * Discard all constraints and reset the stack.
      * Use between top-level method analyses.
      */
-    public void reset() { z3Solver.reset(); }
+    public void reset() {
+        z3Solver.reset();
+        generatedArrayLengthBounds.forEach(z3Solver::add);
+    }
 
     // =========================================================================
     // Diagnostics

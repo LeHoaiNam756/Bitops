@@ -30,4 +30,19 @@ public class SymTypeMapTest {
         assertTrue(type instanceof ClassSymType);
         assertEquals("java.lang.String", ((ObjectSymType) type).className());
     }
+
+    @Test
+    public void addArrayDimensions_wrapsScalarType() {
+        SymType type = SymTypeMap.addArrayDimensions(PrimitiveSymType.INT, 1);
+
+        assertEquals(new ArraySymType(PrimitiveSymType.INT, 1), type);
+    }
+
+    @Test
+    public void addArrayDimensions_mergesWithExistingArrayType() {
+        SymType type = SymTypeMap.addArrayDimensions(
+                new ArraySymType(PrimitiveSymType.INT, 1), 2);
+
+        assertEquals(new ArraySymType(PrimitiveSymType.INT, 3), type);
+    }
 }
