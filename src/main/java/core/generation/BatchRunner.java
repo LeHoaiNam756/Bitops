@@ -22,9 +22,10 @@ import java.util.concurrent.*;
  *                 -Dcoverage=STATEMENT
  *                 -DzipPath="d:\CT4J\emLoc.zip"
  *                 [-DmaxMethods=N]
+ *                 [-Druns=N]
  *                 [-DtimeoutSeconds=90]
  *
- * Results are written to concolic-results/ (one JSON file per method, 3 runs each).
+ * Results are written to concolic-results/ (one JSON file per method).
  */
 public class BatchRunner {
 
@@ -34,13 +35,19 @@ public class BatchRunner {
         String modeStr       = System.getProperty("mode",           "BITVECTOR").toUpperCase();
         String coverageStr   = System.getProperty("coverage",       "STATEMENT").toUpperCase();
         int    maxMethods    = Integer.parseInt(System.getProperty("maxMethods", "-1"));
+        int    runs          = Integer.parseInt(System.getProperty("runs", "3"));
         int    timeoutSec    = Integer.parseInt(System.getProperty("timeoutSeconds", "90"));
 
         System.out.println("[BatchRunner] zipPath    = " + zipPathStr);
         System.out.println("[BatchRunner] mode       = " + modeStr);
         System.out.println("[BatchRunner] coverage   = " + coverageStr);
         System.out.println("[BatchRunner] maxMethods = " + (maxMethods < 0 ? "ALL" : maxMethods));
+        System.out.println("[BatchRunner] runs       = " + runs);
         System.out.println("[BatchRunner] timeout    = " + timeoutSec + "s");
+
+        if (runs <= 0) {
+            throw new IllegalArgumentException("runs must be greater than zero");
+        }
 
         // --- Validate ---
         Path zipPath = Paths.get(zipPathStr);
@@ -78,14 +85,14 @@ public class BatchRunner {
         Path resultsDir = Paths.get("src", "main", "java", "core", "output", "concolic-results");
         Files.createDirectories(resultsDir);
 
-        // --- Run each method 3 times ---
+        // --- Run each method the requested number of times ---
         int ok = 0, errors = 0, timeouts = 0;
 
         for (int i = 0; i < total; i++) {
             MethodDeclaration method = methods.get(i);
             String methodName = method.getName().getIdentifier();
 
-            // Delete old JSON for this method so we get a clean 3-run array
+            // Delete old JSON for this method so we get a clean run array
             File oldJson = resultsDir.resolve(safeFileName(methodName) + ".json").toFile();
             if (oldJson.exists()) {
                 oldJson.delete();
@@ -101,8 +108,8 @@ public class BatchRunner {
             }
 
             boolean methodSuccess = true;
-            for (int run = 1; run <= 3; run++) {
-                System.out.printf("  -> Run %d/3 ...%n", run);
+            for (int run = 1; run <= runs; run++) {
+                System.out.printf("  -> Run %d/%d ...%n", run, runs);
 
                 final MethodDeclaration finalMethod = method;
                 final CompilationUnit finalCu = cu;
@@ -128,7 +135,7 @@ public class BatchRunner {
                 executor.shutdown();
                 try {
                     future.get(timeoutSec, TimeUnit.SECONDS);
-                    System.out.printf("  -> Run %d/3 OK%n", run);
+                    System.out.printf("  -> Run %d/%d OK%n", run, runs);
                 } catch (TimeoutException te) {
                     future.cancel(true);
                     executor.shutdownNow();

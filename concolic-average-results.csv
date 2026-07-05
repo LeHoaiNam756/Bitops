@@ -1,0 +1,4 @@
+coverage_type,requested_runs_per_method,methods_with_10_completed_runs,completed_method_runs,average_coverage_percent,average_time_ms,average_memory_mb,average_variable_count,average_z3_expression_count,timed_out_methods,failed_methods
+STATEMENT,10,40,400,94.689103,2212.670000,609.395521,8.785000,131.657500,3,0
+BRANCH,10,40,400,93.527778,2346.057500,647.750340,9.190000,140.492500,2,1
+MCDC,10,40,400,92.888889,2504.247500,573.071100,9.750000,149.455000,2,1
