@@ -36,6 +36,9 @@
                         <RadioButton fx:id="mcdcCoverage" text="MC/DC"/>
                     </HBox>
                     <Separator orientation="VERTICAL"/>
+                    <Label text="Initial seeds:"/>
+                    <ChoiceBox fx:id="seedMode" prefWidth="140"/>
+                    <Separator orientation="VERTICAL"/>
                     <Button text="Run Concolic" onAction="#handleRunConcolic"/>
                 </HBox>
             </VBox>
@@ -120,4 +123,3 @@
     </bottom>
 
 </BorderPane>
-

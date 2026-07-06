@@ -1,0 +1,4 @@
+coverage_type,method_name,completed_runs,average_coverage_percent,average_time_ms,average_memory_mb,average_variable_count,average_z3_expression_count,status
+STATEMENT,"AdditionalBitOps.bouncyGetBit(int[];int)",1,80.0000,3351.0000,104.5794,1.5000,11.5000,"SUCCESS"
+BRANCH,"AdditionalBitOps.bouncyGetBit(int[];int)",1,83.3333,3709.0000,68.8128,1.5000,11.5000,"SUCCESS"
+MCDC,"AdditionalBitOps.bouncyGetBit(int[];int)",1,87.5000,1720.0000,68.3617,1.6667,12.6667,"SUCCESS"

@@ -1,0 +1,51 @@
+Nguồn,Link nguồn,Tên file,Tên unit,Phép toán
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"pow(int,int)",&;>>;<<
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"divide(int,int,RoundingMode)",|;^;>>;&
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"gcd(int,int)",>>;&;<<
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"checkedPow(int,int)",&;>>;<<;|
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"saturatedPow(int,int)",&;>>;<<;|
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/IntMath.java,IntMath.java,"binomial(int,int)",>>
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"pow(long,int)",&;>>;<<
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"divide(long,long,RoundingMode)",|;^;>>;&
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"gcd(long,long)",>>;&;<<
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"checkedPow(long,int)",&;>>;<<
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"saturatedAdd(long,long)",^;|;>>>
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"saturatedSubtract(long,long)",^;|;>>>
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"saturatedMultiply(long,long)",~;^;>>>;|;&
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"saturatedPow(long,int)",&;>>>;>>;<<;|
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,"binomial(int,int)",>>
+Guava,https://github.com/google/guava/blob/master/guava/src/com/google/common/math/LongMath.java,LongMath.java,isPrime(long),&;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,"IncrementalHash32x86.add(byte[],int,int)",&;<<;|;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,IncrementalHash32x86.end(),&;<<;|;^;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,"hash128x64Internal(byte[],int,int,long)",&;<<;|;^;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,"hash32(byte[],int,int,int)",&;<<;|;^;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,"hash32x86(byte[],int,int,int)",&;<<;|;^;>>>
+Apache Commons Codec,https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java,MurmurHash3.java,"hash64(byte[],int,int,int)",&;<<;|;^;>>>
+Apache Kafka,https://github.com/apache/kafka/blob/3.9.0/clients/src/main/java/org/apache/kafka/common/utils/Utils.java,Utils.java,murmur2(byte[]),&;<<;>>>;^
+Caffeine,https://github.com/ben-manes/caffeine/blob/master/caffeine/src/main/java/com/github/benmanes/caffeine/cache/FrequencySketch.java,FrequencySketch.java,"incrementAt(int,int)",<<;&
+Caffeine,https://github.com/ben-manes/caffeine/blob/master/caffeine/src/main/java/com/github/benmanes/caffeine/cache/FrequencySketch.java,FrequencySketch.java,reset(),&;>>>;>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"advanceUntil(char[],int,int,char)",>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"reverseUntil(char[],int,int,char)",>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"branchyUnsignedBinarySearch(char[],int,int,char)",>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"hybridUnsignedBinarySearch(char[],int,int,char)",>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"flipBitmapRange(long[],int,int)",^;~;<<;>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"cardinalityInBitmapRange(long[],int,int)",&;~;<<;>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"resetBitmapRange(long[],int,int)",&;~;<<;>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"intersectArrayIntoBitmap(long[],char[],int)",>>>;&;|;<<
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"select(long,int)",>>>;&
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"setBitmapRange(long[],int,int)",|;~;<<;>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,partialRadixSort(int[]),>>>;&
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"fillArray(long[],char[])",&;>>>;<<
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"add(int,int[],int[],int[])",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"addBothTo(int,int[],int[],int[])",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"addTo(int,int[],int[],int)",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"cadd(int,int,int[],int[],int[])",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"cmov(int,int,int[],int,int[],int)",^;&
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"csub(int,int,int[],int[],int[])",&;>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"equalTo(int,int[],int[])",|;^;>>;~
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"getBit(int[],int)",>>;&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"mulWordAddTo(int,int,int[],int,int[],int)",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"mulWordDwordAddAt(int,int,long,int[],int)",&;>>>
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"shiftDownBit(int,int[],int)",>>>;|;<<
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"shiftDownBits(int,int[],int,int)",>>>;|;<<
+Bouncy Castle,https://github.com/bcgit/bc-java/blob/main/core/src/main/java/org/bouncycastle/math/raw/Nat.java,Nat.java,"shiftUpBit(int,int[],int)",<<;|;>>>

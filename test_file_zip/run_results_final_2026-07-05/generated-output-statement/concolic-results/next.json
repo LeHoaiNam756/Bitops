@@ -1,0 +1,371 @@
+[ {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77030312,
+  "memoryUseMb" : 73.46183013916016,
+  "executionTimeMs" : 1025,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77009416,
+  "memoryUseMb" : 73.44190216064453,
+  "executionTimeMs" : 259,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77008128,
+  "memoryUseMb" : 73.440673828125,
+  "executionTimeMs" : 263,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77010496,
+  "memoryUseMb" : 73.44293212890625,
+  "executionTimeMs" : 262,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77017640,
+  "memoryUseMb" : 73.44974517822266,
+  "executionTimeMs" : 267,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77018264,
+  "memoryUseMb" : 73.4503402709961,
+  "executionTimeMs" : 267,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77011456,
+  "memoryUseMb" : 73.44384765625,
+  "executionTimeMs" : 257,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77008128,
+  "memoryUseMb" : 73.440673828125,
+  "executionTimeMs" : 853,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77008640,
+  "memoryUseMb" : 73.441162109375,
+  "executionTimeMs" : 858,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "next",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "numBits" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 7,
+      "totalNodes" : 7,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 7,
+    "totalNodes" : 7,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77007488,
+  "memoryUseMb" : 73.4400634765625,
+  "executionTimeMs" : 259,
+  "z3Statistics" : [ ]
+} ]

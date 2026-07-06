@@ -9,7 +9,10 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -17,10 +20,13 @@ import org.eclipse.jdt.core.dom.SimpleType;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class RandomTestInput {
@@ -50,6 +56,96 @@ public final class RandomTestInput {
             result.put(name, value);
         }
         return result;
+    }
+
+    /**
+     * Creates the normal seed plus a bounded set of array-traversal seeds.
+     *
+     * <p>For methods with one bounded array index and two {@code int}
+     * parameters, the additional cases exercise values around the inferred
+     * array length and values obtained by scaling that length with constants
+     * used by the method. This supplies concrete witnesses for loop-heavy code
+     * when symbolic execution cannot model the loop mutation precisely.</p>
+     */
+    public static List<Map<String, Object>> createConcolicSeedData(
+            MethodDeclaration methodDeclaration) {
+        Map<String, Object> randomSeed = createRandomTestData(methodDeclaration);
+        List<Map<String, Object>> seeds = new ArrayList<>();
+        seeds.add(randomSeed);
+
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
+        List<String> intParameters = new ArrayList<>();
+        int traversalLength = 0;
+        for (SingleVariableDeclaration parameter : parameters) {
+            String name = parameter.getName().getIdentifier();
+            if (isIntScalar(parameter)) {
+                intParameters.add(name);
+            }
+            if (parameter.getExtraDimensions() > 0 || parameter.getType().isArrayType()) {
+                traversalLength = Math.max(
+                        traversalLength,
+                        minimumArrayLength(methodDeclaration, name));
+            }
+        }
+        if (traversalLength <= 0 || intParameters.size() != 2) {
+            return List.copyOf(seeds);
+        }
+        final int inferredTraversalLength = traversalLength;
+
+        LinkedHashSet<Integer> upperValues = new LinkedHashSet<>();
+        upperValues.add(1);
+        upperValues.add(2);
+        upperValues.add(inferredTraversalLength);
+        if (inferredTraversalLength < Integer.MAX_VALUE) {
+            upperValues.add(inferredTraversalLength + 1);
+        }
+        includeScaledValue(upperValues, inferredTraversalLength, 2);
+        methodDeclaration.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(NumberLiteral node) {
+                Integer constant = constantInt(node);
+                if (constant != null && constant > 0) {
+                    includeScaledValue(upperValues, inferredTraversalLength, constant);
+                }
+                return true;
+            }
+        });
+
+        String lowerParameter = intParameters.get(0);
+        String upperParameter = intParameters.get(1);
+        for (int upper : upperValues) {
+            if (seeds.size() >= 16) break;
+            Map<String, Object> seed = new LinkedHashMap<>(randomSeed);
+            seed.put(lowerParameter, 0);
+            seed.put(upperParameter, upper);
+            seeds.add(seed);
+        }
+
+        // A non-zero lower value is needed to enter do/while-style partial
+        // traversals such as an array suffix ending at traversalLength.
+        Map<String, Object> partialTraversal = new LinkedHashMap<>(randomSeed);
+        partialTraversal.put(lowerParameter, 1);
+        partialTraversal.put(upperParameter, inferredTraversalLength);
+        seeds.add(partialTraversal);
+        return List.copyOf(seeds);
+    }
+
+    private static boolean isIntScalar(SingleVariableDeclaration parameter) {
+        if (parameter.getExtraDimensions() > 0 || !parameter.getType().isPrimitiveType()) {
+            return false;
+        }
+        PrimitiveType.Code code =
+                ((PrimitiveType) parameter.getType()).getPrimitiveTypeCode();
+        return PrimitiveType.INT.equals(code);
+    }
+
+    private static void includeScaledValue(
+            Set<Integer> values, int traversalLength, int multiplier) {
+        long scaled = (long) traversalLength * multiplier;
+        if (scaled > 0 && scaled <= Integer.MAX_VALUE) {
+            values.add((int) scaled);
+        }
     }
 
     /**
@@ -358,8 +454,9 @@ public final class RandomTestInput {
      * Finds the largest constant index used on a parameter in this method.
      * A seed that is shorter than this cannot reach the first real branch.
      */
-    private static int minimumArrayLength(MethodDeclaration method, String parameterName) {
+    static int minimumArrayLength(MethodDeclaration method, String parameterName) {
         int[] minimum = {0};
+        Set<String> indexVariables = new HashSet<>();
         method.accept(new ASTVisitor() {
             @Override
             public boolean visit(ArrayAccess node) {
@@ -368,14 +465,63 @@ public final class RandomTestInput {
                 }
                 Integer index = constantInt(node.getIndex());
                 if (index != null && index >= 0 && index < Integer.MAX_VALUE) {
-                    int required = Math.min(
-                            index + 1, ConcolicLimits.maxGeneratedArrayLength());
-                    minimum[0] = Math.max(minimum[0], required);
+                    includeRequiredLength(minimum, (long) index + 1);
+                }
+                String indexVariable = indexVariableName(node.getIndex());
+                if (indexVariable != null) {
+                    indexVariables.add(indexVariable);
+                }
+                return true;
+            }
+        });
+
+        // Also account for variable indices with a constant upper bound, for
+        // example table[i] in a loop guarded by i < 64. Without this, Z3 is
+        // free to choose a zero-length array even for a path that executes the
+        // indexed statement, and the concrete run terminates before the target.
+        method.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(InfixExpression node) {
+                InfixExpression.Operator operator = node.getOperator();
+                String leftVariable = indexVariableName(node.getLeftOperand());
+                String rightVariable = indexVariableName(node.getRightOperand());
+                Integer leftConstant = constantInt(node.getLeftOperand());
+                Integer rightConstant = constantInt(node.getRightOperand());
+
+                if (indexVariables.contains(leftVariable) && rightConstant != null) {
+                    if (operator == InfixExpression.Operator.LESS) {
+                        includeRequiredLength(minimum, rightConstant);
+                    } else if (operator == InfixExpression.Operator.LESS_EQUALS) {
+                        includeRequiredLength(minimum, (long) rightConstant + 1);
+                    }
+                } else if (indexVariables.contains(rightVariable) && leftConstant != null) {
+                    if (operator == InfixExpression.Operator.GREATER) {
+                        includeRequiredLength(minimum, leftConstant);
+                    } else if (operator == InfixExpression.Operator.GREATER_EQUALS) {
+                        includeRequiredLength(minimum, (long) leftConstant + 1);
+                    }
                 }
                 return true;
             }
         });
         return minimum[0];
+    }
+
+    private static void includeRequiredLength(int[] minimum, long required) {
+        if (required <= 0) return;
+        int bounded = (int) Math.min(required, ConcolicLimits.maxGeneratedArrayLength());
+        minimum[0] = Math.max(minimum[0], bounded);
+    }
+
+    private static String indexVariableName(Expression expression) {
+        Expression current = expression;
+        while (current instanceof ParenthesizedExpression parenthesized) {
+            current = parenthesized.getExpression();
+        }
+        if (current instanceof PostfixExpression postfix) {
+            current = postfix.getOperand();
+        }
+        return current instanceof SimpleName name ? name.getIdentifier() : null;
     }
 
     private static String arrayBaseName(Expression expression) {

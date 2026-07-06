@@ -37,6 +37,7 @@ public class ToolView {
     public RadioButton statementCoverage;
     public RadioButton branchCoverage;
     public RadioButton mcdcCoverage;
+    public ChoiceBox<SeedMode> seedMode;
     public Label fullCoverageLabel;
     public Label memoryUsageLabel;
     public Label runtimeLabel;
@@ -59,6 +60,23 @@ public class ToolView {
     private MethodLocation currentMethodLocation;
     private TestResult currentTestResult;
     private InstrumentationPlan currentInstrumentationPlan;
+
+    public enum SeedMode {
+        COVERAGE_GUIDED("Coverage-guided"),
+        RANDOM_ONLY("Random only"),
+        OFF("Off");
+
+        private final String label;
+
+        SeedMode(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
 
     private static class MethodLocation {
         final File file;
@@ -94,6 +112,9 @@ public class ToolView {
         branchCoverage.setToggleGroup(coverageGroup);
         mcdcCoverage.setToggleGroup(coverageGroup);
         statementCoverage.setSelected(true);
+
+        seedMode.setItems(FXCollections.observableArrayList(SeedMode.values()));
+        seedMode.setValue(SeedMode.COVERAGE_GUIDED);
 
         // Configure report table columns
         if (testInputsColumn != null) {
@@ -307,7 +328,7 @@ public class ToolView {
                     loc.methodDeclaration,
                     rootAst,
                     coverage,
-                    RandomTestInput.createRandomTestData(loc.methodDeclaration),
+                    seedInputsFor(getSelectedSeedMode(), loc.methodDeclaration),
                     getSelectedPathFinder(),
                     getSelectedEncodingMode()
             );
@@ -345,6 +366,22 @@ public class ToolView {
             return Z3EncodingMode.LEGACY_INT_REAL;
         }
         return Z3EncodingMode.BITVECTOR;
+    }
+
+    private SeedMode getSelectedSeedMode() {
+        SeedMode selected = seedMode.getValue();
+        return selected == null ? SeedMode.COVERAGE_GUIDED : selected;
+    }
+
+    static List<Map<String, Object>> seedInputsFor(
+            SeedMode mode, MethodDeclaration methodDeclaration) {
+        return switch (mode) {
+            case OFF -> List.of();
+            case RANDOM_ONLY -> List.of(
+                    RandomTestInput.createRandomTestData(methodDeclaration));
+            case COVERAGE_GUIDED ->
+                    RandomTestInput.createConcolicSeedData(methodDeclaration);
+        };
     }
 
     private void updateSummary(TestResult result) {

@@ -1,0 +1,653 @@
+[ {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78849040,
+  "memoryUseMb" : 75.19630432128906,
+  "executionTimeMs" : 455,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.27",
+    "num allocs" : "3.51964662427E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78835952,
+  "memoryUseMb" : 75.18382263183594,
+  "executionTimeMs" : 454,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.27",
+    "num allocs" : "3.51964734212E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78826496,
+  "memoryUseMb" : 75.1748046875,
+  "executionTimeMs" : 474,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.27",
+    "num allocs" : "3.51964805986E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78830688,
+  "memoryUseMb" : 75.17880249023438,
+  "executionTimeMs" : 1629,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.27",
+    "num allocs" : "3.51964877746E11",
+    "time" : "0.003",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78829408,
+  "memoryUseMb" : 75.17758178710938,
+  "executionTimeMs" : 1994,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.28",
+    "num allocs" : "3.51964949511E11",
+    "time" : "0.003",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78830944,
+  "memoryUseMb" : 75.17904663085938,
+  "executionTimeMs" : 1284,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.28",
+    "num allocs" : "3.51965021281E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78826128,
+  "memoryUseMb" : 75.17445373535156,
+  "executionTimeMs" : 451,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.28",
+    "num allocs" : "3.51965093007E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78832840,
+  "memoryUseMb" : 75.18085479736328,
+  "executionTimeMs" : 462,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.29",
+    "num allocs" : "3.51965164766E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78830608,
+  "memoryUseMb" : 75.17872619628906,
+  "executionTimeMs" : 1671,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.29",
+    "num allocs" : "3.51965236561E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "stickyRound",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "dval" : 8.0
+    },
+    "output" : "8.0",
+    "coveredNodeIds" : [ 7, 4, 3, 8 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 5,
+      "percent" : 80.0
+    }
+  }, {
+    "input" : {
+      "dval" : 0.0
+    },
+    "output" : "0.0",
+    "coveredNodeIds" : [ 4, 3, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 5,
+      "percent" : 60.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 5,
+    "totalNodes" : 5,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 6, 7, 8 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 78825472,
+  "memoryUseMb" : 75.173828125,
+  "executionTimeMs" : 1248,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "decisions" : "1",
+    "propagations" : "1",
+    "binary propagations" : "1",
+    "final checks" : "1",
+    "added eqs" : "2",
+    "mk clause binary" : "1",
+    "num checks" : "1",
+    "mk bool var" : "4",
+    "bv bit2core" : "1",
+    "rlimit count" : "446",
+    "max memory" : "38.48",
+    "memory" : "23.29",
+    "num allocs" : "3.51965308305E11",
+    "variableCount" : 1,
+    "expressionCount" : 8
+  } ]
+} ]

@@ -1,0 +1,731 @@
+[ {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8 ],
+      "q" : [ 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 1",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80378992,
+  "memoryUseMb" : 76.65538024902344,
+  "executionTimeMs" : 468,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "27.82",
+    "num allocs" : "3.90827998698E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8 ],
+      "q" : [ 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 1",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80357168,
+  "memoryUseMb" : 76.63456726074219,
+  "executionTimeMs" : 1064,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "27.89",
+    "num allocs" : "3.90828103449E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8, 8 ],
+      "q" : [ 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 4",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80364536,
+  "memoryUseMb" : 76.64159393310547,
+  "executionTimeMs" : 2187,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "27.95",
+    "num allocs" : "3.90828208227E11",
+    "time" : "0.012",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "q" : [ 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80359720,
+  "memoryUseMb" : 76.63700103759766,
+  "executionTimeMs" : 1272,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.02",
+    "num allocs" : "3.90828313E11",
+    "time" : "0.012",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8, 8 ],
+      "q" : [ 8, 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 4",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80357280,
+  "memoryUseMb" : 76.63467407226562,
+  "executionTimeMs" : 454,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.09",
+    "num allocs" : "3.90828417733E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8 ],
+      "q" : [ 8, 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 2",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80364680,
+  "memoryUseMb" : 76.64173126220703,
+  "executionTimeMs" : 456,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.15",
+    "num allocs" : "3.90828522472E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "q" : [ 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80354296,
+  "memoryUseMb" : 76.63182830810547,
+  "executionTimeMs" : 455,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.22",
+    "num allocs" : "3.90828627365E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8 ],
+      "q" : [ 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 3",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80359744,
+  "memoryUseMb" : 76.63702392578125,
+  "executionTimeMs" : 1061,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.29",
+    "num allocs" : "3.90828732209E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8 ],
+      "q" : [ 8, 8, 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 1",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80361440,
+  "memoryUseMb" : 76.63864135742188,
+  "executionTimeMs" : 2248,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.35",
+    "num allocs" : "3.90828836965E11",
+    "time" : "0.016",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+}, {
+  "methodName" : "mulsub",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "len" : 8,
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "q" : [ 8, 8, 8 ],
+      "offset" : 8,
+      "x" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 8, 6, 5, 4, 3, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 10,
+      "percent" : 60.0
+    }
+  }, {
+    "input" : {
+      "len" : 1,
+      "a" : [ 0 ],
+      "q" : [ 0 ],
+      "offset" : -1,
+      "x" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 13, 12, 11, 10, 9, 8, 6, 5, 4, 3 ],
+    "coverage" : {
+      "coveredNodes" : 10,
+      "totalNodes" : 10,
+      "percent" : 100.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 10,
+    "totalNodes" : 10,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 3, 4, 5, 6, 8, 9, 10, 11, 12, 13 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80361016,
+  "memoryUseMb" : 76.63823699951172,
+  "executionTimeMs" : 1669,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "79",
+    "solve-eqs-elim-vars" : "22",
+    "sat mk clause 2ary" : "328",
+    "sat mk clause nary" : "148",
+    "sat mk var" : "183",
+    "sat decisions" : "49",
+    "sat propagations 2ary" : "104",
+    "sat propagations nary" : "30",
+    "rlimit count" : "5779",
+    "max memory" : "277.13",
+    "memory" : "28.42",
+    "num allocs" : "3.9082894167E11",
+    "time" : "0.013",
+    "variableCount" : 4,
+    "expressionCount" : 20
+  } ]
+} ]

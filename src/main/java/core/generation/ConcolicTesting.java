@@ -78,7 +78,7 @@ public class ConcolicTesting {
                 methodDeclaration,
                 cu,
                 coverage,
-                RandomTestInput.createRandomTestData(methodDeclaration),
+                RandomTestInput.createConcolicSeedData(methodDeclaration),
                 new AllPathsFinder());
     }
 
@@ -115,8 +115,8 @@ public class ConcolicTesting {
                                List<Map<String, Object>> seedInputs,
                                PathFinder pathFinder,
                                Z3EncodingMode encodingMode) throws Exception {
-        if (seedInputs == null || seedInputs.isEmpty()) {
-            throw new IllegalArgumentException("seedInputs must contain at least one input");
+        if (seedInputs == null) {
+            throw new IllegalArgumentException("seedInputs must not be null");
         }
         long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
@@ -135,6 +135,14 @@ public class ConcolicTesting {
 
         List<TestDriver.ParamInfo> paramInfos =
                 TestDriver.extractParams(methodDeclaration);
+        Map<String, Integer> minimumArrayLengths = new HashMap<>();
+        for (TestDriver.ParamInfo param : paramInfos) {
+            if (param.typeName().replace(" ", "").endsWith("[]")) {
+                minimumArrayLengths.put(
+                        param.name(),
+                        RandomTestInput.minimumArrayLength(methodDeclaration, param.name()));
+            }
+        }
 
         // --- 4. Seed runs ----------------------------------------------------
         List<TestData> allTestData = new ArrayList<>();
@@ -150,6 +158,7 @@ public class ConcolicTesting {
                 // --- 5. Ingest traces from the seed run ---------------------
                 traceReader.applyTo(tracker);
             } catch (Exception e) {
+                ConcolicRunDiagnostics.recordDriverFailure();
                 System.err.println(e.getMessage());
             }
         }
@@ -182,7 +191,7 @@ public class ConcolicTesting {
 
                 if (result instanceof SolverResult.Sat sat) {
                     Map<String, Object> newInputs =
-                            extractInputsFromModel(sat.model(), paramInfos);
+                            extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
 
                     try {
                         TestData runResult = TestDriver.run(
@@ -194,10 +203,12 @@ public class ConcolicTesting {
                         // Ingest traces from this run
                         traceReader.applyTo(tracker);
                     } catch (TestDriver.DriverTimeoutException e) {
+                        ConcolicRunDiagnostics.recordDriverFailure();
                         System.err.println(e.getMessage());
                         exhaustedBatch = false;
                         break;
                     } catch (Exception e) {
+                        ConcolicRunDiagnostics.recordDriverFailure();
                         System.err.println(e.getMessage());
                     }
                 }
@@ -250,7 +261,7 @@ public class ConcolicTesting {
                     if (result instanceof SolverResult.Sat sat) {
                         sawSat = true;
                         Map<String, Object> newInputs =
-                                extractInputsFromModel(sat.model(), paramInfos);
+                                extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
 
                         try {
                             TestData runResult = TestDriver.run(
@@ -262,10 +273,12 @@ public class ConcolicTesting {
                             // Ingest traces from this run
                             traceReader.applyTo(tracker);
                         } catch (TestDriver.DriverTimeoutException e) {
+                            ConcolicRunDiagnostics.recordDriverFailure();
                             System.err.println(e.getMessage());
                             driverTimedOut = true;
                             break;
                         } catch (Exception e) {
+                            ConcolicRunDiagnostics.recordDriverFailure();
                             System.err.println(e.getMessage());
                         }
 
@@ -301,7 +314,7 @@ public class ConcolicTesting {
 
                         sawSat = true;
                         Map<String, Object> newInputs =
-                                extractInputsFromModel(sat.model(), paramInfos);
+                                extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
                         try {
                             TestData runResult = TestDriver.run(
                                     Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
@@ -311,10 +324,12 @@ public class ConcolicTesting {
                             allTestData.add(runResult);
                             traceReader.applyTo(tracker);
                         } catch (TestDriver.DriverTimeoutException e) {
+                            ConcolicRunDiagnostics.recordDriverFailure();
                             System.err.println(e.getMessage());
                             driverTimedOut = true;
                             break;
                         } catch (Exception e) {
+                            ConcolicRunDiagnostics.recordDriverFailure();
                             System.err.println(e.getMessage());
                         }
                         if (!tracker.isUncovered(uncoveredNodeId)) {
@@ -429,17 +444,27 @@ public class ConcolicTesting {
     private static Map<String, Object> extractInputsFromModel(
             Z3ModelBindings bindings,
             List<TestDriver.ParamInfo> paramInfos) {
+        return extractInputsFromModel(bindings, paramInfos, Map.of());
+    }
+
+    private static Map<String, Object> extractInputsFromModel(
+            Z3ModelBindings bindings,
+            List<TestDriver.ParamInfo> paramInfos,
+            Map<String, Integer> minimumArrayLengths) {
 
         Map<String, Object> inputs = new LinkedHashMap<>();
         for (TestDriver.ParamInfo param : paramInfos) {
+            int minimumArrayLength = minimumArrayLengths.getOrDefault(param.name(), 0);
             bindings.lookup(param.name())
                     .ifPresentOrElse(
-                            lit -> inputs.put(param.name(), valueForParam(param, lit.value())),
+                            lit -> inputs.put(param.name(), valueForParam(
+                                    param, lit.value(), minimumArrayLength)),
                             () -> {
                                 // Parameter unconstrained by the model —
                                 // fall back to a default literal so the driver
                                 // still receives every expected key.
-                                Object fallback = defaultValueForType(param, bindings);
+                                Object fallback = defaultValueForType(
+                                        param, bindings, minimumArrayLength);
                                 inputs.put(param.name(), fallback);
                             }
                     );
@@ -448,18 +473,33 @@ public class ConcolicTesting {
     }
 
     /** Produces a sensible default for a parameter when Z3 leaves it unconstrained. */
-    private static Object defaultValueForType(TestDriver.ParamInfo param, Z3ModelBindings bindings) {
+    private static Object defaultValueForType(
+            TestDriver.ParamInfo param,
+            Z3ModelBindings bindings,
+            int minimumArrayLength) {
         String t = param.typeName().replace(" ", "");
         if (t.endsWith("[]")) {
-            int length = arrayLengthFromModel(param.name(), bindings);
+            int length = Math.max(
+                    minimumArrayLength,
+                    arrayLengthFromModel(param.name(), bindings));
             Object primitiveArray = emptyPrimitiveArray(t, length);
             if (primitiveArray != null) return primitiveArray;
         }
         return defaultValueForType(param.typeName());
     }
 
-    private static Object valueForParam(TestDriver.ParamInfo param, Object value) {
-        return coercePrimitiveArray(param.typeName().replace(" ", ""), value);
+    private static Object valueForParam(
+            TestDriver.ParamInfo param, Object value, int minimumArrayLength) {
+        Object coerced = coercePrimitiveArray(param.typeName().replace(" ", ""), value);
+        if (coerced == null || !coerced.getClass().isArray()
+                || java.lang.reflect.Array.getLength(coerced) >= minimumArrayLength) {
+            return coerced;
+        }
+        Object expanded = java.lang.reflect.Array.newInstance(
+                coerced.getClass().getComponentType(), minimumArrayLength);
+        System.arraycopy(
+                coerced, 0, expanded, 0, java.lang.reflect.Array.getLength(coerced));
+        return expanded;
     }
 
     private static Object emptyPrimitiveArray(String typeName, int length) {

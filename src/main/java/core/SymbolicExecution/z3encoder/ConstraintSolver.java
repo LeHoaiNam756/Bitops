@@ -217,9 +217,12 @@ public final class ConstraintSolver implements AutoCloseable {
         z3Constraints.forEach(z3Solver::add);
 
         // ── Step 4: Invoke Z3 ─────────────────────────────────────────────────
+        // Snapshot the final encoded assertion DAG before invoking Z3. Experiment metrics must
+        // describe the expression sent to the solver, not any solver-side/post-check state.
+        Expr<?>[] finalAssertions = z3Solver.getAssertions();
         Status status = z3Solver.check();
         Statistics statistics = z3Solver.getStatistics();
-        Z3StatisticsRecorder.record(statistics, z3Solver.getAssertions());
+        Z3StatisticsRecorder.record(statistics, finalAssertions);
 //        printZ3Statistics(statistics);
 
         return switch (status) {

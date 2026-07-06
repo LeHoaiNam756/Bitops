@@ -1,0 +1,1318 @@
+[ {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 1",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77303112,
+  "memoryUseMb" : 73.72199249267578,
+  "executionTimeMs" : 2041,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.07",
+    "num allocs" : "5.73914210344E11",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.12",
+    "num allocs" : "5.7391431561E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.11",
+    "num allocs" : "5.73914614642E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgICA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 4",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77274328,
+  "memoryUseMb" : 73.69454193115234,
+  "executionTimeMs" : 3284,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.16",
+    "num allocs" : "5.73914795601E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.21",
+    "num allocs" : "5.73914900803E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.2",
+    "num allocs" : "5.73915199606E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgI"
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 3",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77273544,
+  "memoryUseMb" : 73.69379425048828,
+  "executionTimeMs" : 842,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.25",
+    "num allocs" : "5.73915380546E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.3",
+    "num allocs" : "5.73915485971E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.29",
+    "num allocs" : "5.7391578508E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 2",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77276560,
+  "memoryUseMb" : 73.69667053222656,
+  "executionTimeMs" : 2049,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.34",
+    "num allocs" : "5.73915966171E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.39",
+    "num allocs" : "5.7391607144E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.38",
+    "num allocs" : "5.73916370245E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 2",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77267744,
+  "memoryUseMb" : 73.68826293945312,
+  "executionTimeMs" : 2059,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.43",
+    "num allocs" : "5.73916551164E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.48",
+    "num allocs" : "5.73916656398E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.47",
+    "num allocs" : "5.73916955459E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgICAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 5",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77264064,
+  "memoryUseMb" : 73.68475341796875,
+  "executionTimeMs" : 848,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.52",
+    "num allocs" : "5.73917136536E11",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.57",
+    "num allocs" : "5.73917241821E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.56",
+    "num allocs" : "5.73917540779E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgI"
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 3",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77271376,
+  "memoryUseMb" : 73.69172668457031,
+  "executionTimeMs" : 3070,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.61",
+    "num allocs" : "5.73917721884E11",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.66",
+    "num allocs" : "5.7391782711E11",
+    "time" : "0.008",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.65",
+    "num allocs" : "5.73918125964E11",
+    "time" : "0.014",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgICAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 5",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77269152,
+  "memoryUseMb" : 73.68960571289062,
+  "executionTimeMs" : 2272,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.7",
+    "num allocs" : "5.73918306906E11",
+    "time" : "0.009",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.75",
+    "num allocs" : "5.73918412263E11",
+    "time" : "0.008",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.74",
+    "num allocs" : "5.73918711128E11",
+    "time" : "0.002",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 1",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77273400,
+  "memoryUseMb" : 73.69365692138672,
+  "executionTimeMs" : 2276,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.79",
+    "num allocs" : "5.7391889208E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.84",
+    "num allocs" : "5.73918997423E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.83",
+    "num allocs" : "5.73919296307E11",
+    "time" : "0.022",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+}, {
+  "methodName" : "readBits",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "byteOffset" : 8,
+      "numBits" : 8,
+      "bitOffset" : 8,
+      "data" : "CAgI"
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 3",
+    "coveredNodeIds" : [ 14, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 6,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 0,
+      "bitOffset" : 0,
+      "data" : ""
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 6,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 14,
+      "numBits" : -1,
+      "bitOffset" : 9,
+      "data" : "AAAAAAAAAAAAAAAAAAAAAA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15, 24, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "byteOffset" : 0,
+      "numBits" : 102760457,
+      "bitOffset" : -102760458,
+      "data" : "AA=="
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 25, 15, 7 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 6,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 6,
+    "totalNodes" : 6,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 24, 25, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 77266120,
+  "memoryUseMb" : 73.68671417236328,
+  "executionTimeMs" : 3369,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "196",
+    "max memory" : "277.68",
+    "memory" : "30.88",
+    "num allocs" : "5.73919477201E11",
+    "time" : "0.007",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "solve-eqs-steps" : "22",
+    "solve-eqs-elim-vars" : "22",
+    "elim-unconstrained" : "2",
+    "sat mk clause 2ary" : "97",
+    "sat mk clause nary" : "38",
+    "sat mk var" : "61",
+    "sat decisions" : "24",
+    "sat propagations 2ary" : "31",
+    "sat propagations nary" : "6",
+    "rlimit count" : "2212",
+    "max memory" : "277.68",
+    "memory" : "30.93",
+    "num allocs" : "5.73919582587E11",
+    "time" : "0.001",
+    "variableCount" : 4,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "21",
+    "solve-eqs-elim-vars" : "21",
+    "sat mk clause 2ary" : "520",
+    "sat mk clause nary" : "835",
+    "sat mk var" : "459",
+    "sat conflicts" : "5",
+    "sat decisions" : "168",
+    "sat propagations 2ary" : "290",
+    "sat propagations nary" : "327",
+    "sat backjumps" : "5",
+    "rlimit count" : "10940",
+    "max memory" : "277.68",
+    "memory" : "30.92",
+    "num allocs" : "5.73919881605E11",
+    "time" : "0.005",
+    "variableCount" : 4,
+    "expressionCount" : 18
+  } ]
+} ]

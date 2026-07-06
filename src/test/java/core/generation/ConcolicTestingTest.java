@@ -29,6 +29,34 @@ import static org.junit.Assert.assertTrue;
 public class ConcolicTestingTest {
 
     @Test
+    public void generate_supportsTurningInitialSeedsOff() throws Exception {
+        Path zip = createZipProject("Sign.java", """
+                public class Sign {
+                    int absolute(int value) {
+                        if (value < 0) return -value;
+                        return value;
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "absolute".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        var result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.BRANCH,
+                List.of(),
+                new AllPathsFinder());
+
+        assertFalse(result.testDataList().isEmpty());
+        assertEquals(0, result.fullCoverage().getUncovered().size());
+        assertEquals(0, result.fullCoverage().getSkipped().size());
+    }
+
+    @Test
     public void generate_rangeBitwiseAnd() throws Exception {
         Path zip = createZipProject("BitOps.java", """
                 package sample;
@@ -161,6 +189,72 @@ public class ConcolicTestingTest {
         assertEquals(8, result.fullCoverage().getCovered().size());
         assertEquals(0, result.fullCoverage().getUncovered().size());
         assertEquals(0, result.fullCoverage().getSkipped().size());
+    }
+
+    @Test
+    public void generate_bmpSet32x64BitsReachesFullCoverage() throws Exception {
+        Path zip = createZipProject("BMPSet.java", """
+                public class BMPSet {
+                    void set32x64Bits(int[] table, int start, int limit) {
+                        int lead = start >> 6;
+                        int trail = start & 0x3f;
+                        int bits = 1 << lead;
+                        if ((start + 1) == limit) {
+                            table[trail] |= bits;
+                            return;
+                        }
+                        int limitLead = limit >> 6;
+                        int limitTrail = limit & 0x3f;
+                        if (lead == limitLead) {
+                            while (trail < limitTrail) {
+                                table[trail++] |= bits;
+                            }
+                        } else {
+                            if (trail > 0) {
+                                do {
+                                    table[trail++] |= bits;
+                                } while (trail < 64);
+                                ++lead;
+                            }
+                            if (lead < limitLead) {
+                                bits = ~((1 << lead) - 1);
+                                if (limitLead < 0x20) {
+                                    bits &= (1 << limitLead) - 1;
+                                }
+                                for (trail = 0; trail < 64; ++trail) {
+                                    table[trail] |= bits;
+                                }
+                            }
+                            bits = 1 << limitLead;
+                            for (trail = 0; trail < limitTrail; ++trail) {
+                                table[trail] |= bits;
+                            }
+                        }
+                    }
+                }
+                """);
+
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "set32x64Bits".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        for (Coverage coverage : Coverage.values()) {
+            var result = ConcolicTesting.getInstance().generate(
+                    method, project.getRootAST(method), coverage);
+
+            assertEquals(coverage + " covered obligations", 18,
+                    result.fullCoverage().getCovered().size());
+            assertEquals(coverage + " uncovered obligations", 0,
+                    result.fullCoverage().getUncovered().size());
+            assertEquals(coverage + " skipped obligations", 0,
+                    result.fullCoverage().getSkipped().size());
+            assertFalse(coverage + " generated an exceptional input",
+                    result.testDataList().stream().anyMatch(testData ->
+                            testData.output() != null
+                                    && testData.output().startsWith("EXCEPTION:")));
+        }
     }
 
     @Test

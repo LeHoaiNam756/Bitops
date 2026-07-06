@@ -1,0 +1,27 @@
+Loaded methods: 50
+[1/150] STATEMENT AdditionalBitOps.bouncyGetBit(int[];int)
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+[2/150] STATEMENT AdditionalBitOps.bouncyMulWordDwordAddAt(int;int;long;int[];int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[3/150] STATEMENT AdditionalBitOps.bouncyShiftDownBits(int;int[];int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[4/150] STATEMENT AdditionalBitOps.caffeineIncrementAt(long[];int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[5/150] STATEMENT AdditionalBitOps.kafkaMurmur2(byte[])
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[6/150] STATEMENT AdditionalBitOps.roaringAdvanceUntil(char[];int;int;char)
+null
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+null
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+null
+null

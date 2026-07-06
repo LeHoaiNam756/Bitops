@@ -1,0 +1,892 @@
+[ {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81321632,
+  "memoryUseMb" : 77.55435180664062,
+  "executionTimeMs" : 655,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.29",
+    "num allocs" : "5.35588968022E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.31",
+    "num allocs" : "5.35589060482E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81298224,
+  "memoryUseMb" : 77.53202819824219,
+  "executionTimeMs" : 2470,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.37",
+    "num allocs" : "5.35589152796E11",
+    "time" : "0.002",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.39",
+    "num allocs" : "5.35589245345E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81298216,
+  "memoryUseMb" : 77.53202056884766,
+  "executionTimeMs" : 1254,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.45",
+    "num allocs" : "5.35589337664E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.46",
+    "num allocs" : "5.35589430157E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81296080,
+  "memoryUseMb" : 77.52998352050781,
+  "executionTimeMs" : 652,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.52",
+    "num allocs" : "5.35589522473E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.54",
+    "num allocs" : "5.35589614913E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81304264,
+  "memoryUseMb" : 77.53778839111328,
+  "executionTimeMs" : 1101,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.6",
+    "num allocs" : "5.3558970721E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.61",
+    "num allocs" : "5.35589799787E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81303952,
+  "memoryUseMb" : 77.53749084472656,
+  "executionTimeMs" : 2605,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.67",
+    "num allocs" : "5.35589892189E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.69",
+    "num allocs" : "5.35589984666E11",
+    "time" : "0.008",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81298664,
+  "memoryUseMb" : 77.5324478149414,
+  "executionTimeMs" : 2616,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.75",
+    "num allocs" : "5.35590077012E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.77",
+    "num allocs" : "5.35590169511E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81298584,
+  "memoryUseMb" : 77.5323715209961,
+  "executionTimeMs" : 662,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.82",
+    "num allocs" : "5.35590261841E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.84",
+    "num allocs" : "5.3559035441E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81295664,
+  "memoryUseMb" : 77.52958679199219,
+  "executionTimeMs" : 1299,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.9",
+    "num allocs" : "5.35590446816E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.92",
+    "num allocs" : "5.35590539405E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "pow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "k" : 8
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 11, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : 0,
+      "k" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: exponent (-1) must be >= 0",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 4,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "b" : -1,
+      "k" : 0
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 10, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 4,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 4,
+    "totalNodes" : 4,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81292328,
+  "memoryUseMb" : 77.52640533447266,
+  "executionTimeMs" : 1205,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "38.14",
+    "memory" : "25.98",
+    "num allocs" : "5.35590631777E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "4",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "5",
+    "sat decisions" : "2",
+    "sat propagations 2ary" : "3",
+    "rlimit count" : "481",
+    "max memory" : "38.14",
+    "memory" : "25.99",
+    "num allocs" : "5.35590724286E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+} ]

@@ -1,0 +1,9 @@
+{
+  "input" : {
+    "x" : -9223372036854775808,
+    "y" : 0,
+    "overflowResult" : 0
+  },
+  "output" : "-9223372036854775808",
+  "coveredNodeIds" : [ 9 ]
+}

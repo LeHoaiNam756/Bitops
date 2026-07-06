@@ -38,6 +38,38 @@ public class RandomTestInputTest {
     }
 
     @Test
+    public void createRandomTestData_sizesArrayForConstantBoundedIndexVariable() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "void fill(int[] table) { for (int i = 0; i < 64; i++) table[i] = i; }"
+        ).get(0);
+
+        Map<String, Object> input = RandomTestInput.createRandomTestData(method);
+
+        assertTrue(input.get("table") instanceof int[]);
+        assertTrue(((int[]) input.get("table")).length >= 64);
+    }
+
+    @Test
+    public void createConcolicSeedData_includesBoundedArrayTraversalCases() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "void fill(int[] table, int start, int limit) {"
+                        + " for (int i = start; i < 64; i++) table[i] = limit;"
+                        + " if ((limit >> 6) < 0x20) table[start] = 1;"
+                        + "}"
+        ).get(0);
+
+        List<Map<String, Object>> seeds = RandomTestInput.createConcolicSeedData(method);
+
+        assertTrue(seeds.stream().allMatch(seed -> ((int[]) seed.get("table")).length >= 64));
+        assertTrue(seeds.stream().anyMatch(seed ->
+                Integer.valueOf(1).equals(seed.get("start"))
+                        && Integer.valueOf(64).equals(seed.get("limit"))));
+        assertTrue(seeds.stream().anyMatch(seed ->
+                Integer.valueOf(0).equals(seed.get("start"))
+                        && Integer.valueOf(2048).equals(seed.get("limit"))));
+    }
+
+    @Test
     public void createBoundaryTestData_isBoundedAndIncludesPrimitiveExtrema() {
         MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
                 "void target(int i, long l, boolean enabled) {}"

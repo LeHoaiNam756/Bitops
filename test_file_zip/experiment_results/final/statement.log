@@ -1,0 +1,1202 @@
+Loaded methods: 50
+[1/50] STATEMENT AdditionalBitOps.bouncyGetBit(int[];int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[2/50] STATEMENT AdditionalBitOps.bouncyMulWordDwordAddAt(int;int;long;int[];int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[3/50] STATEMENT AdditionalBitOps.bouncyShiftDownBits(int;int[];int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[4/50] STATEMENT AdditionalBitOps.caffeineIncrementAt(long[];int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[5/50] STATEMENT AdditionalBitOps.kafkaMurmur2(byte[])
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[6/50] STATEMENT AdditionalBitOps.roaringAdvanceUntil(char[];int;int;char)
+null
+null
+null
+null
+null
+null
+null
+null
+null
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.AdditionalBitOps_roaringAdvanceUntil-8ada24b5-a7fe-4732-ae96-36c6455cc8ed.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.AdditionalBitOps_roaringAdvanceUntil-8ada24b5-a7fe-4732-ae96-36c6455cc8ed.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.AdditionalBitOps_roaringAdvanceUntil-a8cb58fd-f679-4bbb-96d6-242b2850e1b6.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.AdditionalBitOps_roaringAdvanceUntil-a8cb58fd-f679-4bbb-96d6-242b2850e1b6.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+null
+null
+null
+null
+null
+null
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+Driver run timed out after 5s for inputs {array=[C@701c638, pos=-2, length=4, min=0}
+Driver run timed out after 5s for inputs {array=[C@4218aa20, pos=-2, length=64, min=32769}
+Driver run timed out after 5s for inputs {array=[C@48d03002, pos=31, length=37, min=32769}
+null
+[7/50] STATEMENT AdditionalBitOps.roaringSelect(long;int)
+Driver run timed out after 5s for inputs {array=[C@69bd53be, pos=-2, length=4, min=32769}
+Driver run timed out after 5s for inputs {array=[C@3946ef7d, pos=50, length=118, min=24809}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: array
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {array=[C@1cecab34, pos=31, length=37, min=32769}
+Driver run timed out after 5s for inputs {array=[C@5c1ed14b, pos=-2, length=64, min=1}
+Driver run timed out after 5s for inputs {array=[C@2a1394fd, pos=4, length=10, min=32769}
+[MemoryUsageMonitor] Detected 15 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {array=[C@444aa02e, pos=-2, length=16, min=32769}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 12 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 18 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 7 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {array=[C@18e4e17f, pos=31, length=37, min=32769}
+[MemoryUsageMonitor] Detected 17 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+[MemoryUsageMonitor] Detected 21 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {array=[C@45ad4f8d, pos=31, length=37, min=32769}
+[MemoryUsageMonitor] Detected 13 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 14 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 11 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: w
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 10 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 20 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 6 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {w=8, j=8}
+null
+[MemoryUsageMonitor] Detected 2 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[8/50] STATEMENT BMPSet.findCodePoint(int;int;int)
+null
+null
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+null
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+null
+[9/50] STATEMENT BMPSet.set32x64Bits(int[];int;int)
+null
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+null
+null
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[10/50] STATEMENT BinaryWriter.computeUInt64SizeNoTag(long)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[11/50] STATEMENT CollationFastLatin.getCases(int;boolean;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[12/50] STATEMENT CollationFastLatin.getPrimaries(int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[13/50] STATEMENT CollationFastLatin.getQuaternaries(int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[14/50] STATEMENT CollationFastLatin.getSecondariesFromOneShortCE(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[15/50] STATEMENT CollationFastLatin.getTertiaries(int;boolean;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[16/50] STATEMENT CollationFastLatin.lookup(char[];int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[17/50] STATEMENT ContainerHelper.binarySearch(int[];int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[18/50] STATEMENT ContainerHelper.binarySearch(long[];int;long)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[19/50] STATEMENT DeltaEncode.encodeCopy(int;long;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[20/50] STATEMENT DerIndefLenConverter.getLengthBytes(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[21/50] STATEMENT DerIndefLenConverter.getNumOfLenBytes(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[22/50] STATEMENT DetalIndexScanner.tableSize(int)
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfLeadingZeros_429058804' – defaulting to bv32Sort
+[23/50] STATEMENT Ed25519.slide(byte[])
+[MemoryUsageMonitor] Detected 102 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 155 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 161 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 163 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 214 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 247 GC collection(s) during memory measurement.
+[24/50] STATEMENT FormattedFloatingDecimal.countBits(long)
+[MemoryUsageMonitor] Detected 28 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 24 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 273 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 23 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 18 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 17 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 245 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 13 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 222 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 11 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 183 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 6 GC collection(s) during memory measurement.
+[25/50] STATEMENT FormattedFloatingDecimal.stickyRound(double)
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_doubleToLongBits_2134639513' – defaulting to bv32Sort
+[26/50] STATEMENT Integer2.numberOfLeadingZeros(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[27/50] STATEMENT Integer2.numberOfTrailingZeros(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[28/50] STATEMENT Joiner.expandedCapacity(int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[29/50] STATEMENT LongMath.gcd(long;long)
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1450712470' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_1300528434' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_918307166' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[30/50] STATEMENT LongMath.pow(long;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[31/50] STATEMENT LongMath.saturatedAdd(long;long)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[32/50] STATEMENT LongMath.saturatedMultiply(long;long)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[33/50] STATEMENT LongMath.saturatedSubtract(long;long)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[34/50] STATEMENT MutableBigInteger.binaryGcd(int;int)
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2059461664' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_2005028997' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_numberOfTrailingZeros_584561912' – defaulting to bv32Sort
+[35/50] STATEMENT MutableBigInteger.divWord(long;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[36/50] STATEMENT MutableBigInteger.divadd(int[];int[];int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[37/50] STATEMENT MutableBigInteger.mulsub(int[];int[];int;int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[38/50] STATEMENT MutableBigInteger.mulsubBorrow(int[];int[];int;int;int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[39/50] STATEMENT MutableBigInteger.toCompactValue(int;int;int[])
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[40/50] STATEMENT ParsableBitArray.readBits(int;int;int;byte[])
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[41/50] STATEMENT Sniffer.isCompatibleBrand(int;boolean)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[42/50] STATEMENT SshDeamon.next(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[43/50] STATEMENT SshDeamon.random(int)
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_next_1388979794' – defaulting to bv32Sort
+[44/50] STATEMENT UScriptRun.getPairIndex(int)
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[SortResolver] WARNING: no sort for variable '__call_highBit_1558460059' – defaulting to bv32Sort
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[45/50] STATEMENT UScriptRun.highBit(int)
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 1 GC collection(s) during memory measurement.
+[46/50] STATEMENT UbcCheck.check(int[])
+[47/50] STATEMENT Uft8.isWellFormedSlowPath(byte[];int;int)
+null
+null
+null
+null
+null
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Uft8_isWellFormedSlowPath-a592a93c-c22a-4d80-9f3c-0d858568549d.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Uft8_isWellFormedSlowPath-a592a93c-c22a-4d80-9f3c-0d858568549d.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+null
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+null
+null
+Driver run timed out after 5s for inputs {bytes=[B@107b098a, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@c48a1c7, off=7, end=13}
+Driver run timed out after 5s for inputs {bytes=[B@18007bb8, off=7, end=13}
+Driver run timed out after 5s for inputs {bytes=[B@61762cfb, off=7, end=13}
+Driver run timed out after 5s for inputs {bytes=[B@7320107c, off=7, end=13}
+Driver run timed out after 5s for inputs {bytes=[B@2e4edfe4, off=119, end=127}
+null
+Driver run timed out after 5s for inputs {bytes=[B@7775f8b8, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@4eb01f18, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@1afd9a6, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@4e1c6082, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@5b101b8b, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@552a1d42, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@24b9260b, off=7, end=14}
+[48/null
+50] STATEMENT Utf8.isValidUtf8NonAscii(byte[];int;int)
+Driver run timed out after 5s for inputs {bytes=[B@381421e1, off=7, end=14}
+Driver run timed out after 5s for inputs {bytes=[B@7374bb09, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@80eed7c, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@2311ae92, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@16b8c5af, off=3, end=6}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: off
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@272325f1, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@75cbfae6, off=125, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@5837f087, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@6bc6d636, off=3, end=6}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@6741439d, off=126, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@5122f1db, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@1004fc3, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@20f74fba, off=3, end=6}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@67119d8d, off=126, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@63e5d473, off=3, end=7}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@36c6ea2d, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@174acfb3, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@473b8025, index=8, limit=8}
+Driver run timed out after 5s for inputs {bytes=[B@28fdc7fa, off=3, end=6}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@2e24539, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@6d896677, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@7a858603, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@7766c336, off=123, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@7a22e7f5, off=123, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@77e82c36, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@180f0150, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@7aec65bc, off=123, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@41885df8, off=3, end=7}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run timed out after 5s for inputs {bytes=[B@3aade618, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@5907f66d, off=1, end=3}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@39e054ba, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@70e92ce4, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@18046aac, index=7, limit=15}
+Driver run timed out after 5s for inputs {bytes=[B@69f41cd6, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@583c1c3c, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@62506877, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@186d4c5e, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@6d1db3fd, off=3, end=7}
+[MemoryUsageMonitor] Detected 150 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@4978a7b0, index=123, limit=128}
+Driver run timed out after 5s for inputs {bytes=[B@6e379010, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@3e709114, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@142904b4, index=8, limit=8}
+Driver run timed out after 5s for inputs {bytes=[B@2207675, off=123, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@2250dab1, off=1, end=3}
+[MemoryUsageMonitor] Detected 215 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@305062be, off=3, end=7}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@27ec9d94, off=7, end=15}
+null
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+Driver run timed out after 5s for inputs {bytes=[B@2a42fa98, index=123, limit=128}
+Driver run timed out after 5s for inputs {bytes=[B@54cc2aad, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@95d2433, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@1a823caa, off=1, end=3}
+Driver run timed out after 5s for inputs {bytes=[B@70b0467d, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@593a8f68, off=125, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@52b5f7a8, off=126, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@256901f7, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@7e230a33, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@633ad107, off=126, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@185d0389, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@7baad275, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@74fe1e9d, off=7, end=15}
+Driver run timed out after 5s for inputs {bytes=[B@6292ea1, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@7c462605, off=126, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@54ba16ad, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@7003ec64, off=1, end=3}
+[MemoryUsageMonitor] Detected 114 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@2f552e19, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@734a728b, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@30b35a32, off=1, end=3}
+[MemoryUsageMonitor] Detected 380 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@53e8ba72, off=126, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@74dac751, index=1, limit=2}
+null
+Driver run timed out after 5s for inputs {bytes=[B@500841f3, off=126, end=127}
+Driver run timed out after 5s for inputs {bytes=[B@f3adf0, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@6b4c7309, off=3, end=7}
+Driver run timed out after 5s for inputs {bytes=[B@51122d27, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@70ce9a37, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@263f926a, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@4e0d485b, off=1, end=3}
+[MemoryUsageMonitor] Detected 144 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@23856e48, index=-2147483648, limit=-2147483648}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@505353a4, index=0, limit=1}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@26ecf7f5, off=3, end=7}
+[MemoryUsageMonitor] Detected 281 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@15c0e43c, index=-2147483648, limit=-2147483648}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@74bbfd, off=7, end=15}
+null
+null
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Utf8_isValidUtf8NonAscii-b8be52f2-89a7-4808-a616-67033ff8da48.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Utf8_isValidUtf8NonAscii-b8be52f2-89a7-4808-a616-67033ff8da48.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+Driver run timed out after 5s for inputs {bytes=[B@24980893, index=7, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@4c35e98a, index=31, limit=33}
+Driver run timed out after 5s for inputs {bytes=[B@66ff4bd, off=7, end=15}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@5d117dc9, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@57c43249, index=3, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@79c11829, off=126, end=127}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@37894c90, off=3, end=7}
+[MemoryUsageMonitor] Detected 214 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@76bca1c4, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@2f9a3244, index=8, limit=8}
+Driver run timed out after 5s for inputs {bytes=[B@57ad9226, index=3, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@370670c, index=7, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@57e4a56e, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@43f681b7, off=1, end=3}
+[MemoryUsageMonitor] Detected 345 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@7e96de13, off=1, end=3}
+[MemoryUsageMonitor] Detected 119 GC collection(s) during memory measurement.
+null
+Driver run timed out after 5s for inputs {bytes=[B@256f4942, index=123, limit=128}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: index
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@66ac0bf5, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@51dc802f, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@29e11bbf, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@170f55f7, index=8, limit=8}
+Driver run timed out after 5s for inputs {bytes=[B@5bc6d78f, off=3, end=6}
+Driver run timed out after 5s for inputs {bytes=[B@49bc2dbf, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@8d11dd, index=7, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@26281fd2, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@7c248977, index=1, limit=3}
+[MemoryUsageMonitor] Detected 99 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@518b472f, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@56c3ba06, index=3, limit=6}
+null
+Driver run timed out after 5s for inputs {bytes=[B@5d4e0a20, index=3, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@7c061fb4, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@7da436bd, off=1, end=3}
+[MemoryUsageMonitor] Detected 115 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@58f62b85, index=1, limit=3}
+[MemoryUsageMonitor] Detected 53 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@7f2fd474, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@9107694, index=1, limit=3}
+[MemoryUsageMonitor] Detected 70 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@2455c3d9, index=1, limit=3}
+[MemoryUsageMonitor] Detected 94 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@73763fe2, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@fa5d2b5, index=29, limit=32}
+Driver run timed out after 5s for inputs {bytes=[B@35684053, index=8, limit=8}
+Driver run timed out after 5s for inputs {bytes=[B@6887b79e, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@34630bcd, index=3, limit=1073741825}
+Driver run timed out after 5s for inputs {bytes=[B@7c1da24, index=3, limit=1073741825}
+[49/50] STATEMENT Util.addWithOverflowDefault(long;long;long)
+null
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Utf8_isValidUtf8NonAscii-d806eb0d-8df4-451e-a1be-ab0d64043b83.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Utf8_isValidUtf8NonAscii-d806eb0d-8df4-451e-a1be-ab0d64043b83.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: bytes
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@162f4e2d, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@67b6cfd9, index=0, limit=1}
+Driver run timed out after 5s for inputs {bytes=[B@52c3e725, index=29, limit=32}
+Driver run timed out after 5s for inputs {bytes=[B@727e7c74, index=31, limit=33}
+Driver run timed out after 5s for inputs {bytes=[B@5705f41f, index=3, limit=1073741824}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@74af151f, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@7f8489f0, index=1, limit=3}
+[MemoryUsageMonitor] Detected 93 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@52c64114, index=1, limit=3}
+[MemoryUsageMonitor] Detected 59 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run timed out after 5s for inputs {bytes=[B@f035493, index=-2147483648, limit=-2147483648}
+Driver run timed out after 5s for inputs {bytes=[B@981565b, index=3, limit=1073741824}
+Driver run timed out after 5s for inputs {bytes=[B@3fb76b3, index=3, limit=1073741825}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run timed out after 5s for inputs {bytes=[B@30b394a1, index=3, limit=7}
+[MemoryUsageMonitor] Detected 67 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@6c84b206, index=3, limit=6}
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+Driver run timed out after 5s for inputs {bytes=[B@26321c45, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@61054ca1, index=123, limit=128}
+Driver run timed out after 5s for inputs {x=9223372036854775799, y=-1, overflowResult=0}
+Driver run timed out after 5s for inputs {bytes=[B@2536a534, index=1, limit=3}
+[MemoryUsageMonitor] Detected 61 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=9223372036854775799, y=-1, overflowResult=0}
+[MemoryUsageMonitor] Detected 30 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+Driver run timed out after 5s for inputs {bytes=[B@55d613c2, index=0, limit=1}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run timed out after 5s for inputs {bytes=[B@13fc024e, index=-2147483648, limit=-2147483648}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@374414f3, index=7, limit=1073741825}
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+Driver run timed out after 5s for inputs {bytes=[B@140b16c4, index=3, limit=1073741825}
+Driver run timed out after 5s for inputs {x=9223372036854775799, y=-1, overflowResult=0}
+[MemoryUsageMonitor] Detected 33 GC collection(s) during memory measurement.
+null
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 24 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@7f7e4447, index=0, limit=1}
+Driver run timed out after 5s for inputs {x=9223372036854775799, y=-1, overflowResult=0}
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Util_addWithOverflowDefault-723046c0-a00b-44a8-baf4-ad5af95cc839.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Util_addWithOverflowDefault-723046c0-a00b-44a8-baf4-ad5af95cc839.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 28 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 21 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {bytes=[B@1c0c419b, index=3, limit=6}
+Driver run timed out after 5s for inputs {bytes=[B@6d77ddc9, index=3, limit=6}
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+null
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+Driver run timed out after 5s for inputs {bytes=[B@270cd33, index=9, limit=11}
+Driver run timed out after 5s for inputs {bytes=[B@653de19b, index=3, limit=7}
+[MemoryUsageMonitor] Detected 82 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+null
+Driver run failed with exit code 5: java.lang.IllegalStateException: Cannot create trace file: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Util_addWithOverflowDefault-b67515c8-d6ff-42dd-9041-96f1f55c3058.trace
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:133)
+	at core.output.clone.DriverMain.main(DriverMain.java:57)
+Caused by: java.nio.file.NoSuchFileException: /tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace/core.output.clone.Util_addWithOverflowDefault-b67515c8-d6ff-42dd-9041-96f1f55c3058.trace
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:218)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380)
+	at java.base/java.nio.file.Files.createFile(Files.java:658)
+	at core.testpath.TraceRecorder.startSession(TraceRecorder.java:131)
+	... 1 more
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+[MemoryUsageMonitor] Detected 24 GC collection(s) during memory measurement.
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run failed with exit code 5: java.lang.IllegalArgumentException: Missing input for parameter: x
+	at core.output.clone.DriverMain.main(DriverMain.java:43)
+
+Driver run timed out after 5s for inputs {bytes=[B@66267517, index=3, limit=7}
+[MemoryUsageMonitor] Detected 105 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+null
+Driver run timed out after 5s for inputs {x=9223372036854775799, y=-1, overflowResult=0}
+[MemoryUsageMonitor] Detected 27 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+[MemoryUsageMonitor] Detected 20 GC collection(s) during memory measurement.
+null
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+[MemoryUsageMonitor] Detected 16 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+[50/50] STATEMENT Util.subtractWithOverflowDefault(long;long;long)
+null
+null
+[MemoryUsageMonitor] Detected 12 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=-9223372036854775807, y=-9223372036854775807, overflowResult=0}
+[MemoryUsageMonitor] Detected 28 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 13 GC collection(s) during memory measurement.
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+null
+Driver run timed out after 5s for inputs {x=9223372036854775807, y=-6254092507534065663, overflowResult=0}
+Driver run timed out after 5s for inputs {x=8, y=8, overflowResult=8}
+null
+/tmp/ct4j2-statement/src/main/java/core/output/clone/.ct4j-trace
+[MemoryUsageMonitor] Detected 28 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 7 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 22 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 8 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 13 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 15 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 16 GC collection(s) during memory measurement.
+[MemoryUsageMonitor] Detected 14 GC collection(s) during memory measurement.
+Wrote /tmp/ct4j2-statement/test_file_zip/experiment_results/statement.csv

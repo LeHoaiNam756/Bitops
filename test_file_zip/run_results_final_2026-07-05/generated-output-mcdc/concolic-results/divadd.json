@@ -1,0 +1,671 @@
+[ {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8, 8, 8 ],
+      "a" : [ 8, 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 11 out of bounds for length 4",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80315088,
+  "memoryUseMb" : 76.59443664550781,
+  "executionTimeMs" : 1506,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.51",
+    "num allocs" : "6.59388843769E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8, 8, 8 ],
+      "a" : [ 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 4",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80303288,
+  "memoryUseMb" : 76.58318328857422,
+  "executionTimeMs" : 1127,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.54",
+    "num allocs" : "6.5938890557E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8 ],
+      "a" : [ 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80300896,
+  "memoryUseMb" : 76.58090209960938,
+  "executionTimeMs" : 1740,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.58",
+    "num allocs" : "6.59388967367E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8 ],
+      "a" : [ 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 9 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80304856,
+  "memoryUseMb" : 76.58467864990234,
+  "executionTimeMs" : 1087,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.61",
+    "num allocs" : "6.59389029124E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8 ],
+      "a" : [ 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 1",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80312544,
+  "memoryUseMb" : 76.59201049804688,
+  "executionTimeMs" : 1104,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.65",
+    "num allocs" : "6.59389090868E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8 ],
+      "a" : [ 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80306128,
+  "memoryUseMb" : 76.58589172363281,
+  "executionTimeMs" : 1093,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.68",
+    "num allocs" : "6.59389152647E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8, 8, 8 ],
+      "a" : [ 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 8 out of bounds for length 4",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80313424,
+  "memoryUseMb" : 76.59284973144531,
+  "executionTimeMs" : 493,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.72",
+    "num allocs" : "6.59389214394E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80302096,
+  "memoryUseMb" : 76.58204650878906,
+  "executionTimeMs" : 506,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.76",
+    "num allocs" : "6.59389276134E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8, 8 ],
+      "a" : [ 8, 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 3",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80306848,
+  "memoryUseMb" : 76.58657836914062,
+  "executionTimeMs" : 1739,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.79",
+    "num allocs" : "6.59389337924E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "divadd",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "offset" : 8,
+      "result" : [ 8, 8, 8 ],
+      "a" : [ 8, 8 ]
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 9 out of bounds for length 3",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "offset" : 0,
+      "result" : [ ],
+      "a" : [ ]
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 11 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80302944,
+  "memoryUseMb" : 76.58285522460938,
+  "executionTimeMs" : 1740,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "11",
+    "solve-eqs-elim-vars" : "11",
+    "sat mk clause 2ary" : "11",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "13",
+    "sat decisions" : "4",
+    "sat propagations 2ary" : "9",
+    "rlimit count" : "829",
+    "max memory" : "275.65",
+    "memory" : "28.83",
+    "num allocs" : "6.59389399774E11",
+    "time" : "0.013",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+} ]

@@ -1,0 +1,1960 @@
+[ {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82356896,
+  "memoryUseMb" : 78.54165649414062,
+  "executionTimeMs" : 2730,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "784720033",
+    "rlimit count" : "414",
+    "max memory" : "27.04",
+    "memory" : "18.92",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "784822838",
+    "rlimit count" : "245",
+    "max memory" : "27.07",
+    "memory" : "18.95",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "785011697",
+    "rlimit count" : "294",
+    "max memory" : "27.07",
+    "memory" : "18.95",
+    "time" : "0.007",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "785268635",
+    "rlimit count" : "678",
+    "max memory" : "27.07",
+    "memory" : "18.92",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "785572798",
+    "rlimit count" : "214",
+    "max memory" : "27.07",
+    "memory" : "18.85",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "785990807",
+    "rlimit count" : "390",
+    "max memory" : "27.07",
+    "memory" : "18.92",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82345936,
+  "memoryUseMb" : 78.53120422363281,
+  "executionTimeMs" : 1531,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "786200858",
+    "rlimit count" : "414",
+    "max memory" : "27.13",
+    "memory" : "19.0",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "786303557",
+    "rlimit count" : "245",
+    "max memory" : "27.16",
+    "memory" : "19.03",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "786492191",
+    "rlimit count" : "294",
+    "max memory" : "27.16",
+    "memory" : "19.03",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "786748929",
+    "rlimit count" : "678",
+    "max memory" : "27.16",
+    "memory" : "19.01",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "787052720",
+    "rlimit count" : "214",
+    "max memory" : "27.16",
+    "memory" : "18.93",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "787470275",
+    "rlimit count" : "390",
+    "max memory" : "27.16",
+    "memory" : "19.0",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82343656,
+  "memoryUseMb" : 78.5290298461914,
+  "executionTimeMs" : 3973,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "787680161",
+    "rlimit count" : "414",
+    "max memory" : "27.21",
+    "memory" : "19.09",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "787783019",
+    "rlimit count" : "245",
+    "max memory" : "27.24",
+    "memory" : "19.12",
+    "time" : "0.006",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "787971950",
+    "rlimit count" : "294",
+    "max memory" : "27.24",
+    "memory" : "19.12",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "788228953",
+    "rlimit count" : "678",
+    "max memory" : "27.24",
+    "memory" : "19.09",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "788533144",
+    "rlimit count" : "214",
+    "max memory" : "27.24",
+    "memory" : "19.02",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "788951227",
+    "rlimit count" : "390",
+    "max memory" : "27.24",
+    "memory" : "19.09",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82352640,
+  "memoryUseMb" : 78.53759765625,
+  "executionTimeMs" : 2784,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "789161334",
+    "rlimit count" : "414",
+    "max memory" : "27.29",
+    "memory" : "19.17",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "789264178",
+    "rlimit count" : "245",
+    "max memory" : "27.32",
+    "memory" : "19.2",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "789453165",
+    "rlimit count" : "294",
+    "max memory" : "27.32",
+    "memory" : "19.2",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "789710235",
+    "rlimit count" : "678",
+    "max memory" : "27.32",
+    "memory" : "19.17",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "790014362",
+    "rlimit count" : "214",
+    "max memory" : "27.32",
+    "memory" : "19.1",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "790432390",
+    "rlimit count" : "390",
+    "max memory" : "27.32",
+    "memory" : "19.17",
+    "time" : "0.009",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82346512,
+  "memoryUseMb" : 78.53175354003906,
+  "executionTimeMs" : 2783,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "790642430",
+    "rlimit count" : "414",
+    "max memory" : "27.38",
+    "memory" : "19.25",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "790745344",
+    "rlimit count" : "245",
+    "max memory" : "27.41",
+    "memory" : "19.28",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "790934277",
+    "rlimit count" : "294",
+    "max memory" : "27.41",
+    "memory" : "19.28",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "791191316",
+    "rlimit count" : "678",
+    "max memory" : "27.41",
+    "memory" : "19.26",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "791495336",
+    "rlimit count" : "214",
+    "max memory" : "27.41",
+    "memory" : "19.18",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "791913218",
+    "rlimit count" : "390",
+    "max memory" : "27.41",
+    "memory" : "19.25",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82341816,
+  "memoryUseMb" : 78.52727508544922,
+  "executionTimeMs" : 4676,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "792123240",
+    "rlimit count" : "414",
+    "max memory" : "27.46",
+    "memory" : "19.34",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "792226118",
+    "rlimit count" : "245",
+    "max memory" : "27.49",
+    "memory" : "19.37",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "792415031",
+    "rlimit count" : "294",
+    "max memory" : "27.49",
+    "memory" : "19.37",
+    "time" : "0.006",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "792672031",
+    "rlimit count" : "678",
+    "max memory" : "27.49",
+    "memory" : "19.34",
+    "time" : "0.007",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "792976189",
+    "rlimit count" : "214",
+    "max memory" : "27.49",
+    "memory" : "19.27",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "793394194",
+    "rlimit count" : "390",
+    "max memory" : "27.49",
+    "memory" : "19.34",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82337368,
+  "memoryUseMb" : 78.52303314208984,
+  "executionTimeMs" : 2726,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "793604255",
+    "rlimit count" : "414",
+    "max memory" : "27.54",
+    "memory" : "19.42",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "793707059",
+    "rlimit count" : "245",
+    "max memory" : "27.57",
+    "memory" : "19.45",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "793895810",
+    "rlimit count" : "294",
+    "max memory" : "27.57",
+    "memory" : "19.45",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "794152667",
+    "rlimit count" : "678",
+    "max memory" : "27.57",
+    "memory" : "19.42",
+    "time" : "0.009",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "794456625",
+    "rlimit count" : "214",
+    "max memory" : "27.57",
+    "memory" : "19.35",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "794874344",
+    "rlimit count" : "390",
+    "max memory" : "27.57",
+    "memory" : "19.42",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82341000,
+  "memoryUseMb" : 78.52649688720703,
+  "executionTimeMs" : 2722,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "795084199",
+    "rlimit count" : "414",
+    "max memory" : "27.63",
+    "memory" : "19.5",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "795187087",
+    "rlimit count" : "245",
+    "max memory" : "27.66",
+    "memory" : "19.53",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "795375935",
+    "rlimit count" : "294",
+    "max memory" : "27.66",
+    "memory" : "19.53",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "795632827",
+    "rlimit count" : "678",
+    "max memory" : "27.66",
+    "memory" : "19.51",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "795936760",
+    "rlimit count" : "214",
+    "max memory" : "27.66",
+    "memory" : "19.43",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "796354441",
+    "rlimit count" : "390",
+    "max memory" : "27.66",
+    "memory" : "19.51",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82333112,
+  "memoryUseMb" : 78.51897430419922,
+  "executionTimeMs" : 3921,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "796564336",
+    "rlimit count" : "414",
+    "max memory" : "27.71",
+    "memory" : "19.59",
+    "time" : "0.007",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "796667023",
+    "rlimit count" : "245",
+    "max memory" : "27.74",
+    "memory" : "19.62",
+    "time" : "0.002",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "796855687",
+    "rlimit count" : "294",
+    "max memory" : "27.74",
+    "memory" : "19.62",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "797112307",
+    "rlimit count" : "678",
+    "max memory" : "27.74",
+    "memory" : "19.59",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "797415981",
+    "rlimit count" : "214",
+    "max memory" : "27.74",
+    "memory" : "19.52",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "797833430",
+    "rlimit count" : "390",
+    "max memory" : "27.74",
+    "memory" : "19.59",
+    "time" : "0.006",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+}, {
+  "methodName" : "getQuaternaries",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "pair" : 8,
+      "variableTop" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 21, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : -1
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 26, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  }, {
+    "input" : {
+      "pair" : 33152,
+      "variableTop" : 0
+    },
+    "output" : "-67044352",
+    "coveredNodeIds" : [ 8, 10, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 32768,
+      "variableTop" : 0
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 8, 11, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 0,
+      "variableTop" : -1
+    },
+    "output" : "64512",
+    "coveredNodeIds" : [ 9, 16, 6 ],
+    "coverage" : {
+      "coveredNodes" : 3,
+      "totalNodes" : 12,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "pair" : 3072,
+      "variableTop" : 3072
+    },
+    "output" : "3072",
+    "coveredNodeIds" : [ 20, 6, 17, 9 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 12,
+      "percent" : 33.333333333333336
+    }
+  }, {
+    "input" : {
+      "pair" : 1073741824,
+      "variableTop" : 0
+    },
+    "output" : "1073741824",
+    "coveredNodeIds" : [ 27, 7 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 12,
+      "percent" : 16.666666666666668
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 12,
+    "totalNodes" : 12,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 8, 9, 26, 10, 11, 27 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 82335752,
+  "memoryUseMb" : 78.52149200439453,
+  "executionTimeMs" : 2737,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "798043193",
+    "rlimit count" : "414",
+    "max memory" : "27.8",
+    "memory" : "19.67",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 7
+  }, {
+    "sat mk clause 2ary" : "3",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "9",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "2",
+    "sat propagations nary" : "1",
+    "num allocs" : "798145962",
+    "rlimit count" : "245",
+    "max memory" : "27.82",
+    "memory" : "19.7",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 9
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "7",
+    "sat decisions" : "6",
+    "sat propagations nary" : "1",
+    "num allocs" : "798334710",
+    "rlimit count" : "294",
+    "max memory" : "27.82",
+    "memory" : "19.7",
+    "variableCount" : 1,
+    "expressionCount" : 10
+  }, {
+    "elim-unconstrained" : "2",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "24",
+    "sat mk clause nary" : "5",
+    "sat mk var" : "37",
+    "sat decisions" : "16",
+    "sat propagations 2ary" : "20",
+    "sat propagations nary" : "1",
+    "num allocs" : "798591626",
+    "rlimit count" : "678",
+    "max memory" : "27.82",
+    "memory" : "19.68",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "3",
+    "solve-eqs-elim-vars" : "3",
+    "num allocs" : "798895640",
+    "rlimit count" : "214",
+    "max memory" : "27.82",
+    "memory" : "19.6",
+    "variableCount" : 2,
+    "expressionCount" : 11
+  }, {
+    "elim-unconstrained" : "1",
+    "solve-eqs-steps" : "2",
+    "solve-eqs-elim-vars" : "2",
+    "sat mk clause nary" : "1",
+    "sat mk var" : "16",
+    "sat decisions" : "15",
+    "sat propagations nary" : "1",
+    "num allocs" : "799313543",
+    "rlimit count" : "390",
+    "max memory" : "27.82",
+    "memory" : "19.67",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 8
+  } ]
+} ]

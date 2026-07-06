@@ -1,0 +1,721 @@
+[ {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8, 8, 8, 8 ],
+      "a" : [ 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 4",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80082280,
+  "memoryUseMb" : 76.3724136352539,
+  "executionTimeMs" : 1049,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.13",
+    "num allocs" : "5.73912970786E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8, 8, 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80074312,
+  "memoryUseMb" : 76.36481475830078,
+  "executionTimeMs" : 461,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.15",
+    "num allocs" : "5.73913032843E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80069520,
+  "memoryUseMb" : 76.36024475097656,
+  "executionTimeMs" : 467,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.17",
+    "num allocs" : "5.73913094783E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 3",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80067600,
+  "memoryUseMb" : 76.35841369628906,
+  "executionTimeMs" : 870,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.19",
+    "num allocs" : "5.73913156813E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 2",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80069936,
+  "memoryUseMb" : 76.36064147949219,
+  "executionTimeMs" : 1221,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.21",
+    "num allocs" : "5.73913218868E11",
+    "time" : "0.007",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8, 8, 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80073128,
+  "memoryUseMb" : 76.36368560791016,
+  "executionTimeMs" : 1049,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.23",
+    "num allocs" : "5.73913280913E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8, 8, 8 ],
+      "a" : [ 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 1",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80073808,
+  "memoryUseMb" : 76.36433410644531,
+  "executionTimeMs" : 1039,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.25",
+    "num allocs" : "5.73913342853E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80070144,
+  "memoryUseMb" : 76.36083984375,
+  "executionTimeMs" : 458,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.27",
+    "num allocs" : "5.73913404908E11",
+    "time" : "0.002",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 3",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80073232,
+  "memoryUseMb" : 76.36378479003906,
+  "executionTimeMs" : 452,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.28",
+    "num allocs" : "5.73913466868E11",
+    "time" : "0.001",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+}, {
+  "methodName" : "mulsubBorrow",
+  "coverageType" : "BRANCH",
+  "testResult" : [ {
+    "input" : {
+      "q" : [ 8, 8 ],
+      "a" : [ 8, 8, 8, 8, 8 ],
+      "len" : 8,
+      "x" : 8,
+      "offset" : 8
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 5",
+    "coveredNodeIds" : [ 14 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "q" : [ ],
+      "a" : [ ],
+      "len" : 0,
+      "x" : 0,
+      "offset" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 15 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 80068528,
+  "memoryUseMb" : 76.35929870605469,
+  "executionTimeMs" : 1307,
+  "z3Statistics" : [ {
+    "elim-unconstrained" : "3",
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "22",
+    "sat mk clause nary" : "2",
+    "sat mk var" : "25",
+    "sat decisions" : "6",
+    "sat propagations 2ary" : "19",
+    "rlimit count" : "543",
+    "max memory" : "277.68",
+    "memory" : "29.3",
+    "num allocs" : "5.73913528867E11",
+    "time" : "0.007",
+    "variableCount" : 3,
+    "expressionCount" : 13
+  } ]
+} ]

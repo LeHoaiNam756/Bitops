@@ -1,0 +1,2664 @@
+[ {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81982968,
+  "memoryUseMb" : 78.18505096435547,
+  "executionTimeMs" : 681,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51806738023E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51806785765E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51806853667E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51806951949E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51807081293E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51807240473E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51807431279E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51807654541E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.518079094E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51808195938E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51808543727E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51808925248E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.51809310915E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.88",
+    "num allocs" : "3.51809764621E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51810291297E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.79",
+    "num allocs" : "3.5181081491E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51811377057E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.5181202151E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.5181270479E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51813427575E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51814191398E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51814995223E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51815839532E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51816725176E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51817650897E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51818618363E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51819628644E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51820680957E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "22.98",
+    "num allocs" : "3.51821857E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81949680,
+  "memoryUseMb" : 78.15330505371094,
+  "executionTimeMs" : 696,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51822528044E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51822575834E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51822643773E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51822742092E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51822871489E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51823030739E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51823221646E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51823445048E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51823700023E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51823986693E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51824334647E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51824716333E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51825102167E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51825556042E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51826082901E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.81",
+    "num allocs" : "3.51826606705E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51827168997E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51827813566E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51828496923E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51829219761E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51829983619E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51830787488E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.5183163178E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51832517373E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51833442996E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51834410311E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51835420455E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51836472557E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.0",
+    "num allocs" : "3.51837648343E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81953104,
+  "memoryUseMb" : 78.15657043457031,
+  "executionTimeMs" : 1892,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51838319184E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51838366974E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.5183843493E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51838533259E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.5183866267E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51838821918E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51839012796E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51839236163E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.518394911E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51839777695E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51840125525E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51840507057E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51840892737E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.92",
+    "num allocs" : "3.51841346497E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51841873243E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.83",
+    "num allocs" : "3.51842396944E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51842959155E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.92",
+    "num allocs" : "3.51843603666E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51844286979E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51845009829E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51845773764E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51846577755E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.5184742222E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51848307996E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51849233869E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51850201489E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51851211977E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51852264447E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.02",
+    "num allocs" : "3.51853440606E11",
+    "time" : "0.004",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81955176,
+  "memoryUseMb" : 78.1585464477539,
+  "executionTimeMs" : 3057,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51854111651E11",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854159396E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854227305E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854325587E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854454933E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854614127E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51854804955E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51855028288E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51855283196E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51855569775E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.5185591759E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.51856299121E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.518566848E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.94",
+    "num allocs" : "3.51857138542E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51857665228E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.85",
+    "num allocs" : "3.5185818884E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51858750955E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51859395354E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51860078567E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51860801295E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51861565071E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.5186236885E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51863213052E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51864098576E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51865024194E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51865991521E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.5186700166E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51868053768E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.04",
+    "num allocs" : "3.51869229549E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81947848,
+  "memoryUseMb" : 78.15155792236328,
+  "executionTimeMs" : 681,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51869900414E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.5186994816E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870016074E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870114404E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870243831E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870403081E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870593919E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51870817267E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51871072199E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51871358809E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51871706644E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51872088201E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51872473926E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.96",
+    "num allocs" : "3.51872927679E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51873454347E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.87",
+    "num allocs" : "3.51873977999E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51874540144E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51875184578E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51875867835E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51876590586E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51877354363E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51878158198E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51879002474E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51879888047E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51880813698E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51881781096E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51882791329E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51883843534E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.06",
+    "num allocs" : "3.51885019392E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81941472,
+  "memoryUseMb" : 78.14547729492188,
+  "executionTimeMs" : 1279,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51885690318E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51885738084E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51885805998E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51885904292E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51886033669E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51886192897E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51886383763E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51886607147E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.5188686214E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51887148815E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51887496732E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51887878348E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51888264084E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "22.98",
+    "num allocs" : "3.51888717875E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51889244625E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.89",
+    "num allocs" : "3.51889768324E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51890330556E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51890975102E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51891658452E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.5189238128E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51893145183E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51893949139E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51894793562E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51895679304E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51896605123E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51897572654E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51898583019E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "22.99",
+    "num allocs" : "3.51899635386E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.08",
+    "num allocs" : "3.51900811436E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81944056,
+  "memoryUseMb" : 78.14794158935547,
+  "executionTimeMs" : 1269,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.09",
+    "num allocs" : "3.51901482445E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51901530174E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51901598098E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51901696415E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51901825824E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.5190198508E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51902175982E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51902399323E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51902654242E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51902940844E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51903288669E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51903670176E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51904055828E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "23.0",
+    "num allocs" : "3.51904509502E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51905036123E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.91",
+    "num allocs" : "3.51905559709E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51906121797E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51906766122E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51907449276E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51908171891E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51908935543E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51909739192E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51910583256E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51911468636E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51912394092E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51913361282E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51914371355E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "23.01",
+    "num allocs" : "3.51915423476E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.1",
+    "num allocs" : "3.51916599262E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81939224,
+  "memoryUseMb" : 78.1433334350586,
+  "executionTimeMs" : 1873,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.11",
+    "num allocs" : "3.5191727016E11",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51917317939E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51917385867E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51917484168E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51917613554E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51917772784E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.5191796365E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.5191818698E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51918441895E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51918728496E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51919076335E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51919457898E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51919843569E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "23.02",
+    "num allocs" : "3.5192029724E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51920823857E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.93",
+    "num allocs" : "3.51921347404E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51921909429E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51922553752E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51923236876E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51923959463E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51924723065E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51925526646E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51926370628E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51927255898E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51928181274E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51929148368E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51930158272E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "23.03",
+    "num allocs" : "3.51931210164E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.12",
+    "num allocs" : "3.51932385675E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81943424,
+  "memoryUseMb" : 78.1473388671875,
+  "executionTimeMs" : 684,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.13",
+    "num allocs" : "3.51933056374E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933104157E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933172116E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.519332705E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933399972E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933559325E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933750342E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51933973863E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51934229E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51934515787E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "23.04",
+    "num allocs" : "3.51934863854E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51935245639E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51935631571E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "23.04",
+    "num allocs" : "3.5193608557E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51936612544E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.95",
+    "num allocs" : "3.51937136467E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51937698886E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "23.04",
+    "num allocs" : "3.51938343619E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51939027145E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51939750166E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51940514245E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51941318392E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51942162986E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51943048914E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51943974877E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51944942573E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51945953127E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "23.05",
+    "num allocs" : "3.51947005672E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.14",
+    "num allocs" : "3.5194818191E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+}, {
+  "methodName" : "countBits",
+  "coverageType" : "STATEMENT",
+  "testResult" : [ {
+    "input" : {
+      "v" : 8
+    },
+    "output" : "1",
+    "coveredNodeIds" : [ 9, 8, 6, 16, 15, 14 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  }, {
+    "input" : {
+      "v" : 0
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 4 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 9,
+      "percent" : 11.11111111111111
+    }
+  }, {
+    "input" : {
+      "v" : -9187343239835811840
+    },
+    "output" : "9",
+    "coveredNodeIds" : [ 11, 9, 16, 15, 14, 12 ],
+    "coverage" : {
+      "coveredNodes" : 6,
+      "totalNodes" : 9,
+      "percent" : 66.66666666666667
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 9,
+    "totalNodes" : 9,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 4, 6, 8, 9, 11, 12, 14, 15 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81936992,
+  "memoryUseMb" : 78.14120483398438,
+  "executionTimeMs" : 1895,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "26",
+    "max memory" : "38.48",
+    "memory" : "23.15",
+    "num allocs" : "3.51948853066E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  }, {
+    "rlimit count" : "341",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51948900796E11",
+    "variableCount" : 1,
+    "expressionCount" : 26
+  }, {
+    "rlimit count" : "468",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51948968675E11",
+    "variableCount" : 1,
+    "expressionCount" : 29
+  }, {
+    "rlimit count" : "444",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51949066952E11",
+    "variableCount" : 1,
+    "expressionCount" : 31
+  }, {
+    "rlimit count" : "456",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51949196333E11",
+    "variableCount" : 1,
+    "expressionCount" : 30
+  }, {
+    "rlimit count" : "569",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51949355587E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  }, {
+    "rlimit count" : "547",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51949546489E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "481",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51949769876E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "583",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51950024841E11",
+    "variableCount" : 1,
+    "expressionCount" : 33
+  }, {
+    "rlimit count" : "559",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51950311495E11",
+    "variableCount" : 1,
+    "expressionCount" : 35
+  }, {
+    "rlimit count" : "642",
+    "max memory" : "38.48",
+    "memory" : "23.06",
+    "num allocs" : "3.51950659363E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "584",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51951040911E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "571",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51951426596E11",
+    "variableCount" : 1,
+    "expressionCount" : 34
+  }, {
+    "rlimit count" : "684",
+    "max memory" : "38.48",
+    "memory" : "23.06",
+    "num allocs" : "3.51951880325E11",
+    "variableCount" : 1,
+    "expressionCount" : 36
+  }, {
+    "rlimit count" : "662",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51952407003E11",
+    "variableCount" : 1,
+    "expressionCount" : 38
+  }, {
+    "rlimit count" : "596",
+    "max memory" : "38.48",
+    "memory" : "22.97",
+    "num allocs" : "3.51952930612E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "679",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51953492717E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "698",
+    "max memory" : "38.48",
+    "memory" : "23.06",
+    "num allocs" : "3.51954137121E11",
+    "variableCount" : 1,
+    "expressionCount" : 37
+  }, {
+    "rlimit count" : "674",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51954820319E11",
+    "variableCount" : 1,
+    "expressionCount" : 39
+  }, {
+    "rlimit count" : "757",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51955543005E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "699",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51956306709E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "799",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51957110468E11",
+    "variableCount" : 1,
+    "expressionCount" : 40
+  }, {
+    "rlimit count" : "777",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51957954661E11",
+    "variableCount" : 1,
+    "expressionCount" : 42
+  }, {
+    "rlimit count" : "711",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51958840139E11",
+    "variableCount" : 1,
+    "expressionCount" : 41
+  }, {
+    "rlimit count" : "794",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51959765681E11",
+    "variableCount" : 1,
+    "expressionCount" : 43
+  }, {
+    "rlimit count" : "872",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51960732928E11",
+    "variableCount" : 1,
+    "expressionCount" : 45
+  }, {
+    "rlimit count" : "814",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51961743001E11",
+    "variableCount" : 1,
+    "expressionCount" : 44
+  }, {
+    "rlimit count" : "909",
+    "max memory" : "38.48",
+    "memory" : "23.07",
+    "num allocs" : "3.51962795076E11",
+    "variableCount" : 1,
+    "expressionCount" : 47
+  }, {
+    "solve-eqs-steps" : "57",
+    "solve-eqs-elim-vars" : "57",
+    "rlimit count" : "2541",
+    "max memory" : "38.48",
+    "memory" : "23.16",
+    "num allocs" : "3.51963970803E11",
+    "variableCount" : 1,
+    "expressionCount" : 32
+  } ]
+} ]

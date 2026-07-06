@@ -123,7 +123,7 @@ public class BatchRunner {
                                 finalMethod,
                                 finalCu,
                                 finalCoverage,
-                                RandomTestInput.createRandomTestData(finalMethod),
+                                RandomTestInput.createConcolicSeedData(finalMethod),
                                 new AllPathsFinder(),
                                 finalMode
                         );

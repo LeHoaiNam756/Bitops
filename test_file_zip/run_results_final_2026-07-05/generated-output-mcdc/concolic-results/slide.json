@@ -1,0 +1,571 @@
+[ {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21281419656,
+  "memoryUseMb" : 20295.543342590332,
+  "executionTimeMs" : 9398,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAgI"
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279980496,
+  "memoryUseMb" : 20294.170852661133,
+  "executionTimeMs" : 9308,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279603232,
+  "memoryUseMb" : 20293.811065673828,
+  "executionTimeMs" : 8846,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAgICA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279437072,
+  "memoryUseMb" : 20293.652603149414,
+  "executionTimeMs" : 10051,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAgICA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279453072,
+  "memoryUseMb" : 20293.667861938477,
+  "executionTimeMs" : 10040,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAgICAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279455944,
+  "memoryUseMb" : 20293.670600891113,
+  "executionTimeMs" : 8536,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279467952,
+  "memoryUseMb" : 20293.682052612305,
+  "executionTimeMs" : 9602,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAg="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279450368,
+  "memoryUseMb" : 20293.665283203125,
+  "executionTimeMs" : 9657,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CAgI"
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279440928,
+  "memoryUseMb" : 20293.656280517578,
+  "executionTimeMs" : 8871,
+  "z3Statistics" : [ ]
+}, {
+  "methodName" : "slide",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "a" : "CA=="
+    },
+    "output" : "EXCEPTION: java.lang.ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1",
+    "coveredNodeIds" : [ 10 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 20,
+      "percent" : 5.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 1,
+    "totalNodes" : 20,
+    "percent" : 5.0,
+    "rawPercent" : 5.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 19,
+    "unknownNodes" : 0,
+    "skippedNodes" : 19,
+    "coveredNodeIds" : [ 10 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : {
+      "36" : "all-candidate-paths-proved-unsatisfiable",
+      "37" : "all-candidate-paths-proved-unsatisfiable",
+      "42" : "all-candidate-paths-proved-unsatisfiable",
+      "11" : "all-candidate-paths-proved-unsatisfiable",
+      "43" : "all-candidate-paths-proved-unsatisfiable",
+      "44" : "all-candidate-paths-proved-unsatisfiable",
+      "45" : "all-candidate-paths-proved-unsatisfiable",
+      "18" : "all-candidate-paths-proved-unsatisfiable",
+      "19" : "all-candidate-paths-proved-unsatisfiable",
+      "20" : "all-candidate-paths-proved-unsatisfiable",
+      "21" : "all-candidate-paths-proved-unsatisfiable",
+      "24" : "all-candidate-paths-proved-unsatisfiable",
+      "25" : "all-candidate-paths-proved-unsatisfiable",
+      "26" : "all-candidate-paths-proved-unsatisfiable",
+      "27" : "all-candidate-paths-proved-unsatisfiable",
+      "28" : "all-candidate-paths-proved-unsatisfiable",
+      "29" : "all-candidate-paths-proved-unsatisfiable",
+      "30" : "all-candidate-paths-proved-unsatisfiable",
+      "31" : "all-candidate-paths-proved-unsatisfiable"
+    },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ 36, 37, 42, 11, 43, 44, 45, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "memoryUseBytes" : 21279436224,
+  "memoryUseMb" : 20293.651794433594,
+  "executionTimeMs" : 11118,
+  "z3Statistics" : [ ]
+} ]

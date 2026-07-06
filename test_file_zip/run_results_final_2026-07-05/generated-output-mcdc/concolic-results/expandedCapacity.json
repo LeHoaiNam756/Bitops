@@ -1,0 +1,1625 @@
+[ {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89182344,
+  "memoryUseMb" : 85.05091094970703,
+  "executionTimeMs" : 1832,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.27",
+    "memory" : "23.74",
+    "num allocs" : "6.26201935212E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.27",
+    "memory" : "23.7",
+    "num allocs" : "6.26202354419E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.27",
+    "memory" : "23.67",
+    "num allocs" : "6.26202800795E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.27",
+    "memory" : "23.75",
+    "num allocs" : "6.2620386991E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.27",
+    "memory" : "23.62",
+    "num allocs" : "6.26204904014E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89150224,
+  "memoryUseMb" : 85.02027893066406,
+  "executionTimeMs" : 1821,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.34",
+    "memory" : "23.82",
+    "num allocs" : "6.26205434814E11",
+    "time" : "0.004",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.34",
+    "memory" : "23.78",
+    "num allocs" : "6.2620585385E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.34",
+    "memory" : "23.75",
+    "num allocs" : "6.26206300157E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.34",
+    "memory" : "23.82",
+    "num allocs" : "6.2620736916E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.34",
+    "memory" : "23.69",
+    "num allocs" : "6.26208403377E11",
+    "time" : "0.001",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89148792,
+  "memoryUseMb" : 85.01891326904297,
+  "executionTimeMs" : 4478,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.42",
+    "memory" : "23.9",
+    "num allocs" : "6.26208934183E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.42",
+    "memory" : "23.85",
+    "num allocs" : "6.26209353226E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.42",
+    "memory" : "23.82",
+    "num allocs" : "6.26209799571E11",
+    "time" : "0.006",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.42",
+    "memory" : "23.9",
+    "num allocs" : "6.26210897031E11",
+    "time" : "0.032",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.42",
+    "memory" : "23.77",
+    "num allocs" : "6.26211931351E11",
+    "time" : "0.002",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89156808,
+  "memoryUseMb" : 85.02655792236328,
+  "executionTimeMs" : 1672,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.49",
+    "memory" : "23.97",
+    "num allocs" : "6.26212462126E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.49",
+    "memory" : "23.93",
+    "num allocs" : "6.26212880907E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.49",
+    "memory" : "23.9",
+    "num allocs" : "6.26213327087E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.5",
+    "memory" : "23.97",
+    "num allocs" : "6.26214423926E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.5",
+    "memory" : "23.85",
+    "num allocs" : "6.26215457472E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89149480,
+  "memoryUseMb" : 85.01956939697266,
+  "executionTimeMs" : 2260,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.57",
+    "memory" : "24.05",
+    "num allocs" : "6.26215987955E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.57",
+    "memory" : "24.01",
+    "num allocs" : "6.26216406744E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.57",
+    "memory" : "23.97",
+    "num allocs" : "6.26216853221E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.57",
+    "memory" : "24.05",
+    "num allocs" : "6.2621792229E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.57",
+    "memory" : "23.92",
+    "num allocs" : "6.26218956398E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89145928,
+  "memoryUseMb" : 85.01618194580078,
+  "executionTimeMs" : 3947,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.65",
+    "memory" : "24.12",
+    "num allocs" : "6.26219487174E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.65",
+    "memory" : "24.08",
+    "num allocs" : "6.26219906113E11",
+    "time" : "0.016",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.65",
+    "memory" : "24.05",
+    "num allocs" : "6.26220352404E11",
+    "time" : "0.006",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.65",
+    "memory" : "24.12",
+    "num allocs" : "6.26221449685E11",
+    "time" : "0.027",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.65",
+    "memory" : "24.0",
+    "num allocs" : "6.26222483731E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89149552,
+  "memoryUseMb" : 85.01963806152344,
+  "executionTimeMs" : 1801,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.72",
+    "memory" : "24.2",
+    "num allocs" : "6.26223014463E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.72",
+    "memory" : "24.16",
+    "num allocs" : "6.26223433365E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.72",
+    "memory" : "24.12",
+    "num allocs" : "6.26223879551E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.72",
+    "memory" : "24.2",
+    "num allocs" : "6.2622497649E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.72",
+    "memory" : "24.07",
+    "num allocs" : "6.26226010256E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89146656,
+  "memoryUseMb" : 85.01687622070312,
+  "executionTimeMs" : 2271,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.8",
+    "memory" : "24.27",
+    "num allocs" : "6.26226540996E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.8",
+    "memory" : "24.23",
+    "num allocs" : "6.26226960025E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.8",
+    "memory" : "24.2",
+    "num allocs" : "6.26227406471E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.8",
+    "memory" : "24.27",
+    "num allocs" : "6.26228504049E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.8",
+    "memory" : "24.15",
+    "num allocs" : "6.26229538296E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89149960,
+  "memoryUseMb" : 85.02002716064453,
+  "executionTimeMs" : 2260,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.87",
+    "memory" : "24.35",
+    "num allocs" : "6.26230069092E11",
+    "time" : "0.008",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.87",
+    "memory" : "24.31",
+    "num allocs" : "6.26230488148E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.87",
+    "memory" : "24.28",
+    "num allocs" : "6.26230934484E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.87",
+    "memory" : "24.35",
+    "num allocs" : "6.26232003419E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.87",
+    "memory" : "24.22",
+    "num allocs" : "6.26233037569E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+}, {
+  "methodName" : "expandedCapacity",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "oldCapacity" : 8,
+      "minCapacity" : 8
+    },
+    "output" : "8",
+    "coveredNodeIds" : [ 7, 10 ],
+    "coverage" : {
+      "coveredNodes" : 2,
+      "totalNodes" : 8,
+      "percent" : 25.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 8435712
+    },
+    "output" : "16777216",
+    "coveredNodeIds" : [ 16, 7, 21, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1442840577,
+      "minCapacity" : 35815936
+    },
+    "output" : "2130706431",
+    "coveredNodeIds" : [ 7, 21, 11, 17 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : -1426031959,
+      "minCapacity" : 1887483904
+    },
+    "output" : "2147483647",
+    "coveredNodeIds" : [ 16, 7, 20, 11 ],
+    "coverage" : {
+      "coveredNodes" : 4,
+      "totalNodes" : 8,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "oldCapacity" : 0,
+      "minCapacity" : -1
+    },
+    "output" : "EXCEPTION: java.lang.IllegalArgumentException: cannot store more than Integer.MAX_VALUE elements",
+    "coveredNodeIds" : [ 6 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 8,
+      "percent" : 12.5
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 8,
+    "totalNodes" : 8,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 16, 17, 20, 21, 6, 7, 10, 11 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 89147896,
+  "memoryUseMb" : 85.01805877685547,
+  "executionTimeMs" : 1662,
+  "z3Statistics" : [ {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1586",
+    "sat mk clause nary" : "1289",
+    "sat mk var" : "867",
+    "sat conflicts" : "38",
+    "sat decisions" : "185",
+    "sat propagations 2ary" : "1756",
+    "sat propagations nary" : "1349",
+    "sat minimized lits" : "14",
+    "sat backjumps" : "38",
+    "rlimit count" : "22525",
+    "max memory" : "32.95",
+    "memory" : "24.42",
+    "num allocs" : "6.26233568309E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 39
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "871",
+    "sat mk clause nary" : "763",
+    "sat mk var" : "546",
+    "sat conflicts" : "4",
+    "sat decisions" : "101",
+    "sat propagations 2ary" : "721",
+    "sat propagations nary" : "641",
+    "sat backjumps" : "4",
+    "rlimit count" : "12409",
+    "max memory" : "32.95",
+    "memory" : "24.38",
+    "num allocs" : "6.26233987125E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 17
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "rlimit count" : "5999",
+    "max memory" : "32.95",
+    "memory" : "24.35",
+    "num allocs" : "6.26234433366E11",
+    "variableCount" : 2,
+    "expressionCount" : 16
+  }, {
+    "solve-eqs-steps" : "1",
+    "solve-eqs-elim-vars" : "1",
+    "sat mk clause 2ary" : "1587",
+    "sat mk clause nary" : "1290",
+    "sat mk var" : "867",
+    "sat conflicts" : "40",
+    "sat decisions" : "192",
+    "sat propagations 2ary" : "1831",
+    "sat propagations nary" : "1361",
+    "sat minimized lits" : "20",
+    "sat backjumps" : "40",
+    "rlimit count" : "22632",
+    "max memory" : "32.95",
+    "memory" : "24.42",
+    "num allocs" : "6.26235502163E11",
+    "time" : "0.003",
+    "variableCount" : 2,
+    "expressionCount" : 38
+  }, {
+    "elim-unconstrained" : "2",
+    "final checks" : "1",
+    "num checks" : "1",
+    "mk bool var" : "1",
+    "rlimit count" : "98",
+    "max memory" : "32.95",
+    "memory" : "24.3",
+    "num allocs" : "6.26236536173E11",
+    "variableCount" : 1,
+    "expressionCount" : 3
+  } ]
+} ]

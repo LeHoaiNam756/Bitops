@@ -1,0 +1,661 @@
+[ {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81403448,
+  "memoryUseMb" : 77.63237762451172,
+  "executionTimeMs" : 465,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.64",
+    "num allocs" : "6.33786711972E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81397568,
+  "memoryUseMb" : 77.62677001953125,
+  "executionTimeMs" : 472,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.68",
+    "num allocs" : "6.33786828005E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81395840,
+  "memoryUseMb" : 77.6251220703125,
+  "executionTimeMs" : 2326,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.71",
+    "num allocs" : "6.33786944113E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81392896,
+  "memoryUseMb" : 77.622314453125,
+  "executionTimeMs" : 1660,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.75",
+    "num allocs" : "6.3378706017E11",
+    "time" : "0.001",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81397640,
+  "memoryUseMb" : 77.62683868408203,
+  "executionTimeMs" : 2264,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.79",
+    "num allocs" : "6.3378717614E11",
+    "time" : "0.014",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81394312,
+  "memoryUseMb" : 77.62366485595703,
+  "executionTimeMs" : 1810,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.82",
+    "num allocs" : "6.33787292038E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81393232,
+  "memoryUseMb" : 77.62263488769531,
+  "executionTimeMs" : 570,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.86",
+    "num allocs" : "6.33787407931E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81394576,
+  "memoryUseMb" : 77.62391662597656,
+  "executionTimeMs" : 1373,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.89",
+    "num allocs" : "6.33787523854E11",
+    "time" : "0.017",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81398072,
+  "memoryUseMb" : 77.62725067138672,
+  "executionTimeMs" : 2523,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.93",
+    "num allocs" : "6.33787639775E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+}, {
+  "methodName" : "saturatedSubtract",
+  "coverageType" : "MCDC",
+  "testResult" : [ {
+    "input" : {
+      "b" : 8,
+      "a" : 8
+    },
+    "output" : "0",
+    "coveredNodeIds" : [ 8 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  }, {
+    "input" : {
+      "b" : -6254092507534065663,
+      "a" : 9223372036854775807
+    },
+    "output" : "9223372036854775807",
+    "coveredNodeIds" : [ 9 ],
+    "coverage" : {
+      "coveredNodes" : 1,
+      "totalNodes" : 2,
+      "percent" : 50.0
+    }
+  } ],
+  "totalCoverage" : {
+    "coveredNodes" : 2,
+    "totalNodes" : 2,
+    "percent" : 100.0,
+    "rawPercent" : 100.0,
+    "feasiblePercent" : 100.0,
+    "uncoveredNodes" : 0,
+    "infeasibleNodes" : 0,
+    "unknownNodes" : 0,
+    "skippedNodes" : 0,
+    "coveredNodeIds" : [ 8, 9 ],
+    "uncoveredNodeIds" : [ ],
+    "infeasibleNodeIds" : [ ],
+    "unknownNodeIds" : [ ],
+    "infeasibleReasons" : { },
+    "unknownReasons" : { },
+    "skippedNodeIds" : [ ]
+  },
+  "memoryUseBytes" : 81394200,
+  "memoryUseMb" : 77.6235580444336,
+  "executionTimeMs" : 1956,
+  "z3Statistics" : [ {
+    "sat mk clause 2ary" : "689",
+    "sat mk clause nary" : "571",
+    "sat mk var" : "505",
+    "sat conflicts" : "1",
+    "sat decisions" : "131",
+    "sat propagations 2ary" : "314",
+    "sat propagations nary" : "146",
+    "sat backjumps" : "1",
+    "rlimit count" : "5903",
+    "max memory" : "275.65",
+    "memory" : "26.96",
+    "num allocs" : "6.33787755679E11",
+    "time" : "0.002",
+    "variableCount" : 2,
+    "expressionCount" : 12
+  } ]
+} ]

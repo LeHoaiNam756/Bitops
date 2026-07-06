@@ -1,0 +1,6 @@
+coverage_type,method_name,completed_runs,average_coverage_percent,average_time_ms,average_memory_mb,average_variable_count,average_z3_expression_count,status
+STATEMENT,"AdditionalBitOps.bouncyGetBit(int[];int)",10,80.0000,2097.8000,70.0031,1.5000,11.5000,"SUCCESS"
+STATEMENT,"AdditionalBitOps.bouncyMulWordDwordAddAt(int;int;long;int[];int)",10,100.0000,3632.0000,101.4666,7.7736,76.4528,"SUCCESS"
+STATEMENT,"AdditionalBitOps.bouncyShiftDownBits(int;int[];int;int)",10,100.0000,922.9000,65.5120,2.0000,9.0000,"SUCCESS"
+STATEMENT,"AdditionalBitOps.caffeineIncrementAt(long[];int;int)",10,100.0000,1210.1000,65.3081,4.0000,29.0000,"SUCCESS"
+STATEMENT,"AdditionalBitOps.kafkaMurmur2(byte[])",10,100.0000,748.1000,65.2698,1.0000,18.0000,"SUCCESS"
