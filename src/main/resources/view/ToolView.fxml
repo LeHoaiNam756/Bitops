@@ -41,6 +41,13 @@
                     <Separator orientation="VERTICAL"/>
                     <Button text="Run Concolic" onAction="#handleRunConcolic"/>
                 </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Ablation parts enabled:"/>
+                    <CheckBox fx:id="javaTypeConversionAblation" text="Java type conversion" selected="true"/>
+                    <CheckBox fx:id="bitOperationsAblation" text="BitOps operation" selected="true"/>
+                    <CheckBox fx:id="bitVectorArithmeticAblation" text="BV arithmetic operator encoding" selected="true"/>
+                    <CheckBox fx:id="simplifierAblation" text="Simplifier" selected="true"/>
+                </HBox>
             </VBox>
         </VBox>
     </top>

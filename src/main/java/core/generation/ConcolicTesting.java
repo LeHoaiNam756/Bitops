@@ -3,6 +3,7 @@ package core.generation;
 import core.cfg.CfgBuilder;
 import core.cfg.ControlFlowGraph;
 import core.cfg.Coverage;
+import core.SymbolicExecution.AblationOptions;
 import core.instrument.*;
 import core.symbolic.SymbolicExecution;
 import core.SymbolicExecution.model.types.SymType;
@@ -115,9 +116,29 @@ public class ConcolicTesting {
                                List<Map<String, Object>> seedInputs,
                                PathFinder pathFinder,
                                Z3EncodingMode encodingMode) throws Exception {
+        return generate(
+                methodDeclaration,
+                cu,
+                coverage,
+                seedInputs,
+                pathFinder,
+                encodingMode,
+                AblationOptions.ALL_ENABLED);
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               List<Map<String, Object>> seedInputs,
+                               PathFinder pathFinder,
+                               Z3EncodingMode encodingMode,
+                               AblationOptions ablationOptions) throws Exception {
         if (seedInputs == null) {
             throw new IllegalArgumentException("seedInputs must not be null");
         }
+        AblationOptions options = ablationOptions == null
+                ? AblationOptions.ALL_ENABLED
+                : ablationOptions;
         long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
@@ -187,7 +208,7 @@ public class ConcolicTesting {
                 }
                 SolverResult result = executePath(
                         symbolicExecution, solverCache, cfg, path,
-                        parameters, parameterTypes, encodingMode);
+                        parameters, parameterTypes, encodingMode, options);
 
                 if (result instanceof SolverResult.Sat sat) {
                     Map<String, Object> newInputs =
@@ -242,7 +263,7 @@ public class ConcolicTesting {
                 for (List<ControlFlowGraph.Edge> path : paths) {
                     SolverResult result = executePath(
                             symbolicExecution, solverCache, cfg, path,
-                            parameters, parameterTypes, encodingMode);
+                            parameters, parameterTypes, encodingMode, options);
                     solverResultCount++;
 
                     if (isTimeout(result)) {
@@ -299,7 +320,7 @@ public class ConcolicTesting {
                     for (List<ControlFlowGraph.Edge> path : alternatives) {
                         SolverResult result = executePath(
                                 symbolicExecution, solverCache, cfg, path,
-                                parameters, parameterTypes, encodingMode);
+                                parameters, parameterTypes, encodingMode, options);
                         solverResultCount++;
                         if (result instanceof SolverResult.Unknown unknown) {
                             sawUnknown = true;
@@ -402,11 +423,12 @@ public class ConcolicTesting {
             List<ControlFlowGraph.Edge> path,
             List<ASTNode> parameters,
             Map<String, SymType> parameterTypes,
-            Z3EncodingMode encodingMode) {
+            Z3EncodingMode encodingMode,
+            AblationOptions ablationOptions) {
         List<ControlFlowGraph.Edge> cacheKey = List.copyOf(path);
         return solverCache.computeIfAbsent(cacheKey, ignored ->
                 symbolicExecution.executePath(
-                        cfg, cacheKey, parameters, parameterTypes, encodingMode));
+                        cfg, cacheKey, parameters, parameterTypes, encodingMode, ablationOptions));
     }
 
     private static boolean isTimeout(SolverResult result) {

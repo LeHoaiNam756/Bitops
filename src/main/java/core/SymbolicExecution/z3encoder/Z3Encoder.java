@@ -1,6 +1,7 @@
 package core.SymbolicExecution.z3encoder;
 
 import com.microsoft.z3.*;
+import core.SymbolicExecution.AblationOptions;
 import core.SymbolicExecution.model.*;
 import core.SymbolicExecution.model.types.*;
 
@@ -53,6 +54,7 @@ public final class Z3Encoder {
 
     private final Context      ctx;
     private final SortResolver sorts;
+    private final AblationOptions ablationOptions;
 
     /** FP rounding mode: round-nearest-ties-to-even (matches Java). */
     private final FPRMExpr RNE;
@@ -82,9 +84,16 @@ public final class Z3Encoder {
     // =========================================================================
 
     public Z3Encoder(SortResolver sortResolver) {
+        this(sortResolver, AblationOptions.ALL_ENABLED);
+    }
+
+    public Z3Encoder(SortResolver sortResolver, AblationOptions ablationOptions) {
         this.sorts = sortResolver;
         this.ctx   = sortResolver.ctx();
         this.RNE   = ctx.mkFPRoundNearestTiesToEven();
+        this.ablationOptions = ablationOptions == null
+                ? AblationOptions.ALL_ENABLED
+                : ablationOptions;
     }
 
     // =========================================================================
@@ -247,12 +256,16 @@ public final class Z3Encoder {
             case NEG -> {
                 if (opSort.equals(sorts.fp32Sort()) || opSort.equals(sorts.fp64Sort()))
                     yield ctx.mkFPNeg((FPExpr) operand);
+                requireBitVectorArithmetic(u);
                 yield ctx.mkBVNeg((BitVecExpr) operand);
             }
 
             case PLUS -> operand;   // unary-plus is identity
 
-            case COMPLIMENT -> ctx.mkBVNot((BitVecExpr) operand);
+            case COMPLIMENT -> {
+                requireBitOperations(u);
+                yield ctx.mkBVNot((BitVecExpr) operand);
+            }
 
             case INC -> {
                 if (opSort.equals(sorts.fp32Sort()))
@@ -261,6 +274,7 @@ public final class Z3Encoder {
                 if (opSort.equals(sorts.fp64Sort()))
                     yield ctx.mkFPAdd(RNE, (FPExpr) operand,
                                      (FPExpr) encodeLiteral(SymLiteral.of(1.0)));
+                requireBitVectorArithmetic(u);
                 BitVecExpr bv = (BitVecExpr) operand;
                 yield ctx.mkBVAdd(bv, ctx.mkBV(1, bv.getSortSize()));
             }
@@ -272,12 +286,15 @@ public final class Z3Encoder {
                 if (opSort.equals(sorts.fp64Sort()))
                     yield ctx.mkFPSub(RNE, (FPExpr) operand,
                                      (FPExpr) encodeLiteral(SymLiteral.of(1.0)));
+                requireBitVectorArithmetic(u);
                 BitVecExpr bv = (BitVecExpr) operand;
                 yield ctx.mkBVSub(bv, ctx.mkBV(1, bv.getSortSize()));
             }
 
-            case LONG_NUMBER_OF_LEADING_ZEROS ->
-                    encodeLongNumberOfLeadingZeros((BitVecExpr) operand);
+            case LONG_NUMBER_OF_LEADING_ZEROS -> {
+                requireBitOperations(u);
+                yield encodeLongNumberOfLeadingZeros((BitVecExpr) operand);
+            }
         };
     }
 
@@ -356,6 +373,10 @@ public final class Z3Encoder {
         // ── Identity ──────────────────────────────────────────────────────────
         if (fromSort.equals(toSort)) {
             return operand;
+        }
+
+        if (!ablationOptions.javaTypeConversionEnabled()) {
+            throw new EncodingException("Java type conversion resolution disabled", cast);
         }
 
         // ── Boolean → boolean only: identity (Java does not allow other casts) ─
@@ -459,8 +480,12 @@ public final class Z3Encoder {
         // byte/short/int.  These are null for non-variable sub-expressions
         // (literals, compound expressions) because literals are already
         // bit-exact and compound results are always int-promoted or wider.
-        SymType leftJavaType  = sorts.javaTypeOf(b.left());
-        SymType rightJavaType = sorts.javaTypeOf(b.right());
+        SymType leftJavaType = ablationOptions.javaTypeConversionEnabled()
+                ? sorts.javaTypeOf(b.left())
+                : null;
+        SymType rightJavaType = ablationOptions.javaTypeConversionEnabled()
+                ? sorts.javaTypeOf(b.right())
+                : null;
 
         Expr<?> left  = visit(b.left(),  exprCache, sortCache);
         Expr<?> right = visit(b.right(), exprCache, sortCache);
@@ -793,29 +818,56 @@ public final class Z3Encoder {
                                    SymBinaryOp node) {
         return switch (op) {
             // Arithmetic
-            case ADD  -> ctx.mkBVAdd(l, r);
-            case SUB  -> ctx.mkBVSub(l, r);
-            case MUL  -> ctx.mkBVMul(l, r);
-            case DIV  -> ctx.mkBVSDiv(l, r);
-            case MOD  -> ctx.mkBVSRem(l, r);
+            case ADD  -> {
+                requireBitVectorArithmetic(node);
+                yield ctx.mkBVAdd(l, r);
+            }
+            case SUB  -> {
+                requireBitVectorArithmetic(node);
+                yield ctx.mkBVSub(l, r);
+            }
+            case MUL  -> {
+                requireBitVectorArithmetic(node);
+                yield ctx.mkBVMul(l, r);
+            }
+            case DIV  -> {
+                requireBitVectorArithmetic(node);
+                yield ctx.mkBVSDiv(l, r);
+            }
+            case MOD  -> {
+                requireBitVectorArithmetic(node);
+                yield ctx.mkBVSRem(l, r);
+            }
             // Bitwise
-            case BAND -> ctx.mkBVAND(l, r);
-            case BOR  -> ctx.mkBVOR(l, r);
-            case BXOR -> ctx.mkBVXOR(l, r);
+            case BAND -> {
+                requireBitOperations(node);
+                yield ctx.mkBVAND(l, r);
+            }
+            case BOR  -> {
+                requireBitOperations(node);
+                yield ctx.mkBVOR(l, r);
+            }
+            case BXOR -> {
+                requireBitOperations(node);
+                yield ctx.mkBVXOR(l, r);
+            }
             // JLS §15.19: shift distance is masked to the low 5 bits (int) or 6 bits (long).
             // Z3 BV shifts do NOT do this automatically — a value >= width gives 0 / all-sign-bits,
             // which differs from Java's wrap-around semantics.  We mask the RHS before shifting.
             // The RHS may also have a different BV width than L (e.g. long << int after coercion),
             // so we first truncate/extend it to match L's width, then apply the bit-mask.
             case BLS  -> {
+                requireBitOperations(node);
                 BitVecExpr dist = matchWidth(r, l.getSortSize());
                 yield ctx.mkBVSHL(l, maskShiftDist(dist, l.getSortSize()));
             }
             case BRS  -> {                                          // arithmetic (signed) shift right
+                requireBitOperations(node);
                 BitVecExpr dist = matchWidth(r, l.getSortSize());
                 yield ctx.mkBVASHR(l, maskShiftDist(dist, l.getSortSize()));
             }
             case BURS -> {                                          // logical (unsigned) shift right
+                requireBitOperations(node);
                 BitVecExpr dist = matchWidth(r, l.getSortSize());
                 yield ctx.mkBVLSHR(l, maskShiftDist(dist, l.getSortSize()));
             }
@@ -1119,6 +1171,18 @@ public final class Z3Encoder {
         return sort instanceof BitVecSort
                 || sort instanceof FPSort
                 || sort.equals(sorts.intSort());
+    }
+
+    private void requireBitOperations(SymbolicValue source) {
+        if (!ablationOptions.bitOperationsEnabled()) {
+            throw new EncodingException("Bitwise/shift operation encoding disabled", source);
+        }
+    }
+
+    private void requireBitVectorArithmetic(SymbolicValue source) {
+        if (!ablationOptions.bitVectorArithmeticEnabled()) {
+            throw new EncodingException("Bit-vector arithmetic encoding disabled", source);
+        }
     }
 
     // =========================================================================

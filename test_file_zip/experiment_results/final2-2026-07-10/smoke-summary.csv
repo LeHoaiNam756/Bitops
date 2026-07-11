@@ -1,0 +1,2 @@
+coverage_type,method_name,completed_runs,average_coverage_percent,average_time_ms,average_memory_mb,average_variable_count,average_z3_expression_count,status
+STATEMENT,"ByteString.checkIndex(int;int)",1,100.0000,1949.0000,105.4065,2.0000,10.0000,"SUCCESS"

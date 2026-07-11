@@ -1,6 +1,7 @@
 package view;
 
 import core.cfg.Coverage;
+import core.SymbolicExecution.AblationOptions;
 import core.generation.ConcolicTesting;
 import core.generation.Project;
 import core.generation.RandomTestInput;
@@ -38,6 +39,10 @@ public class ToolView {
     public RadioButton branchCoverage;
     public RadioButton mcdcCoverage;
     public ChoiceBox<SeedMode> seedMode;
+    public CheckBox javaTypeConversionAblation;
+    public CheckBox bitOperationsAblation;
+    public CheckBox bitVectorArithmeticAblation;
+    public CheckBox simplifierAblation;
     public Label fullCoverageLabel;
     public Label memoryUsageLabel;
     public Label runtimeLabel;
@@ -115,6 +120,8 @@ public class ToolView {
 
         seedMode.setItems(FXCollections.observableArrayList(SeedMode.values()));
         seedMode.setValue(SeedMode.COVERAGE_GUIDED);
+
+        initializeAblationSwitches();
 
         // Configure report table columns
         if (testInputsColumn != null) {
@@ -330,7 +337,8 @@ public class ToolView {
                     coverage,
                     seedInputsFor(getSelectedSeedMode(), loc.methodDeclaration),
                     getSelectedPathFinder(),
-                    getSelectedEncodingMode()
+                    getSelectedEncodingMode(),
+                    getSelectedAblationOptions()
             );
 
             updateSummary(result);
@@ -371,6 +379,25 @@ public class ToolView {
     private SeedMode getSelectedSeedMode() {
         SeedMode selected = seedMode.getValue();
         return selected == null ? SeedMode.COVERAGE_GUIDED : selected;
+    }
+
+    private void initializeAblationSwitches() {
+        if (javaTypeConversionAblation != null) javaTypeConversionAblation.setSelected(true);
+        if (bitOperationsAblation != null) bitOperationsAblation.setSelected(true);
+        if (bitVectorArithmeticAblation != null) bitVectorArithmeticAblation.setSelected(true);
+        if (simplifierAblation != null) simplifierAblation.setSelected(true);
+    }
+
+    AblationOptions getSelectedAblationOptions() {
+        return new AblationOptions(
+                isEnabled(javaTypeConversionAblation),
+                isEnabled(bitOperationsAblation),
+                isEnabled(bitVectorArithmeticAblation),
+                isEnabled(simplifierAblation));
+    }
+
+    private static boolean isEnabled(CheckBox checkBox) {
+        return checkBox == null || checkBox.isSelected();
     }
 
     static List<Map<String, Object>> seedInputsFor(

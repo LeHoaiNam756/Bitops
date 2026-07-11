@@ -2,6 +2,7 @@ package core.SymbolicExecution.z3encoder;
 
 import com.microsoft.z3.*;
 
+import core.SymbolicExecution.AblationOptions;
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.types.SymType;
 import core.SymbolicExecution.model.types.ArraySymType;
@@ -83,6 +84,7 @@ public final class ConstraintSolver implements AutoCloseable {
     private final LegacyZ3Encoder legacyEncoder;
     private final LegacyModelExtractor legacyExtractor;
     private final Z3EncodingMode encodingMode;
+    private final AblationOptions ablationOptions;
     private final List<BoolExpr> generatedArrayLengthBounds;
 
     // =========================================================================
@@ -101,9 +103,19 @@ public final class ConstraintSolver implements AutoCloseable {
     public ConstraintSolver(Map<String, SymType> varTypes,
                             SymValueFactory factory,
                             Z3EncodingMode encodingMode) {
+        this(varTypes, factory, encodingMode, AblationOptions.ALL_ENABLED);
+    }
+
+    public ConstraintSolver(Map<String, SymType> varTypes,
+                            SymValueFactory factory,
+                            Z3EncodingMode encodingMode,
+                            AblationOptions ablationOptions) {
         // One Z3 Context per solver instance (not thread-safe; one per thread)
         this.ctx = new Context();
         this.encodingMode = encodingMode == null ? Z3EncodingMode.BITVECTOR : encodingMode;
+        this.ablationOptions = ablationOptions == null
+                ? AblationOptions.ALL_ENABLED
+                : ablationOptions;
 
         // Z3 solver with incremental push/pop support
         this.z3Solver = ctx.mkSolver();
@@ -123,7 +135,7 @@ public final class ConstraintSolver implements AutoCloseable {
         // per solver instance, but keeping both initialized preserves the
         // existing constructor shape and keeps mode selection localized here.
         this.sortResolver = new SortResolver(ctx, buildSortMap(varTypes), varTypes);
-        this.encoder      = new Z3Encoder(sortResolver);
+        this.encoder      = new Z3Encoder(sortResolver, this.ablationOptions);
         this.extractor    = new ModelExtractor(sortResolver);
         this.legacySortResolver = new LegacySortResolver(ctx, varTypes);
         this.legacyEncoder      = new LegacyZ3Encoder(legacySortResolver);
@@ -170,6 +182,13 @@ public final class ConstraintSolver implements AutoCloseable {
         return new ConstraintSolver(varTypes, SymValueFactory.global(), encodingMode);
     }
 
+    public static ConstraintSolver create(Map<String, SymType> varTypes,
+                                          Z3EncodingMode encodingMode,
+                                          AblationOptions ablationOptions) {
+        return new ConstraintSolver(
+                varTypes, SymValueFactory.global(), encodingMode, ablationOptions);
+    }
+
     // =========================================================================
     // Core API
     // =========================================================================
@@ -186,15 +205,19 @@ public final class ConstraintSolver implements AutoCloseable {
     public SolverResult check(List<SymbolicValue> pathCondition) {
 
         // ── Step 1: Static dead-constraint scan (no Z3) ───────────────────────
-        DeadConstraintStrategy.ScanResult scan =
-                DeadConstraintStrategy.INSTANCE.scan(pathCondition);
+        List<SymbolicValue> live;
+        if (ablationOptions.simplifierEnabled()) {
+            DeadConstraintStrategy.ScanResult scan =
+                    DeadConstraintStrategy.INSTANCE.scan(pathCondition);
 
-        if (!scan.feasible()) {
-            // Structural contradiction found — skip Z3 entirely
-            return SolverResult.unsat(SolverResult.UnsatSource.STATIC_DEAD_CONSTRAINT);
+            if (!scan.feasible()) {
+                // Structural contradiction found — skip Z3 entirely
+                return SolverResult.unsat(SolverResult.UnsatSource.STATIC_DEAD_CONSTRAINT);
+            }
+            live = scan.liveConstraints();
+        } else {
+            live = pathCondition;
         }
-
-        List<SymbolicValue> live = scan.liveConstraints();
 
         if (live.isEmpty()) {
             // All constraints were tautologies — trivially SAT with empty model

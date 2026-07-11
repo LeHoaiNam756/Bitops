@@ -1,6 +1,7 @@
 package core.generation;
 
 import core.cfg.Coverage;
+import core.SymbolicExecution.AblationOptions;
 import core.SymbolicExecution.z3encoder.Z3EncodingMode;
 import core.testpath.AllPathsFinder;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -37,6 +38,7 @@ public class BatchRunner {
         int    maxMethods    = Integer.parseInt(System.getProperty("maxMethods", "-1"));
         int    runs          = Integer.parseInt(System.getProperty("runs", "3"));
         int    timeoutSec    = Integer.parseInt(System.getProperty("timeoutSeconds", "90"));
+        AblationOptions ablationOptions = AblationOptions.fromSystemProperties();
 
         System.out.println("[BatchRunner] zipPath    = " + zipPathStr);
         System.out.println("[BatchRunner] mode       = " + modeStr);
@@ -44,6 +46,7 @@ public class BatchRunner {
         System.out.println("[BatchRunner] maxMethods = " + (maxMethods < 0 ? "ALL" : maxMethods));
         System.out.println("[BatchRunner] runs       = " + runs);
         System.out.println("[BatchRunner] timeout    = " + timeoutSec + "s");
+        System.out.println("[BatchRunner] ablation   = " + ablationOptions.label());
 
         if (runs <= 0) {
             throw new IllegalArgumentException("runs must be greater than zero");
@@ -125,7 +128,8 @@ public class BatchRunner {
                                 finalCoverage,
                                 RandomTestInput.createConcolicSeedData(finalMethod),
                                 new AllPathsFinder(),
-                                finalMode
+                                finalMode,
+                                ablationOptions
                         );
                     } catch (Exception e) {
                         System.err.println("  -> Run error: " + e.getMessage());

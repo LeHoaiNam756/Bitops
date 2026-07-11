@@ -2,6 +2,7 @@ package core.symbolic;
 
 import core.SymbolicExecution.dispatch.AstDispatcher;
 import core.SymbolicExecution.dispatch.*;
+import core.SymbolicExecution.AblationOptions;
 import core.SymbolicExecution.model.*;
 import core.SymbolicExecution.model.types.*;
 import core.SymbolicExecution.simplifier.SymbolicSimplifier;
@@ -60,6 +61,21 @@ public class SymbolicExecution {
             List<ASTNode> parameters,
             Map<String, SymType> parameterTypes,
             Z3EncodingMode encodingMode) {
+        return executePath(
+                cfg, path, parameters, parameterTypes, encodingMode,
+                AblationOptions.ALL_ENABLED);
+    }
+
+    public SolverResult executePath(
+            ControlFlowGraph cfg,
+            List<ControlFlowGraph.Edge> path,
+            List<ASTNode> parameters,
+            Map<String, SymType> parameterTypes,
+            Z3EncodingMode encodingMode,
+            AblationOptions ablationOptions) {
+        AblationOptions options = ablationOptions == null
+                ? AblationOptions.ALL_ENABLED
+                : ablationOptions;
 
         SymbolicState state = SymbolicState.builder()
                 .memoryModel(new MemoryModel())
@@ -103,10 +119,12 @@ public class SymbolicExecution {
         constraints.addAll(state.getAssumptions());
 
         // --- 3. Simplify expressions (constant-fold, identities, normalise) -
-        List<SymbolicValue> simplifiedConstraints = expressionSimplifier.simplifyAll(constraints);
+        List<SymbolicValue> simplifiedConstraints = options.simplifierEnabled()
+                ? expressionSimplifier.simplifyAll(constraints)
+                : constraints;
 
         // --- 4. Solve -------------------------------------------------------
-        try (ConstraintSolver solver = ConstraintSolver.create(parameterTypes, encodingMode)) {
+        try (ConstraintSolver solver = ConstraintSolver.create(parameterTypes, encodingMode, options)) {
             return solver.check(simplifiedConstraints);
         }
     }
