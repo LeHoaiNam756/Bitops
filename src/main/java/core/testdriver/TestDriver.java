@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +46,7 @@ import java.util.regex.Pattern;
 public final class TestDriver {
 
     private static final long DEFAULT_TIMEOUT_SECONDS = 5L;
+    private static final String TIMEOUT_SECONDS_PROPERTY = "ct4j.driver.timeout.seconds";
 
     private TestDriver() {}
 
@@ -141,6 +143,15 @@ public final class TestDriver {
                                         List<Map<String, Object>> inputs,
                                         Path workDir)
             throws IOException, InterruptedException {
+        return runAll(classesDir, params, inputs, workDir, defaultTimeout());
+    }
+
+    public static List<TestData> runAll(Path classesDir,
+                                        List<ParamInfo> params,
+                                        List<Map<String, Object>> inputs,
+                                        Path workDir,
+                                        Duration timeout)
+            throws IOException, InterruptedException {
 
         Files.createDirectories(workDir);
         ObjectMapper mapper = new ObjectMapper();
@@ -185,7 +196,7 @@ public final class TestDriver {
                     .start();
 
             CompletableFuture<String> stderr = readStderr(proc);
-            int exitCode = waitFor(proc, inputMap);
+            int exitCode = waitFor(proc, inputMap, timeout);
 
             if (exitCode != 0) {
                 throw new DriverException(i, exitCode, stderr.join());
@@ -204,6 +215,14 @@ public final class TestDriver {
                                List<ParamInfo> params,
                                Map<String, Object> inputs,
                                Path workDir) throws IOException, InterruptedException {
+        return run(classesDir, params, inputs, workDir, defaultTimeout());
+    }
+
+    public static TestData run(Path classesDir,
+                               List<ParamInfo> params,
+                               Map<String, Object> inputs,
+                               Path workDir,
+                               Duration timeout) throws IOException, InterruptedException {
         Files.createDirectories(workDir);
         ObjectMapper mapper = new ObjectMapper();
         Path inputFile = workDir.resolve("inputs" + ".json");
@@ -237,7 +256,7 @@ public final class TestDriver {
                 .start();
 
         CompletableFuture<String> stderr = readStderr(proc);
-        int exitCode = waitFor(proc, inputs);
+        int exitCode = waitFor(proc, inputs, timeout);
 
         if (exitCode != 0) {
             throw new DriverExceptionSimple(exitCode, stderr.join());
@@ -257,15 +276,11 @@ public final class TestDriver {
         });
     }
 
-    private static int waitFor(Process process, Map<String, Object> inputs)
+    private static int waitFor(Process process, Map<String, Object> inputs, Duration timeout)
             throws InterruptedException {
-        long timeoutSeconds = Long.getLong(
-                "ct4j.driver.timeout.seconds", DEFAULT_TIMEOUT_SECONDS);
-        if (timeoutSeconds < 1L) {
-            timeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
-        }
+        long timeoutMillis = timeoutMillis(timeout);
         try {
-            if (process.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
+            if (process.waitFor(timeoutMillis, TimeUnit.MILLISECONDS)) {
                 return process.exitValue();
             }
         } catch (InterruptedException e) {
@@ -275,7 +290,22 @@ public final class TestDriver {
 
         process.destroyForcibly();
         process.waitFor();
-        throw new DriverTimeoutException(timeoutSeconds, inputs);
+        throw new DriverTimeoutException(timeoutMillis, inputs);
+    }
+
+    private static Duration defaultTimeout() {
+        long timeoutSeconds = Long.getLong(
+                TIMEOUT_SECONDS_PROPERTY, DEFAULT_TIMEOUT_SECONDS);
+        if (timeoutSeconds < 1L) {
+            timeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
+        }
+        return Duration.ofSeconds(timeoutSeconds);
+    }
+
+    private static long timeoutMillis(Duration timeout) {
+        Duration effective = timeout == null ? defaultTimeout() : timeout;
+        long millis = effective.toMillis();
+        return millis < 1L ? 1L : millis;
     }
     // -----------------------------------------------------------------------
     // DriverException
@@ -310,8 +340,21 @@ public final class TestDriver {
     }
 
     public static final class DriverTimeoutException extends RuntimeException {
-        private DriverTimeoutException(long timeoutSeconds, Map<String, Object> inputs) {
-            super("Driver run timed out after " + timeoutSeconds + "s for inputs " + inputs);
+        private final Duration timeout;
+        private final Map<String, Object> inputs;
+
+        private DriverTimeoutException(long timeoutMillis, Map<String, Object> inputs) {
+            super("Driver run timed out after " + timeoutMillis + "ms for inputs " + inputs);
+            this.timeout = Duration.ofMillis(timeoutMillis);
+            this.inputs = Map.copyOf(inputs);
+        }
+
+        public Duration timeout() {
+            return timeout;
+        }
+
+        public Map<String, Object> inputs() {
+            return inputs;
         }
     }
 

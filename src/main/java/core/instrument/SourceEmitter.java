@@ -311,18 +311,15 @@ public final class SourceEmitter {
      * ((cond) && TraceRecorder.mark(trueId, TraceKind.COND_T))
      *     || TraceRecorder.mark(falseId, TraceKind.COND_F)
      * }</pre>
-     * For statement coverage the condition is emitted verbatim (no wrapping).
+     * Statement coverage also records branch outcomes so concolic generation can
+     * flip observed decisions, but those branch events are ignored by the
+     * statement {@link core.testpath.CoverageTracker}.
      */
     private void emitCondition(Expression cond, EmitContext ctx, StringBuilder sb) {
         // A classic infinite for-loop has no condition: for (;;). JDT models
         // the omitted expression as null, so there is no AST node (or branch)
         // to instrument.
         if (cond == null) {
-            return;
-        }
-
-        if (ctx.coverage == Coverage.STATEMENT) {
-            sb.append(cond);
             return;
         }
 

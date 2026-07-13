@@ -715,6 +715,95 @@ public class ConcolicTestingTest {
     }
 
     @Test
+    public void generate_utf8SlowPathCoversNonAsciiBranches() throws Exception {
+        Path zip = createZipProject("Uft8.java", """
+                public class Uft8 {
+                    boolean isWellFormedSlowPath(byte[] bytes, int off, int end) {
+                        int index = off;
+                        while (true) {
+                            int byte1;
+                            do {
+                                if (index >= end) {
+                                    return true;
+                                }
+                            } while ((byte1 = bytes[index++]) >= 0);
+
+                            if (byte1 < (byte) 0xE0) {
+                                if (index == end) {
+                                    return false;
+                                }
+                                if (byte1 < (byte) 0xC2 || bytes[index++] > (byte) 0xBF) {
+                                    return false;
+                                }
+                            } else if (byte1 < (byte) 0xF0) {
+                                if (index + 1 >= end) {
+                                    return false;
+                                }
+                                int byte2 = bytes[index++];
+                                if (byte2 > (byte) 0xBF
+                                        || (byte1 == (byte) 0xE0 && byte2 < (byte) 0xA0)
+                                        || (byte1 == (byte) 0xED && byte2 >= (byte) 0xA0)
+                                        || bytes[index++] > (byte) 0xBF) {
+                                    return false;
+                                }
+                            } else {
+                                if (index + 2 >= end) {
+                                    return false;
+                                }
+                                int byte2 = bytes[index++];
+                                if (byte2 > (byte) 0xBF
+                                        || (((byte1 << 28) + (byte2 - (byte) 0x90)) >> 30) != 0
+                                        || bytes[index++] > (byte) 0xBF
+                                        || bytes[index++] > (byte) 0xBF) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+                """);
+        Project project = new Project(zip);
+        MethodDeclaration method = project.getMethods().stream()
+                .filter(m -> "isWellFormedSlowPath".equals(m.getName().getIdentifier()))
+                .findFirst()
+                .orElseThrow();
+
+        Map<String, Object> seedInput = new LinkedHashMap<>();
+        seedInput.put("bytes", new byte[] {0, 0, 0, 0});
+        seedInput.put("off", 0);
+        seedInput.put("end", 4);
+        MethodPreconditions preconditions = MethodPreconditions.builder()
+                .nonNull("bytes")
+                .arrayLengthRange("bytes", 4, 4)
+                .range("off", 0, 0)
+                .range("end", 1, 4)
+                .lessOrEqual("off", "end")
+                .build();
+
+        TestResult result = ConcolicTesting.getInstance().generate(
+                method,
+                project.getRootAST(method),
+                Coverage.BRANCH,
+                List.of(seedInput),
+                new AllPathsFinder(),
+                preconditions);
+
+        boolean generatedNonAsciiByte = result.testDataList().stream()
+                .map(data -> data.input().get("bytes"))
+                .filter(byte[].class::isInstance)
+                .map(byte[].class::cast)
+                .flatMap(bytes -> java.util.stream.IntStream.range(0, bytes.length)
+                        .mapToObj(i -> bytes[i]))
+                .anyMatch(value -> value < 0);
+
+        assertTrue("expected solver model to produce non-ASCII byte-array inputs",
+                generatedNonAsciiByte);
+        assertTrue("expected UTF-8 slow path branch coverage above ASCII-only runs: "
+                        + result.fullCoverage().rawCoveragePercent(),
+                result.fullCoverage().rawCoveragePercent() >= 70.0);
+    }
+
+    @Test
     public void extractInputsFromModel_usesExactPrimitiveArrayFallbacks() throws Exception {
         Z3ModelBindings bindings = new Z3ModelBindings(Map.of(
                 "ints__length", SymLiteral.of(1),

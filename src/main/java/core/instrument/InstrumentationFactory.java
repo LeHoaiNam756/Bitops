@@ -21,6 +21,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class InstrumentationFactory {
     private final InstrumentationPlanner planner;
@@ -47,7 +48,10 @@ public class InstrumentationFactory {
             throws Exception {
         InstrumentationPlan plan = planner.plan(cu, cfg, coverage);
         CoverageTracker tracker = coverage == Coverage.STATEMENT
-                ? new CoverageTracker(plan.nodeIds())
+                ? new CoverageTracker(plan.points().stream()
+                        .filter(point -> point.kind() == TraceKind.NODE)
+                        .map(TracePoint::cfgNodeId)
+                        .collect(Collectors.toSet()))
                 : new BranchCoverageTracker(cfg);
         String instrumentedSource = emitter.emit(
                 cu, plan, coverage, FilePath.CLONED_PROJECT_ROOT_PACKAGE);

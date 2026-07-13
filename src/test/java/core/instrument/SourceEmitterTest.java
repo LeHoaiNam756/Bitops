@@ -147,6 +147,16 @@ public class SourceEmitterTest {
     }
 
     @Test
+    public void branchCoveragePreservesWhileTrueAsCompileTimeInfiniteLoop() throws Exception {
+        assertWhileTrueMethodCompiles(Coverage.BRANCH);
+    }
+
+    @Test
+    public void mcdcCoveragePreservesWhileTrueAsCompileTimeInfiniteLoop() throws Exception {
+        assertWhileTrueMethodCompiles(Coverage.MCDC);
+    }
+
+    @Test
     public void preservesStaticInitializersThatAssignBlankFinalFields() throws Exception {
         CompilationUnit cu = parse("""
                 package com.xk72.charles.gui;
@@ -219,6 +229,46 @@ public class SourceEmitterTest {
         assertTrue("catch clause should be preserved", catchStart >= 0);
         assertTrue("catch body should receive a statement marker", marker >= 0);
         assertTrue("marker should appear before catch return", marker < catchReturn);
+    }
+
+    private static void assertWhileTrueMethodCompiles(Coverage coverage) throws Exception {
+        CompilationUnit cu = parse("""
+                package sample;
+
+                class Example {
+                    boolean scan(byte[] bytes, int off, int end) {
+                        int index = off;
+                        while (true) {
+                            int byte1;
+                            do {
+                                if (index >= end) {
+                                    return true;
+                                }
+                            } while ((byte1 = bytes[index++]) >= 0);
+                            if (byte1 < (byte) 0xE0) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                """);
+        TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+        MethodDeclaration method = type.getMethods()[0];
+        ControlFlowGraph cfg = new CfgBuilder(coverage == Coverage.MCDC).build(method);
+        InstrumentationPlan plan = new InstrumentationPlanner().plan(cu, cfg, coverage);
+
+        String emitted = new SourceEmitter().emit(cu, plan, coverage, "core.output.clone");
+        Path tempDir = Files.createTempDirectory("ct4j-source-emitter");
+        Path sourceDir = tempDir.resolve(Path.of("core", "output", "clone"));
+        Files.createDirectories(sourceDir);
+        Path sourceFile = sourceDir.resolve("Example.java");
+        Files.writeString(sourceFile, emitted, StandardCharsets.UTF_8);
+        Compiler.getInstance().compileJavaFile(
+                sourceFile.toString(),
+                FilePath.PATH_TO_MAVEN_TARGET_CLASSES);
+
+        assertTrue("literal while condition should be preserved",
+                emitted.contains("while (true)"));
     }
 
     private static CompilationUnit parse(String source) {

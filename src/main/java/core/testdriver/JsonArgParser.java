@@ -41,13 +41,14 @@ public final class JsonArgParser {
      *                                requested type
      */
     public static Object convert(String paramName, String typeName, JsonNode node) {
+        typeName = typeName.trim();
         if (node == null || node.isNull()) {
+            if (isNullableType(typeName)) {
+                return null;
+            }
             throw new ArgConversionException(paramName, typeName, "null",
                     "JSON key is missing or null");
         }
-
-        // Strip trailing whitespace just in case
-        typeName = typeName.trim();
 
         // 2-D arrays  (e.g. "int[][]")
         if (typeName.endsWith("[][]")) {
@@ -61,6 +62,13 @@ public final class JsonArgParser {
 
         // Scalar
         return convertScalar(paramName, typeName, node);
+    }
+
+    private static boolean isNullableType(String typeName) {
+        return switch (typeName) {
+            case "int", "long", "short", "byte", "char", "boolean", "float", "double" -> false;
+            default -> true;
+        };
     }
 
     // -----------------------------------------------------------------------

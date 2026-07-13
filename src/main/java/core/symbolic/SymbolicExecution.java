@@ -73,6 +73,19 @@ public class SymbolicExecution {
             Map<String, SymType> parameterTypes,
             Z3EncodingMode encodingMode,
             AblationOptions ablationOptions) {
+        return executePath(
+                cfg, path, parameters, parameterTypes, encodingMode,
+                ablationOptions, List.of());
+    }
+
+    public SolverResult executePath(
+            ControlFlowGraph cfg,
+            List<ControlFlowGraph.Edge> path,
+            List<ASTNode> parameters,
+            Map<String, SymType> parameterTypes,
+            Z3EncodingMode encodingMode,
+            AblationOptions ablationOptions,
+            List<SymbolicValue> initialAssumptions) {
         AblationOptions options = ablationOptions == null
                 ? AblationOptions.ALL_ENABLED
                 : ablationOptions;
@@ -97,6 +110,9 @@ public class SymbolicExecution {
 
         // --- 2. Walk the path, accumulating constraints ---------------------
         List<SymbolicValue> constraints = new ArrayList<>();
+        if (initialAssumptions != null) {
+            constraints.addAll(initialAssumptions);
+        }
         for (ControlFlowGraph.Edge edge : path) {
             ControlFlowGraph.Node node = cfg.getNode(edge.getFrom());
             if (node == null) continue;

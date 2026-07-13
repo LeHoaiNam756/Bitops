@@ -3,6 +3,7 @@ package core.testpath;
 import core.cfg.CfgEdgeKind;
 import core.cfg.CfgNodeKind;
 import core.cfg.ControlFlowGraph;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,10 @@ public class BranchCoverageTracker extends CoverageTracker {
             // Synthetic control-flow nodes (for example the implicit "true"
             // condition in for (;;)) have no source AST and cannot be probed.
             .filter(nodeId -> cfg.getNode(nodeId).getAst() != null)
+            // Literal true/false conditions must remain compile-time constants
+            // (for example while (true)); instrumenting them can change javac's
+            // reachability analysis and introduce missing-return errors.
+            .filter(nodeId -> !(cfg.getNode(nodeId).getAst() instanceof BooleanLiteral))
             .flatMap(nodeId -> Stream.of(nodeId * 2, nodeId * 2 + 1))
             .collect(Collectors.toCollection(HashSet::new));
     }

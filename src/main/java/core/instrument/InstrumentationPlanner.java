@@ -67,9 +67,7 @@ public final class InstrumentationPlanner {
             ASTNode ast = cfgNode.getAst();
             if (ast == null) continue;
 
-            if (isBranchNode(kind) &&
-                    (coverage == Coverage.BRANCH ||
-                     coverage == Coverage.MCDC)) {
+            if (isBranchNode(kind) && !isBooleanLiteral(ast)) {
                 // A condition node produces two probe points that share the same
                 // AST node but have distinct TraceKind values.  The IDs used in
                 // TraceRecorder.mark() calls are:
@@ -128,5 +126,9 @@ public final class InstrumentationPlanner {
             case BRANCH, LOOP -> true;
             default -> false;
         };
+    }
+
+    private static boolean isBooleanLiteral(ASTNode node) {
+        return node instanceof BooleanLiteral;
     }
 }

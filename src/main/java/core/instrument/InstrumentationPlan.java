@@ -46,11 +46,10 @@ public final class InstrumentationPlan {
                 .collect(Collectors.toUnmodifiableMap(
                         TracePoint::cfgNodeId,
                         tp -> tp,
-                        // If two TracePoints share an ID (shouldn't happen), keep first
-                        (a, b) -> {
-                            throw new IllegalStateException(
-                                    "Duplicate CFG node ID in plan: " + a.cfgNodeId());
-                        }));
+                        // Statement and branch-outcome probe IDs can overlap
+                        // when statement mode also records branch traces.
+                        // Direct coverage tracking filters by TraceKind.
+                        (a, b) -> a));
         this.statementCount = (int) points.stream()
                 .filter(tp -> tp.kind() == TraceKind.NODE).count();
         this.branchCount = (int) points.stream()

@@ -9,6 +9,7 @@ import core.symbolic.SymbolicExecution;
 import core.SymbolicExecution.model.types.SymType;
 import core.SymbolicExecution.model.types.SymTypeMap;
 import core.SymbolicExecution.model.SymLiteral;
+import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.z3encoder.SolverResult;
 import core.SymbolicExecution.z3encoder.Z3EncodingMode;
 import core.SymbolicExecution.z3encoder.Z3ModelBindings;
@@ -17,6 +18,7 @@ import core.testdriver.TestData;
 import core.testdriver.TestDriver;
 import core.testdriver.TestResult;
 import core.testpath.AllPathsFinder;
+import core.testpath.BranchFlippingPathExplorer;
 import core.testpath.CoverageTracker;
 import core.testpath.PathFinder;
 import core.testpath.TraceReader;
@@ -29,12 +31,15 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ConcolicTesting {
     private static final ConcolicTesting INSTANCE = new ConcolicTesting();
@@ -75,12 +80,20 @@ public class ConcolicTesting {
     public TestResult generate(MethodDeclaration methodDeclaration,
                                CompilationUnit cu,
                                Coverage coverage) throws Exception {
+        return generate(methodDeclaration, cu, coverage, MethodPreconditions.none());
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               MethodPreconditions preconditions) throws Exception {
         return generate(
                 methodDeclaration,
                 cu,
                 coverage,
                 RandomTestInput.createConcolicSeedData(methodDeclaration),
-                new AllPathsFinder());
+                new AllPathsFinder(),
+                preconditions);
     }
 
     public TestResult generate(MethodDeclaration methodDeclaration,
@@ -115,6 +128,16 @@ public class ConcolicTesting {
                                Coverage coverage,
                                List<Map<String, Object>> seedInputs,
                                PathFinder pathFinder,
+                               MethodPreconditions preconditions) throws Exception {
+        return generate(methodDeclaration, cu, coverage, seedInputs, pathFinder,
+                Z3EncodingMode.BITVECTOR, AblationOptions.ALL_ENABLED, preconditions);
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               List<Map<String, Object>> seedInputs,
+                               PathFinder pathFinder,
                                Z3EncodingMode encodingMode) throws Exception {
         return generate(
                 methodDeclaration,
@@ -133,9 +156,31 @@ public class ConcolicTesting {
                                PathFinder pathFinder,
                                Z3EncodingMode encodingMode,
                                AblationOptions ablationOptions) throws Exception {
+        return generate(
+                methodDeclaration,
+                cu,
+                coverage,
+                seedInputs,
+                pathFinder,
+                encodingMode,
+                ablationOptions,
+                MethodPreconditions.none());
+    }
+
+    public TestResult generate(MethodDeclaration methodDeclaration,
+                               CompilationUnit cu,
+                               Coverage coverage,
+                               List<Map<String, Object>> seedInputs,
+                               PathFinder pathFinder,
+                               Z3EncodingMode encodingMode,
+                               AblationOptions ablationOptions,
+                               MethodPreconditions preconditions) throws Exception {
         if (seedInputs == null) {
             throw new IllegalArgumentException("seedInputs must not be null");
         }
+        MethodPreconditions methodPreconditions = preconditions == null
+                ? MethodPreconditions.none()
+                : preconditions;
         AblationOptions options = ablationOptions == null
                 ? AblationOptions.ALL_ENABLED
                 : ablationOptions;
@@ -164,11 +209,18 @@ public class ConcolicTesting {
                         RandomTestInput.minimumArrayLength(methodDeclaration, param.name()));
             }
         }
+        methodPreconditions.minimumArrayLengths().forEach((name, length) ->
+                minimumArrayLengths.merge(name, length, Math::max));
+        List<Map<String, Object>> runnableSeeds =
+                applyPreconditions(seedInputs, paramInfos, methodPreconditions);
 
         // --- 4. Seed runs ----------------------------------------------------
         List<TestData> allTestData = new ArrayList<>();
         TraceReader traceReader = new TraceReader(product.trackPath());
-        for (Map<String, Object> seedInput : seedInputs) {
+        BranchFlippingPathExplorer pathExplorer = new BranchFlippingPathExplorer();
+        Deque<List<ControlFlowGraph.Edge>> pathWorklist = new ArrayDeque<>();
+        Set<List<ControlFlowGraph.Edge>> queuedPaths = new HashSet<>();
+        for (Map<String, Object> seedInput : runnableSeeds) {
             try {
                 TestData seedResult = TestDriver.run(
                         Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
@@ -178,6 +230,7 @@ public class ConcolicTesting {
                 allTestData.add(seedResult);
                 // --- 5. Ingest traces from the seed run ---------------------
                 traceReader.applyTo(tracker);
+                enqueueFlippedPaths(pathExplorer, cfg, seedResult, pathWorklist, queuedPaths);
             } catch (Exception e) {
                 ConcolicRunDiagnostics.recordDriverFailure();
                 System.err.println(e.getMessage());
@@ -191,198 +244,81 @@ public class ConcolicTesting {
 
         SymbolicExecution symbolicExecution = new SymbolicExecution();
         Map<List<ControlFlowGraph.Edge>, SolverResult> solverCache = new HashMap<>();
+        List<SymbolicValue> preconditionConstraints =
+                methodPreconditions.symbolicConstraints();
 
         // --- 7. Concolic loop -----------------------------------------------
-        List<List<ControlFlowGraph.Edge>> uncoveredBatch =
-                pathFinder.findPathsForUncovered(cfg, tracker);
-        if (!uncoveredBatch.isEmpty()) {
-            int iteration = 0;
-            boolean exhaustedBatch = true;
-            for (List<ControlFlowGraph.Edge> path : uncoveredBatch) {
-                if (tracker.isComplete()) {
-                    break;
-                }
-                if (iteration >= MAX_CONCOLIC_ITERATIONS) {
-                    exhaustedBatch = false;
-                    break;
-                }
-                SolverResult result = executePath(
-                        symbolicExecution, solverCache, cfg, path,
-                        parameters, parameterTypes, encodingMode, options);
-
-                if (result instanceof SolverResult.Sat sat) {
-                    Map<String, Object> newInputs =
-                            extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
-
-                    try {
-                        TestData runResult = TestDriver.run(
-                                Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
-                                paramInfos,
-                                newInputs,
-                                Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-                        allTestData.add(runResult);
-                        // Ingest traces from this run
-                        traceReader.applyTo(tracker);
-                    } catch (TestDriver.DriverTimeoutException e) {
-                        ConcolicRunDiagnostics.recordDriverFailure();
-                        System.err.println(e.getMessage());
-                        exhaustedBatch = false;
-                        break;
-                    } catch (Exception e) {
-                        ConcolicRunDiagnostics.recordDriverFailure();
-                        System.err.println(e.getMessage());
-                    }
-                }
-                iteration++;
+        if (pathWorklist.isEmpty() && !tracker.isComplete()) {
+            enqueueUncoveredTargetPaths(pathExplorer, cfg, tracker, pathWorklist, queuedPaths);
+            if (pathWorklist.isEmpty()) {
+                enqueuePathFinderTargetPaths(pathFinder, cfg, tracker, pathWorklist, queuedPaths);
             }
-
-            if (exhaustedBatch && !tracker.isComplete()) {
-                for (int nodeId : new HashSet<>(tracker.getUncovered())) {
-                    tracker.markUnknown(nodeId, "batch-paths-exhausted-without-proof");
-                }
-            }
-        } else {
-            int iteration = 0;
-            while (!tracker.isComplete() && iteration < MAX_CONCOLIC_ITERATIONS) {
-                int uncoveredNodeId = tracker.getUncovered().iterator().next();
-                int pathTargetNodeId = tracker.pathTargetFor(uncoveredNodeId);
-                List<List<ControlFlowGraph.Edge>> paths =
-                        pathFinder.findPath(
-                                cfg,
-                                pathTargetNodeId,
-                                tracker.requiredExitFor(uncoveredNodeId),
-                                tracker);
-
-                boolean covered = false;
-                boolean driverTimedOut = false;
-                boolean solverTimedOut = false;
-                boolean sawSat = false;
-                boolean sawUnknown = false;
-                String unknownReason = null;
-                int solverResultCount = 0;
-                for (List<ControlFlowGraph.Edge> path : paths) {
-                    SolverResult result = executePath(
-                            symbolicExecution, solverCache, cfg, path,
-                            parameters, parameterTypes, encodingMode, options);
-                    solverResultCount++;
-
-                    if (isTimeout(result)) {
-                        solverTimedOut = true;
-                        sawUnknown = true;
-                        unknownReason = ((SolverResult.Unknown) result).reason();
-                        break;
-                    }
-
-                    if (result instanceof SolverResult.Unknown unknown) {
-                        sawUnknown = true;
-                        unknownReason = unknown.reason();
-                        continue;
-                    }
-
-                    if (result instanceof SolverResult.Sat sat) {
-                        sawSat = true;
-                        Map<String, Object> newInputs =
-                                extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
-
-                        try {
-                            TestData runResult = TestDriver.run(
-                                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
-                                    paramInfos,
-                                    newInputs,
-                                    Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-                            allTestData.add(runResult);
-                            // Ingest traces from this run
-                            traceReader.applyTo(tracker);
-                        } catch (TestDriver.DriverTimeoutException e) {
-                            ConcolicRunDiagnostics.recordDriverFailure();
-                            System.err.println(e.getMessage());
-                            driverTimedOut = true;
-                            break;
-                        } catch (Exception e) {
-                            ConcolicRunDiagnostics.recordDriverFailure();
-                            System.err.println(e.getMessage());
-                        }
-
-                        if (!tracker.isUncovered(uncoveredNodeId)) {
-                            covered = true;
-                            break; // target node now covered — move to next
-                        }
-                    }
-                }
-
-                if (!covered && !driverTimedOut && !solverTimedOut
-                        && tracker.isUncovered(uncoveredNodeId)) {
-                    List<List<ControlFlowGraph.Edge>> alternatives =
-                            pathFinder.findAlternativePaths(
-                                    cfg,
-                                    pathTargetNodeId,
-                                    tracker.requiredExitFor(uncoveredNodeId));
-                    for (List<ControlFlowGraph.Edge> path : alternatives) {
-                        SolverResult result = executePath(
-                                symbolicExecution, solverCache, cfg, path,
-                                parameters, parameterTypes, encodingMode, options);
-                        solverResultCount++;
-                        if (result instanceof SolverResult.Unknown unknown) {
-                            sawUnknown = true;
-                            unknownReason = unknown.reason();
-                            if (isTimeout(result)) {
-                                solverTimedOut = true;
-                                break;
-                            }
-                            continue;
-                        }
-                        if (!(result instanceof SolverResult.Sat sat)) continue;
-
-                        sawSat = true;
-                        Map<String, Object> newInputs =
-                                extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
-                        try {
-                            TestData runResult = TestDriver.run(
-                                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
-                                    paramInfos,
-                                    newInputs,
-                                    Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-                            allTestData.add(runResult);
-                            traceReader.applyTo(tracker);
-                        } catch (TestDriver.DriverTimeoutException e) {
-                            ConcolicRunDiagnostics.recordDriverFailure();
-                            System.err.println(e.getMessage());
-                            driverTimedOut = true;
-                            break;
-                        } catch (Exception e) {
-                            ConcolicRunDiagnostics.recordDriverFailure();
-                            System.err.println(e.getMessage());
-                        }
-                        if (!tracker.isUncovered(uncoveredNodeId)) {
-                            covered = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!covered && tracker.isUncovered(uncoveredNodeId)) {
-                    if (driverTimedOut) {
-                        tracker.markUnknown(uncoveredNodeId, "generated-driver-timeout");
-                    } else if (solverTimedOut || sawUnknown) {
-                        tracker.markUnknown(uncoveredNodeId,
-                                unknownReason == null ? "solver-unknown" : unknownReason);
-                    } else if (sawSat) {
-                        tracker.markUnknown(uncoveredNodeId,
-                                "satisfiable-model-did-not-cover-target");
-                    } else if (solverResultCount > 0) {
-                        tracker.markInfeasible(uncoveredNodeId,
-                                "all-candidate-paths-proved-unsatisfiable");
-                    } else {
-                        tracker.markUnknown(uncoveredNodeId, "no-candidate-path-produced");
-                    }
-                }
-
-                iteration++;
+            if (pathWorklist.isEmpty()) {
+                enqueuePath(pathExplorer.shortestEntryToExit(cfg), pathWorklist, queuedPaths);
             }
         }
 
+        int iteration = 0;
+        boolean stoppedByTimeout = false;
+        while (!tracker.isComplete() && iteration < MAX_CONCOLIC_ITERATIONS) {
+            if (pathWorklist.isEmpty()) {
+                enqueueUncoveredTargetPaths(pathExplorer, cfg, tracker, pathWorklist, queuedPaths);
+                if (pathWorklist.isEmpty()) {
+                    enqueuePathFinderTargetPaths(pathFinder, cfg, tracker, pathWorklist, queuedPaths);
+                }
+                if (pathWorklist.isEmpty()) {
+                    break;
+                }
+            }
+            List<ControlFlowGraph.Edge> path = pathWorklist.removeFirst();
+            SolverResult result = executePath(
+                    symbolicExecution, solverCache, cfg, path,
+                    parameters, parameterTypes, encodingMode, options,
+                    preconditionConstraints);
+
+            if (isTimeout(result)) {
+                stoppedByTimeout = true;
+                break;
+            }
+
+            if (result instanceof SolverResult.Sat sat) {
+                Map<String, Object> newInputs =
+                        extractInputsFromModel(sat.model(), paramInfos, minimumArrayLengths);
+                newInputs = methodPreconditions.apply(newInputs, paramInfos);
+
+                try {
+                    TestData runResult = TestDriver.run(
+                            Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                            paramInfos,
+                            newInputs,
+                            Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
+                    allTestData.add(runResult);
+                    traceReader.applyTo(tracker);
+                    enqueueFlippedPaths(pathExplorer, cfg, runResult, pathWorklist, queuedPaths);
+                } catch (TestDriver.DriverTimeoutException e) {
+                    ConcolicRunDiagnostics.recordDriverFailure();
+                    System.err.println(e.getMessage());
+                    stoppedByTimeout = true;
+                    break;
+                } catch (Exception e) {
+                    ConcolicRunDiagnostics.recordDriverFailure();
+                    System.err.println(e.getMessage());
+                }
+            }
+
+            iteration++;
+        }
+
+        String unfinishedReason;
+        if (stoppedByTimeout) {
+            unfinishedReason = "generated-run-timeout";
+        } else if (iteration >= MAX_CONCOLIC_ITERATIONS) {
+            unfinishedReason = "generation-iteration-limit";
+        } else {
+            unfinishedReason = "branch-flip-worklist-exhausted";
+        }
         for (int nodeId : new HashSet<>(tracker.getUncovered())) {
-            tracker.markUnknown(nodeId, "generation-iteration-limit");
+            tracker.markUnknown(nodeId, unfinishedReason);
         }
 
         // --- 8. Assemble result ---------------------------------------------
@@ -424,17 +360,104 @@ public class ConcolicTesting {
             List<ASTNode> parameters,
             Map<String, SymType> parameterTypes,
             Z3EncodingMode encodingMode,
-            AblationOptions ablationOptions) {
+            AblationOptions ablationOptions,
+            List<SymbolicValue> preconditionConstraints) {
         List<ControlFlowGraph.Edge> cacheKey = List.copyOf(path);
         return solverCache.computeIfAbsent(cacheKey, ignored ->
                 symbolicExecution.executePath(
-                        cfg, cacheKey, parameters, parameterTypes, encodingMode, ablationOptions));
+                        cfg, cacheKey, parameters, parameterTypes, encodingMode,
+                        ablationOptions, preconditionConstraints));
+    }
+
+    private static void enqueueFlippedPaths(
+            BranchFlippingPathExplorer pathExplorer,
+            ControlFlowGraph cfg,
+            TestData testData,
+            Deque<List<ControlFlowGraph.Edge>> worklist,
+            Set<List<ControlFlowGraph.Edge>> queuedPaths) {
+        List<BranchFlippingPathExplorer.BranchDecision> decisions =
+                testData.branchTrace().stream()
+                        .map(step -> new BranchFlippingPathExplorer.BranchDecision(
+                                step.nodeId(), step.edgeKind()))
+                        .toList();
+        for (List<ControlFlowGraph.Edge> path : pathExplorer.flippedPaths(cfg, decisions)) {
+            enqueuePath(path, worklist, queuedPaths);
+        }
+    }
+
+    private static void enqueueUncoveredTargetPaths(
+            BranchFlippingPathExplorer pathExplorer,
+            ControlFlowGraph cfg,
+            CoverageTracker tracker,
+            Deque<List<ControlFlowGraph.Edge>> worklist,
+            Set<List<ControlFlowGraph.Edge>> queuedPaths) {
+        for (int uncoveredNodeId : new HashSet<>(tracker.getUncovered())) {
+            enqueuePath(
+                    pathExplorer.shortestPathThrough(
+                            cfg,
+                            tracker.pathTargetFor(uncoveredNodeId),
+                            tracker.requiredExitFor(uncoveredNodeId)),
+                    worklist,
+                    queuedPaths);
+        }
+    }
+
+    private static void enqueuePathFinderTargetPaths(
+            PathFinder pathFinder,
+            ControlFlowGraph cfg,
+            CoverageTracker tracker,
+            Deque<List<ControlFlowGraph.Edge>> worklist,
+            Set<List<ControlFlowGraph.Edge>> queuedPaths) {
+        for (int uncoveredNodeId : new HashSet<>(tracker.getUncovered())) {
+            int pathTargetNodeId = tracker.pathTargetFor(uncoveredNodeId);
+            core.cfg.CfgEdgeKind requiredExit = tracker.requiredExitFor(uncoveredNodeId);
+            boolean added = false;
+            for (List<ControlFlowGraph.Edge> path :
+                    pathFinder.findPath(cfg, pathTargetNodeId, requiredExit, tracker)) {
+                added |= enqueuePath(path, worklist, queuedPaths);
+            }
+            if (!added) {
+                for (List<ControlFlowGraph.Edge> path :
+                        pathFinder.findAlternativePaths(cfg, pathTargetNodeId, requiredExit)) {
+                    added |= enqueuePath(path, worklist, queuedPaths);
+                }
+            }
+            if (added) {
+                return;
+            }
+        }
+    }
+
+    private static boolean enqueuePath(
+            List<ControlFlowGraph.Edge> path,
+            Deque<List<ControlFlowGraph.Edge>> worklist,
+            Set<List<ControlFlowGraph.Edge>> queuedPaths) {
+        if (path == null || path.isEmpty()) {
+            return false;
+        }
+        List<ControlFlowGraph.Edge> immutablePath = List.copyOf(path);
+        if (queuedPaths.add(immutablePath)) {
+            worklist.addLast(immutablePath);
+            return true;
+        }
+        return false;
     }
 
     private static boolean isTimeout(SolverResult result) {
         return result instanceof SolverResult.Unknown unknown
                 && unknown.reason() != null
                 && unknown.reason().toLowerCase(java.util.Locale.ROOT).contains("timeout");
+    }
+
+    private static List<Map<String, Object>> applyPreconditions(
+            List<Map<String, Object>> seedInputs,
+            List<TestDriver.ParamInfo> paramInfos,
+            MethodPreconditions preconditions) {
+        List<Map<String, Object>> result = new ArrayList<>(seedInputs.size());
+        for (Map<String, Object> seedInput : seedInputs) {
+            result.add(preconditions.apply(seedInput, paramInfos));
+        }
+        return List.copyOf(result);
     }
 
     /**

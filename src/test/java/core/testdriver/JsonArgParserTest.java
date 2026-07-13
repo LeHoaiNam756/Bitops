@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 
 public class JsonArgParserTest {
 
@@ -72,5 +73,11 @@ public class JsonArgParserTest {
         assertArrayEquals(value[0], actual[0]);
         assertArrayEquals(value[1], actual[1]);
         assertArrayEquals(value[2], actual[2]);
+    }
+
+    @Test
+    public void convertsNullReferenceInputsToNull() throws Exception {
+        assertNull(JsonArgParser.convert("label", "String", MAPPER.readTree("null")));
+        assertNull(JsonArgParser.convert("values", "int[]", MAPPER.readTree("null")));
     }
 }

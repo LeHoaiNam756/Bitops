@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
+import java.util.List;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -34,12 +35,22 @@ public class TraceRecorderTest {
             TraceRecorder.mark(7, TraceKind.NODE);
             TraceRecorder.mark(9, TraceKind.COND_T);
             TraceRecorder.mark(9, TraceKind.COND_T);
+            TraceRecorder.mark(11, TraceKind.COND_F);
 
-            assertEquals(Set.of(7, 9), TraceRecorder.coveredNodeIdsSnapshot());
+            assertEquals(Set.of(7, 9, 11), TraceRecorder.coveredNodeIdsSnapshot());
+            assertEquals(Set.of(7), TraceRecorder.coveredStatementNodeIdsSnapshot());
+            assertEquals(Set.of(9, 11), TraceRecorder.coveredBranchOutcomeIdsSnapshot());
+            assertEquals(List.of(
+                    new TraceRecorder.OrderedTraceEvent(7, TraceKind.NODE),
+                    new TraceRecorder.OrderedTraceEvent(9, TraceKind.COND_T),
+                    new TraceRecorder.OrderedTraceEvent(9, TraceKind.COND_T),
+                    new TraceRecorder.OrderedTraceEvent(11, TraceKind.COND_F)
+            ), TraceRecorder.orderedEventsSnapshot());
         } finally {
             TraceRecorder.endSession();
         }
 
         assertTrue(TraceRecorder.coveredNodeIdsSnapshot().isEmpty());
+        assertTrue(TraceRecorder.orderedEventsSnapshot().isEmpty());
     }
 }

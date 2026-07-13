@@ -5,6 +5,7 @@ import core.cfg.CfgNodeKind;
 import core.cfg.ControlFlowGraph;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.Test;
 
 import java.util.List;
@@ -132,8 +133,26 @@ public class BranchCoverageTrackerTest {
         assertTrue(new BranchCoverageTracker(cfg).getUncovered().isEmpty());
     }
 
+    @Test
+    public void ignoresBooleanLiteralBranchNodes() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        cfg.addNode(CfgNodeKind.LOOP, booleanLiteral(), "true");
+
+        assertTrue(new BranchCoverageTracker(cfg).getUncovered().isEmpty());
+    }
+
     @SuppressWarnings("deprecation")
     private static Expression condition() {
+        AST ast = AST.newAST(AST.JLS8);
+        InfixExpression condition = ast.newInfixExpression();
+        condition.setLeftOperand(ast.newSimpleName("x"));
+        condition.setOperator(InfixExpression.Operator.GREATER);
+        condition.setRightOperand(ast.newNumberLiteral("0"));
+        return condition;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Expression booleanLiteral() {
         return AST.newAST(AST.JLS8).newBooleanLiteral(true);
     }
 }

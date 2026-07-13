@@ -2,6 +2,7 @@ package core.testdriver;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import core.cfg.CfgEdgeKind;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -73,6 +74,7 @@ public final class TestData {
      * {@code null} until the driver result is loaded via {@link #fromJson}.
      */
     private final Set<Integer> coveredNodeIds;
+    private final List<BranchStep> branchTrace;
 
     // -----------------------------------------------------------------------
     // Construction
@@ -86,17 +88,19 @@ public final class TestData {
      * @param input parameter-name → argument value (defensive copy is taken)
      */
     public TestData(Map<String, Object> input) {
-        this(Map.copyOf(Objects.requireNonNull(input, "input")), null, false, null);
+        this(Map.copyOf(Objects.requireNonNull(input, "input")), null, false, null, List.of());
     }
 
     private TestData(Map<String, Object> input,
                      String output,
                      boolean outputSet,
-                     Set<Integer> coveredNodeIds) {
+                     Set<Integer> coveredNodeIds,
+                     List<BranchStep> branchTrace) {
         this.input          = input;
         this.output         = output;
         this.outputSet      = outputSet;
         this.coveredNodeIds = coveredNodeIds;
+        this.branchTrace    = branchTrace == null ? List.of() : List.copyOf(branchTrace);
     }
 
     // -----------------------------------------------------------------------
@@ -155,7 +159,22 @@ public final class TestData {
             }
         }
 
-        return new TestData(Map.copyOf(input), output, true, Set.copyOf(ids));
+        // ── branchTrace ─────────────────────────────────────────────────────
+        JsonNode branchTraceNode = root.path("branchTrace");
+        List<BranchStep> branchTrace = new java.util.ArrayList<>();
+        if (branchTraceNode.isArray()) {
+            for (JsonNode item : branchTraceNode) {
+                JsonNode nodeId = item.get("nodeId");
+                JsonNode edgeKind = item.get("edgeKind");
+                if (nodeId != null && edgeKind != null) {
+                    branchTrace.add(new BranchStep(
+                            nodeId.intValue(),
+                            CfgEdgeKind.valueOf(edgeKind.asText())));
+                }
+            }
+        }
+
+        return new TestData(Map.copyOf(input), output, true, Set.copyOf(ids), branchTrace);
     }
 
     // -----------------------------------------------------------------------
@@ -201,6 +220,10 @@ public final class TestData {
         return coveredNodeIds != null;
     }
 
+    public List<BranchStep> branchTrace() {
+        return branchTrace;
+    }
+
     // -----------------------------------------------------------------------
     // Object overrides
     // -----------------------------------------------------------------------
@@ -211,6 +234,9 @@ public final class TestData {
                 + "input=" + input
                 + ", output=" + (outputSet ? output : "<not set>")
                 + ", coveredNodeIds=" + (coveredNodeIds != null ? coveredNodeIds : "<not set>")
+                + ", branchTrace=" + branchTrace
                 + '}';
     }
+
+    public record BranchStep(int nodeId, CfgEdgeKind edgeKind) {}
 }

@@ -129,6 +129,9 @@ public final class TraceReader {
         // All three kinds map to markCovered — the ID already encodes the kind
         // (true/false branch IDs were assigned by InstrumentationPlanner as
         // nodeId*2 and nodeId*2+1 respectively).
+        if (event.kind() != TraceKind.NODE && !(tracker instanceof BranchCoverageTracker)) {
+            return;
+        }
         tracker.markCovered(event.nodeId());
     }
 

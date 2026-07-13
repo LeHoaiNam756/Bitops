@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.junit.After;
 import org.junit.Test;
 
+import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestDriverEmitterTest {
 
@@ -53,8 +55,12 @@ public class TestDriverEmitterTest {
         assertTrue("driver should persist original input", emitted.contains("resultJson.set(\"input\", root)"));
         assertTrue("driver should persist method output", emitted.contains("resultJson.put(\"output\", resultToString(result))"));
         assertTrue("driver should persist coverage snapshot", emitted.contains("resultJson.set(\"coveredNodeIds\""));
+        assertTrue("driver should persist observed branch trace", emitted.contains("resultJson.set(\"branchTrace\""));
+        assertTrue("driver should import TraceKind for branch trace serialization", emitted.contains("import core.instrument.TraceKind;"));
         assertTrue("driver should snapshot in-memory coverage before TraceRecorder.endSession clears it",
-                emitted.contains("TraceRecorder.coveredNodeIdsSnapshot()"));
+                emitted.contains("TraceRecorder.coveredStatementNodeIdsSnapshot()"));
+        assertTrue("driver should snapshot ordered trace events before TraceRecorder.endSession clears them",
+                emitted.contains("TraceRecorder.orderedEventsSnapshot()"));
         assertFalse("driver should not read coverage from the trace file before it is flushed",
                 emitted.contains("Files.lines(traceFile"));
         assertTrue("driver should write the output file", emitted.contains("writeValue(new File(outputPath), resultJson)"));
@@ -285,6 +291,44 @@ public class TestDriverEmitterTest {
 
         assertEquals("A", data.output());
         assertArrayEquals(table, (char[]) data.input().get("table"));
+    }
+
+    @Test
+    public void runTimesOutHangingDriverInvocation() throws Exception {
+        String source = """
+                package sample;
+
+                public class HangingSubject {
+                    public int hang(int x) {
+                        while (true) {
+                        }
+                    }
+                }
+                """;
+
+        MethodDeclaration method = compileAndGenerateDriver(
+                "HangingSubject",
+                source,
+                candidate -> "hang".equals(candidate.getName().getIdentifier())
+        );
+
+        long startNanos = System.nanoTime();
+        try {
+            TestDriver.run(
+                    Path.of(FilePath.PATH_TO_MAVEN_TARGET_CLASSES),
+                    TestDriver.extractParams(method),
+                    Map.of("x", 1),
+                    Files.createTempDirectory("ct4j-driver-run"),
+                    Duration.ofMillis(500)
+            );
+            fail("hanging driver invocation should time out");
+        } catch (TestDriver.DriverTimeoutException e) {
+            long elapsedMillis = Duration.ofNanos(System.nanoTime() - startNanos).toMillis();
+            assertEquals(Duration.ofMillis(500), e.timeout());
+            assertEquals(1, e.inputs().get("x"));
+            assertTrue("timeout should not wait for the default multi-second limit",
+                    elapsedMillis < 3_000L);
+        }
     }
 
     private static CompilationUnit parse(String source) {

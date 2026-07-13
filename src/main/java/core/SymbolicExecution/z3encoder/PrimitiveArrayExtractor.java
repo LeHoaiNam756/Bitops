@@ -23,6 +23,7 @@ import java.util.Optional;
  * so element evaluation still uses {@code ctx.mkInt(i)} as the index expression.
  * Scalar (length) bindings now arrive as {@link BitVecNum} values because all
  * Java integer variables are encoded as BitVec.
+ * Integral element widths 8, 16, 32 and 64 are supported.
  */
 final class PrimitiveArrayExtractor {
 
@@ -52,7 +53,7 @@ final class PrimitiveArrayExtractor {
             array = sorts.ctx().mkConst(name, decl.getRange());
         }
 
-        if (range.equals(sorts.bv32Sort()) || range.equals(sorts.bv64Sort()))
+        if (isBitVectorArrayRange(range))
             return extractBVArray(model, array, length.get(), range);
         // IntSort element range: array was declared with IntSort elements instead of
         // bv32Sort (happens when the varSorts builder uses ctx.getIntSort() for int[]).
@@ -89,11 +90,20 @@ final class PrimitiveArrayExtractor {
     // Element extraction per sort
     // =========================================================================
 
-    /** Handles both bv32 (→ int[]) and bv64 (→ long[]) element sorts. */
+    private boolean isBitVectorArrayRange(Sort range) {
+        return range.equals(sorts.bv8Sort())
+                || range.equals(sorts.bv16Sort())
+                || range.equals(sorts.bv32Sort())
+                || range.equals(sorts.bv64Sort());
+    }
+
+    /** Handles bv8/bv16 (to long[]), bv32 (to int[]) and bv64 (to long[]) element sorts. */
     private Optional<SymLiteral> extractBVArray(Model model, Expr<?> array,
                                                  int length, Sort range) {
-        boolean is64 = range.equals(sorts.bv64Sort());
-        if (is64) {
+        boolean useLongArray = range.equals(sorts.bv8Sort())
+                || range.equals(sorts.bv16Sort())
+                || range.equals(sorts.bv64Sort());
+        if (useLongArray) {
             long[] values = new long[length];
             for (int i = 0; i < length; i++) {
                 Expr<?> val = evalElement(model, array, i);

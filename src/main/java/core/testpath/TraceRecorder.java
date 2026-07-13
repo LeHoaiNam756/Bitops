@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -64,6 +65,7 @@ public final class TraceRecorder {
     private static volatile Path   traceFile;
 
     private static final ConcurrentHashMap<TraceEvent, AtomicInteger> frequencyMap = new ConcurrentHashMap<>();
+    private static final ConcurrentLinkedQueue<TraceEvent> orderedEvents = new ConcurrentLinkedQueue<>();
 
     // -----------------------------------------------------------------------
     // Public API — called by instrumented code + orchestrator
@@ -82,6 +84,7 @@ public final class TraceRecorder {
      */
     public static boolean mark(int nodeId, TraceKind kind) {
         TraceEvent event = new TraceEvent(nodeId, kind);
+        orderedEvents.add(event);
         frequencyMap.computeIfAbsent(event, k -> new AtomicInteger(0))
                 .incrementAndGet();
         return kind == TraceKind.COND_T;
@@ -98,6 +101,27 @@ public final class TraceRecorder {
                 .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
+    public static Set<Integer> coveredStatementNodeIdsSnapshot() {
+        return frequencyMap.keySet().stream()
+                .filter(event -> event.kind() == TraceKind.NODE)
+                .map(TraceEvent::nodeId)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+    }
+
+    public static Set<Integer> coveredBranchOutcomeIdsSnapshot() {
+        return frequencyMap.keySet().stream()
+                .filter(event -> event.kind() == TraceKind.COND_T
+                        || event.kind() == TraceKind.COND_F)
+                .map(TraceEvent::nodeId)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+    }
+
+    public static List<OrderedTraceEvent> orderedEventsSnapshot() {
+        return orderedEvents.stream()
+                .map(event -> new OrderedTraceEvent(event.nodeId(), event.kind()))
+                .toList();
+    }
+
 
     /**
      * Begin a new trace session for {@code methodSig}.
@@ -112,6 +136,7 @@ public final class TraceRecorder {
         // Clean up any lingering previous session
         endSessionQuietly();
         frequencyMap.clear();
+        orderedEvents.clear();
 
         Path root = clonedProjectRoot.isAbsolute()
                 ? clonedProjectRoot
@@ -157,6 +182,7 @@ public final class TraceRecorder {
         }
 
         frequencyMap.clear();
+        orderedEvents.clear();
         traceFile = null;
         sessionId = null;
 
@@ -187,6 +213,8 @@ public final class TraceRecorder {
                     + "}";
         }
     }
+
+    public record OrderedTraceEvent(int nodeId, TraceKind kind) {}
 
     private TraceRecorder() {}   // non-instantiable
 }
