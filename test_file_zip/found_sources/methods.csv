@@ -29,7 +29,7 @@ RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaring
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"branchyUnsignedBinarySearch(char[],int,int,char)",>>>
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"hybridUnsignedBinarySearch(char[],int,int,char)",>>>
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"flipBitmapRange(long[],int,int)",^;~;<<;>>>
-RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"cardinalityInBitmapRange(long[],int,int)",&;~;<<;>>>
+RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"cardinalityInBitmapRnnge(long[],int,int)",&;~;<<;>>>
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"resetBitmapRange(long[],int,int)",&;~;<<;>>>
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"intersectArrayIntoBitmap(long[],char[],int)",>>>;&;|;<<
 RoaringBitmap,https://github.com/RoaringBitmap/RoaringBitmap/blob/master/roaringbitmap/src/main/java/org/roaringbitmap/Util.java,Util.java,"select(long,int)",>>>;&

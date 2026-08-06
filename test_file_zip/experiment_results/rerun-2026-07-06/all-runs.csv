@@ -1499,3 +1499,4 @@ MCDC,"Util.subtractWithOverflowDefault(long;long;long)",7,SUCCESS_WITH_DRIVER_ER
 MCDC,"Util.subtractWithOverflowDefault(long;long;long)",8,TIMEOUT,,,,,,,,"timeout"
 MCDC,"Util.subtractWithOverflowDefault(long;long;long)",9,TIMEOUT,,,,,,,,"timeout"
 MCDC,"Util.subtractWithOverflowDefault(long;long;long)",10,SUCCESS_WITH_DRIVER_ERRORS,0.0000,9520,71.3364,4,21,2,5,""
+STATEMENT,AdditionalBitOps.roaringSelect(long;int),1,TIMEOUT,,,,,,,,timeout
