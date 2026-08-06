@@ -43,7 +43,6 @@ import java.util.Set;
 
 public class ConcolicTesting {
     private static final ConcolicTesting INSTANCE = new ConcolicTesting();
-    private static final int MAX_CONCOLIC_ITERATIONS = 100;
 
     private record MethodCoveragePair(
             MethodDeclaration methodDeclaration,
@@ -187,6 +186,9 @@ public class ConcolicTesting {
         long startNanos = System.nanoTime();
         Z3StatisticsRecorder.beginRun();
         MemoryUsageMonitor.Snapshot initialMemoryUsage = MemoryUsageMonitor.capture();
+        boolean retainTestData = ConcolicLimits.retainTestData();
+        boolean writeConcolicJson = ConcolicLimits.writeConcolicJson();
+        boolean cacheSolverResults = ConcolicLimits.cacheSolverResults();
 
         // --- 1. CFG ---------------------------------------------------------
         ControlFlowGraph cfg = getCfg(methodDeclaration, coverage);
@@ -227,7 +229,9 @@ public class ConcolicTesting {
                         paramInfos,
                         seedInput,
                         Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-                allTestData.add(seedResult);
+                if (retainTestData) {
+                    allTestData.add(seedResult);
+                }
                 // --- 5. Ingest traces from the seed run ---------------------
                 traceReader.applyTo(tracker);
                 enqueueFlippedPaths(pathExplorer, cfg, seedResult, pathWorklist, queuedPaths);
@@ -243,7 +247,8 @@ public class ConcolicTesting {
         List<ASTNode> parameters = new ArrayList<>(methodDeclaration.parameters());
 
         SymbolicExecution symbolicExecution = new SymbolicExecution();
-        Map<List<ControlFlowGraph.Edge>, SolverResult> solverCache = new HashMap<>();
+        Map<List<ControlFlowGraph.Edge>, SolverResult> solverCache =
+                cacheSolverResults ? new HashMap<>() : null;
         List<SymbolicValue> preconditionConstraints =
                 methodPreconditions.symbolicConstraints();
 
@@ -258,9 +263,14 @@ public class ConcolicTesting {
             }
         }
 
+        int maxConcolicIterations = ConcolicLimits.maxConcolicIterations();
+        int maxNoProgressIterations = ConcolicLimits.maxNoProgressIterations();
         int iteration = 0;
+        int noProgressIterations = 0;
         boolean stoppedByTimeout = false;
-        while (!tracker.isComplete() && iteration < MAX_CONCOLIC_ITERATIONS) {
+        boolean stoppedByNoProgress = false;
+        while (!tracker.isComplete() && iteration < maxConcolicIterations) {
+            int coveredBefore = tracker.getCovered().size();
             if (pathWorklist.isEmpty()) {
                 enqueueUncoveredTargetPaths(pathExplorer, cfg, tracker, pathWorklist, queuedPaths);
                 if (pathWorklist.isEmpty()) {
@@ -292,7 +302,9 @@ public class ConcolicTesting {
                             paramInfos,
                             newInputs,
                             Path.of(FilePath.PATH_TO_TOOL_OUTPUT));
-                    allTestData.add(runResult);
+                    if (retainTestData) {
+                        allTestData.add(runResult);
+                    }
                     traceReader.applyTo(tracker);
                     enqueueFlippedPaths(pathExplorer, cfg, runResult, pathWorklist, queuedPaths);
                 } catch (TestDriver.DriverTimeoutException e) {
@@ -306,13 +318,26 @@ public class ConcolicTesting {
                 }
             }
 
+            if (tracker.getCovered().size() > coveredBefore) {
+                noProgressIterations = 0;
+            } else {
+                noProgressIterations++;
+                if (maxNoProgressIterations > 0
+                        && noProgressIterations >= maxNoProgressIterations) {
+                    stoppedByNoProgress = true;
+                    break;
+                }
+            }
+
             iteration++;
         }
 
         String unfinishedReason;
         if (stoppedByTimeout) {
             unfinishedReason = "generated-run-timeout";
-        } else if (iteration >= MAX_CONCOLIC_ITERATIONS) {
+        } else if (stoppedByNoProgress) {
+            unfinishedReason = "coverage-stalled";
+        } else if (iteration >= maxConcolicIterations) {
             unfinishedReason = "generation-iteration-limit";
         } else {
             unfinishedReason = "branch-flip-worklist-exhausted";
@@ -328,7 +353,9 @@ public class ConcolicTesting {
                 tracker,
                 MemoryUsageMonitor.allocatedBytesSince(initialMemoryUsage),
                 elapsedMillis);
-        ConcolicResultWriter.write(methodDeclaration, result, coverage, Z3StatisticsRecorder.snapshot());
+        if (writeConcolicJson) {
+            ConcolicResultWriter.write(methodDeclaration, result, coverage, Z3StatisticsRecorder.snapshot());
+        }
         return result;
     }
 
@@ -363,6 +390,11 @@ public class ConcolicTesting {
             AblationOptions ablationOptions,
             List<SymbolicValue> preconditionConstraints) {
         List<ControlFlowGraph.Edge> cacheKey = List.copyOf(path);
+        if (solverCache == null) {
+            return symbolicExecution.executePath(
+                    cfg, cacheKey, parameters, parameterTypes, encodingMode,
+                    ablationOptions, preconditionConstraints);
+        }
         return solverCache.computeIfAbsent(cacheKey, ignored ->
                 symbolicExecution.executePath(
                         cfg, cacheKey, parameters, parameterTypes, encodingMode,
@@ -393,7 +425,7 @@ public class ConcolicTesting {
             Set<List<ControlFlowGraph.Edge>> queuedPaths) {
         for (int uncoveredNodeId : new HashSet<>(tracker.getUncovered())) {
             enqueuePath(
-                    pathExplorer.shortestPathThrough(
+                    pathExplorer.shortestPrefixThrough(
                             cfg,
                             tracker.pathTargetFor(uncoveredNodeId),
                             tracker.requiredExitFor(uncoveredNodeId)),

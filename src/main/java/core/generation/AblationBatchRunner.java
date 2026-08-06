@@ -7,6 +7,7 @@ import core.SymbolicExecution.z3encoder.Z3StatisticsRecorder;
 import core.cfg.Coverage;
 import core.testdriver.TestResult;
 import core.testpath.AllPathsFinder;
+import core.utils.ConcolicLimits;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -42,6 +43,7 @@ public final class AblationBatchRunner {
     private AblationBatchRunner() {}
 
     public static void main(String[] args) throws Exception {
+        configureLeanExperimentDefaults();
         String zipPathStr = System.getProperty("zipPath", "d:\\CT4J\\emLoc.zip");
         String zipPathsStr = System.getProperty("zipPaths", zipPathStr);
         String coverageStr = System.getProperty("coverage", "STATEMENT").toUpperCase(Locale.ROOT);
@@ -141,14 +143,7 @@ public final class AblationBatchRunner {
                     Z3EncodingMode.BITVECTOR,
                     options);
 
-            long variables = 0;
-            long expressions = 0;
-            long samples = 0;
-            for (Map<String, Object> stats : Z3StatisticsRecorder.snapshot()) {
-                variables += number(stats.get("variableCount"));
-                expressions += number(stats.get("expressionCount"));
-                samples++;
-            }
+            Z3StatisticsRecorder.Summary z3Summary = Z3StatisticsRecorder.summary();
             double percent = "feasible".equals(metric)
                     ? result.fullCoverage().feasibleCoveragePercent()
                     : result.fullCoverage().rawCoveragePercent();
@@ -156,7 +151,10 @@ public final class AblationBatchRunner {
             String status = driverFailures > 0 ? "SUCCESS_WITH_DRIVER_ERRORS" : "SUCCESS";
             return new RunMetrics(status, percent, result.executionTimeMillis(),
                     result.memoryUsageBytes() / (1024.0 * 1024.0),
-                    variables, expressions, samples, driverFailures, "");
+                    z3Summary.variableCount(),
+                    z3Summary.expressionCount(),
+                    z3Summary.sampleCount(),
+                    driverFailures, "");
         });
         executor.shutdown();
 
@@ -198,10 +196,6 @@ public final class AblationBatchRunner {
 
     private static RunMetrics failed(String status, String error) {
         return new RunMetrics(status, 0.0, 0L, 0.0, 0L, 0L, 0L, 0, error);
-    }
-
-    private static long number(Object value) {
-        return value instanceof Number n ? n.longValue() : 0L;
     }
 
     private static void putMetrics(Map<String, String> row, AblationPart part, RunMetrics metrics) {
@@ -279,5 +273,18 @@ public final class AblationBatchRunner {
             return "unknown";
         }
         return message.replace('\n', ' ').replace('\r', ' ');
+    }
+
+    private static void configureLeanExperimentDefaults() {
+        setDefault(ConcolicLimits.RETAIN_TEST_DATA_PROPERTY, "false");
+        setDefault(ConcolicLimits.WRITE_CONCOLIC_JSON_PROPERTY, "false");
+        setDefault(ConcolicLimits.RETAIN_Z3_STATISTICS_PROPERTY, "false");
+        setDefault(ConcolicLimits.CACHE_SOLVER_RESULTS_PROPERTY, "false");
+    }
+
+    private static void setDefault(String property, String value) {
+        if (System.getProperty(property) == null) {
+            System.setProperty(property, value);
+        }
     }
 }

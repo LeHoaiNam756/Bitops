@@ -1,10 +1,8 @@
 package core.SymbolicExecution.dispatch;
 
-import core.SymbolicExecution.model.SymUnaryOp;
-import core.SymbolicExecution.model.SymbolicState;
-import core.SymbolicExecution.model.SymbolicValue;
+import core.SymbolicExecution.model.*;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 
 import java.util.Map;
@@ -21,8 +19,29 @@ public class PrefixExpressionHandler implements AstHandler {
         PrefixExpression prefixExpression = (PrefixExpression) node;
         SymbolicValue operand = dispatcher.eval(prefixExpression.getOperand(), state);
         SymUnaryOp.Op op = mapOp(prefixExpression.getOperator());
+        if (op == SymUnaryOp.Op.INC || op == SymUnaryOp.Op.DEC) {
+            return evalMutatingPrefix(prefixExpression, operand, op, state);
+        }
         return new SymUnaryOp(op, operand);
 
+    }
+
+    private SymbolicValue evalMutatingPrefix(
+            PrefixExpression expression,
+            SymbolicValue operand,
+            SymUnaryOp.Op op,
+            SymbolicState state) {
+        if (!(expression.getOperand() instanceof Name name)) {
+            return new SymUnaryOp(op, operand);
+        }
+        String baseName = name.getFullyQualifiedName();
+        SymbolicValue old = state.getMemoryModel().read(baseName).orElse(operand);
+        SymBinaryOp.Op binaryOp = op == SymUnaryOp.Op.INC
+                ? SymBinaryOp.Op.ADD
+                : SymBinaryOp.Op.SUB;
+        SymbolicValue updated = new SymBinaryOp(old, binaryOp, SymLiteral.of(1));
+        state.getMemoryModel().write(baseName, updated);
+        return updated;
     }
 
     private static final Map<PrefixExpression.Operator, SymUnaryOp.Op> OP_MAP =

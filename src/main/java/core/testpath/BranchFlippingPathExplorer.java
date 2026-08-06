@@ -93,6 +93,31 @@ public final class BranchFlippingPathExplorer {
         return List.copyOf(result);
     }
 
+    public List<ControlFlowGraph.Edge> shortestPrefixThrough(
+            ControlFlowGraph cfg,
+            int targetNodeId,
+            CfgEdgeKind requiredExit) {
+        int entry = findNodeByKind(cfg, CfgNodeKind.ENTRY);
+        if (entry < 0 || cfg.getNode(targetNodeId) == null) {
+            return List.of();
+        }
+
+        List<ControlFlowGraph.Edge> result = new ArrayList<>();
+        if (!appendShortestPath(cfg, entry, targetNodeId, result)) {
+            return List.of();
+        }
+
+        if (requiredExit != null) {
+            ControlFlowGraph.Edge requiredEdge =
+                    outgoingEdge(cfg, targetNodeId, requiredExit);
+            if (requiredEdge == null) {
+                return List.of();
+            }
+            result.add(requiredEdge);
+        }
+        return List.copyOf(result);
+    }
+
     private List<ControlFlowGraph.Edge> pathWithFlippedBranch(
             ControlFlowGraph cfg,
             int entry,
@@ -126,13 +151,6 @@ public final class BranchFlippingPathExplorer {
             return null;
         }
         result.add(flippedEdge);
-        current = flippedEdge.getTo();
-
-        List<ControlFlowGraph.Edge> suffix = shortestPath(cfg, current, exit);
-        if (suffix == null) {
-            return null;
-        }
-        result.addAll(suffix);
         return List.copyOf(result);
     }
 

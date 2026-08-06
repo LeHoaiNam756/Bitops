@@ -88,6 +88,7 @@ public final class RandomTestInput {
                         minimumArrayLength(methodDeclaration, name));
             }
         }
+        addByteArrayBitPatternSeeds(methodDeclaration, randomSeed, seeds);
         if (traversalLength <= 0 || intParameters.size() != 2) {
             return List.copyOf(seeds);
         }
@@ -129,6 +130,70 @@ public final class RandomTestInput {
         partialTraversal.put(upperParameter, inferredTraversalLength);
         seeds.add(partialTraversal);
         return List.copyOf(seeds);
+    }
+
+    private static void addByteArrayBitPatternSeeds(
+            MethodDeclaration methodDeclaration,
+            Map<String, Object> baseSeed,
+            List<Map<String, Object>> seeds) {
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> parameters = methodDeclaration.parameters();
+        for (SingleVariableDeclaration parameter : parameters) {
+            if (!isOneDimensionalPrimitiveArray(parameter, PrimitiveType.BYTE)) {
+                continue;
+            }
+            String name = parameter.getName().getIdentifier();
+            int length = Math.max(1, minimumArrayLength(methodDeclaration, name));
+            addBytePatternSeed(seeds, baseSeed, name, length, (byte) 0x00);
+            addBytePatternSeed(seeds, baseSeed, name, length, (byte) 0x01);
+            addBytePatternSeed(seeds, baseSeed, name, length, (byte) 0x03);
+            addBytePatternSeed(seeds, baseSeed, name, length, (byte) 0x7f);
+            addBytePatternSeed(seeds, baseSeed, name, length, (byte) 0xff);
+            addAlternatingBytePatternSeed(seeds, baseSeed, name, length);
+        }
+    }
+
+    private static boolean isOneDimensionalPrimitiveArray(
+            SingleVariableDeclaration parameter,
+            PrimitiveType.Code expectedElementType) {
+        int dimensions = parameter.getExtraDimensions();
+        Type type = parameter.getType();
+        if (type instanceof ArrayType arrayType) {
+            dimensions += arrayType.getDimensions();
+            type = arrayType.getElementType();
+        }
+        if (dimensions != 1 || !type.isPrimitiveType()) {
+            return false;
+        }
+        PrimitiveType.Code code = ((PrimitiveType) type).getPrimitiveTypeCode();
+        return expectedElementType.equals(code);
+    }
+
+    private static void addBytePatternSeed(
+            List<Map<String, Object>> seeds,
+            Map<String, Object> baseSeed,
+            String parameterName,
+            int length,
+            byte value) {
+        Map<String, Object> seed = new LinkedHashMap<>(baseSeed);
+        byte[] bytes = new byte[length];
+        Arrays.fill(bytes, value);
+        seed.put(parameterName, bytes);
+        seeds.add(seed);
+    }
+
+    private static void addAlternatingBytePatternSeed(
+            List<Map<String, Object>> seeds,
+            Map<String, Object> baseSeed,
+            String parameterName,
+            int length) {
+        Map<String, Object> seed = new LinkedHashMap<>(baseSeed);
+        byte[] bytes = new byte[length];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) ((i & 1) == 0 ? 0x55 : 0xaa);
+        }
+        seed.put(parameterName, bytes);
+        seeds.add(seed);
     }
 
     private static boolean isIntScalar(SingleVariableDeclaration parameter) {
@@ -467,10 +532,7 @@ public final class RandomTestInput {
                 if (index != null && index >= 0 && index < Integer.MAX_VALUE) {
                     includeRequiredLength(minimum, (long) index + 1);
                 }
-                String indexVariable = indexVariableName(node.getIndex());
-                if (indexVariable != null) {
-                    indexVariables.add(indexVariable);
-                }
+                indexVariables.addAll(indexVariableNames(node.getIndex()));
                 return true;
             }
         });
@@ -522,6 +584,18 @@ public final class RandomTestInput {
             current = postfix.getOperand();
         }
         return current instanceof SimpleName name ? name.getIdentifier() : null;
+    }
+
+    private static Set<String> indexVariableNames(Expression expression) {
+        Set<String> names = new HashSet<>();
+        expression.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(SimpleName node) {
+                names.add(node.getIdentifier());
+                return false;
+            }
+        });
+        return names;
     }
 
     private static String arrayBaseName(Expression expression) {

@@ -1,5 +1,8 @@
 package core.SymbolicExecution.dispatch;
 
+import core.SymbolicExecution.model.MemoryModel;
+import core.SymbolicExecution.model.SymBinaryOp;
+import core.SymbolicExecution.model.SymLiteral;
 import core.SymbolicExecution.model.SymbolicState;
 import core.SymbolicExecution.model.SymbolicValue;
 import core.SymbolicExecution.model.SymUnaryOp;
@@ -12,13 +15,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.InOrder;
 
 public class PrefixExpressionHandlerTest {
 
@@ -34,8 +30,14 @@ public class PrefixExpressionHandlerTest {
 
     @Test
     public void supports_returnFalse_forNotPrefix() {
-        ASTNode mockNode = mock(InfixExpression.class);
-        assertFalse(handler.supports(mockNode));
+        ASTNode statement = utils.Parser.parseStatementToAST("int y = x + 1;");
+        org.eclipse.jdt.core.dom.VariableDeclarationStatement varDecl =
+                (org.eclipse.jdt.core.dom.VariableDeclarationStatement) statement;
+        org.eclipse.jdt.core.dom.VariableDeclarationFragment fragment =
+                (org.eclipse.jdt.core.dom.VariableDeclarationFragment) varDecl.fragments().get(0);
+        Expression initializer = fragment.getInitializer();
+        assertTrue(initializer instanceof InfixExpression);
+        assertFalse(handler.supports(initializer));
     }
 
     // ─── eval() — Operand delegation ─────────────────────────────────────────
@@ -43,15 +45,13 @@ public class PrefixExpressionHandlerTest {
     @Test
     public void eval_delegatesOperandDispatcher() {
         PrefixExpression node = parsePrefixExpression("int y = -x;");
-        AstDispatcher dispatcher = mock(AstDispatcher.class);
+        RecordingDispatcher dispatcher = new RecordingDispatcher(new SymVariable("x"));
         SymbolicState state = SymbolicState.builder().build();
-        SymbolicValue mockOperand = new SymVariable("x");
-
-        when(dispatcher.eval(eq(node.getOperand()), eq(state))).thenReturn(mockOperand);
 
         handler.eval(node, state, dispatcher);
 
-        verify(dispatcher).eval(eq(node.getOperand()), eq(state));
+        assertEquals(node.getOperand(), dispatcher.lastNode);
+        assertEquals(state, dispatcher.lastState);
     }
 
     // ─── eval() — Operator propagation ───────────────────────────────────────
@@ -78,12 +78,12 @@ public class PrefixExpressionHandlerTest {
 
     @Test
     public void eval_preIncrement_returnsIncOp() {
-        assertEvalOperator("int y = ++x;", SymUnaryOp.Op.INC);
+        assertMutatingPrefix("int y = ++x;", SymBinaryOp.Op.ADD);
     }
 
     @Test
     public void eval_preDecrement_returnsDecOp() {
-        assertEvalOperator("int y = --x;", SymUnaryOp.Op.DEC);
+        assertMutatingPrefix("int y = --x;", SymBinaryOp.Op.SUB);
     }
 
     // ─── mapOp() — Exhaustive coverage ───────────────────────────────────────
@@ -118,19 +118,6 @@ public class PrefixExpressionHandlerTest {
         assertEquals(SymUnaryOp.Op.COMPLIMENT, PrefixExpressionHandler.mapOp(PrefixExpression.Operator.COMPLEMENT));
     }
 
-    @Test
-    public void mapOp_throwsIllegalArgumentException_forUnknownOperator() {
-        PrefixExpression.Operator mockOp = mock(PrefixExpression.Operator.class);
-        when(mockOp.toString()).thenReturn("MOCKED_UNSUPPORTED");
-
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> PrefixExpressionHandler.mapOp(mockOp)
-        );
-        assertTrue("Expected message to contain 'Unknown operator'",
-                ex.getMessage().contains("Unknown operator"));
-    }
-
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
     private PrefixExpression parsePrefixExpression(String statement) {
@@ -147,15 +134,48 @@ public class PrefixExpressionHandlerTest {
 
     private void assertEvalOperator(String statement, SymUnaryOp.Op expectedOp) {
         PrefixExpression node = parsePrefixExpression(statement);
-        AstDispatcher dispatcher = mock(AstDispatcher.class);
+        AstDispatcher dispatcher = new RecordingDispatcher(new SymVariable("x"));
         SymbolicState state = SymbolicState.builder().build();
-        SymbolicValue mockOperand = new SymVariable("x");
-
-        when(dispatcher.eval(any(), eq(state))).thenReturn(mockOperand);
 
         SymbolicValue result = handler.eval(node, state, dispatcher);
 
         assertTrue("Expected SymUnaryOp for: " + statement, result instanceof SymUnaryOp);
         assertEquals("Wrong operator for: " + statement, expectedOp, ((SymUnaryOp) result).op());
+    }
+
+    private void assertMutatingPrefix(String statement, SymBinaryOp.Op expectedOp) {
+        PrefixExpression node = parsePrefixExpression(statement);
+        AstDispatcher dispatcher = new RecordingDispatcher(new SymVariable("x"));
+        SymbolicState state = SymbolicState.builder()
+                .memoryModel(new MemoryModel())
+                .build();
+        SymVariable old = new SymVariable("x");
+        state.getMemoryModel().write("x", old);
+
+        SymbolicValue result = handler.eval(node, state, dispatcher);
+
+        assertTrue("Expected SymBinaryOp for: " + statement, result instanceof SymBinaryOp);
+        SymBinaryOp updated = (SymBinaryOp) result;
+        assertEquals(expectedOp, updated.op());
+        assertEquals(old, updated.left());
+        assertEquals(SymLiteral.of(1), updated.right());
+        assertEquals(result, state.getMemoryModel().read("x").orElseThrow());
+    }
+
+    private static final class RecordingDispatcher extends AstDispatcher {
+        private final SymbolicValue value;
+        private ASTNode lastNode;
+        private SymbolicState lastState;
+
+        private RecordingDispatcher(SymbolicValue value) {
+            this.value = value;
+        }
+
+        @Override
+        public SymbolicValue eval(ASTNode node, SymbolicState state) {
+            this.lastNode = node;
+            this.lastState = state;
+            return value;
+        }
     }
 }

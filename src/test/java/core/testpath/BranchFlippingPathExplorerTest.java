@@ -92,6 +92,26 @@ public class BranchFlippingPathExplorerTest {
         assertEquals(exit, path.get(path.size() - 1).getTo());
     }
 
+    @Test
+    public void shortestPrefixThroughStopsAfterRequestedBranchOutcome() {
+        ControlFlowGraph cfg = new ControlFlowGraph();
+        int entry = cfg.addNode(CfgNodeKind.ENTRY, null, "entry");
+        int branch = cfg.addNode(CfgNodeKind.BRANCH, null, "a > 0");
+        int falseNode = cfg.addNode(CfgNodeKind.STMT, null, "false");
+        int exit = cfg.addNode(CfgNodeKind.EXIT, null, "exit");
+        cfg.addEdge(entry, branch, CfgEdgeKind.NORMAL);
+        cfg.addEdge(branch, falseNode, CfgEdgeKind.FALSE);
+        cfg.addEdge(falseNode, exit, CfgEdgeKind.NORMAL);
+
+        List<ControlFlowGraph.Edge> path =
+                new BranchFlippingPathExplorer().shortestPrefixThrough(
+                        cfg, branch, CfgEdgeKind.FALSE);
+
+        assertEquals(2, path.size());
+        assertTrue(containsEdge(path, branch, CfgEdgeKind.FALSE));
+        assertEquals(falseNode, path.get(path.size() - 1).getTo());
+    }
+
     private static boolean containsEdge(
             List<ControlFlowGraph.Edge> path,
             int from,

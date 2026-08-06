@@ -50,6 +50,39 @@ public class RandomTestInputTest {
     }
 
     @Test
+    public void createRandomTestData_sizesArrayForCompoundBoundedIndexVariable() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "byte[] slide(byte[] a) {"
+                        + " byte[] r = new byte[256];"
+                        + " for (int i = 0; i < 256; i++) r[i] = (byte) (1 & ((a[i >> 3] & 0xff) >> (i & 7)));"
+                        + " return r;"
+                        + "}"
+        ).get(0);
+
+        Map<String, Object> input = RandomTestInput.createRandomTestData(method);
+
+        assertTrue(input.get("a") instanceof byte[]);
+        assertTrue(((byte[]) input.get("a")).length >= 32);
+    }
+
+    @Test
+    public void createConcolicSeedData_includesByteArrayBitPatterns() {
+        MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
+                "byte[] slide(byte[] a) {"
+                        + " byte[] r = new byte[256];"
+                        + " for (int i = 0; i < 256; i++) r[i] = (byte) (1 & ((a[i >> 3] & 0xff) >> (i & 7)));"
+                        + " return r;"
+                        + "}"
+        ).get(0);
+
+        List<Map<String, Object>> seeds = RandomTestInput.createConcolicSeedData(method);
+
+        assertTrue(seeds.stream().anyMatch(seed -> allBytesEqual(seed.get("a"), (byte) 0x00)));
+        assertTrue(seeds.stream().anyMatch(seed -> allBytesEqual(seed.get("a"), (byte) 0x01)));
+        assertTrue(seeds.stream().anyMatch(seed -> allBytesEqual(seed.get("a"), (byte) 0xff)));
+    }
+
+    @Test
     public void createConcolicSeedData_includesBoundedArrayTraversalCases() {
         MethodDeclaration method = (MethodDeclaration) Parser.parseSourceToAstFuncList(
                 "void fill(int[] table, int start, int limit) {"
@@ -115,4 +148,17 @@ public class RandomTestInputTest {
                 Long.valueOf(Long.MIN_VALUE).equals(seed.get("a"))
                         && Long.valueOf(-1L).equals(seed.get("b"))));
     }
+
+    private static boolean allBytesEqual(Object value, byte expected) {
+        if (!(value instanceof byte[] bytes) || bytes.length == 0) {
+            return false;
+        }
+        for (byte b : bytes) {
+            if (b != expected) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

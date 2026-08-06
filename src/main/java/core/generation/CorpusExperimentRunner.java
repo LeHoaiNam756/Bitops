@@ -5,6 +5,7 @@ import core.SymbolicExecution.z3encoder.Z3StatisticsRecorder;
 import core.cfg.Coverage;
 import core.testdriver.TestResult;
 import core.testpath.AllPathsFinder;
+import core.utils.ConcolicLimits;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -36,6 +37,7 @@ public final class CorpusExperimentRunner {
     private CorpusExperimentRunner() {}
 
     public static void main(String[] args) throws Exception {
+        configureLeanExperimentDefaults();
         Path zip = Path.of(requiredProperty("zipPath"));
         Path output = Path.of(System.getProperty("outputCsv", "bitops-concolic-results.csv"));
         Path runOutput = Path.of(System.getProperty("runOutputCsv", "bitops-concolic-runs.csv"));
@@ -107,17 +109,13 @@ public final class CorpusExperimentRunner {
                     method, cu, coverage,
                     RandomTestInput.createConcolicSeedData(method),
                     new AllPathsFinder(), Z3EncodingMode.BITVECTOR);
-            long variables = 0;
-            long expressions = 0;
-            long z3Samples = 0;
-            for (Map<String, Object> stats : Z3StatisticsRecorder.snapshot()) {
-                variables += number(stats.get("variableCount"));
-                expressions += number(stats.get("expressionCount"));
-                z3Samples++;
-            }
+            Z3StatisticsRecorder.Summary z3Summary = Z3StatisticsRecorder.summary();
             double percent = result.fullCoverage().rawCoveragePercent();
             return new RunMetrics(percent, result.executionTimeMillis(),
-                    result.memoryUsageBytes() / (1024.0 * 1024.0), variables, expressions, z3Samples,
+                    result.memoryUsageBytes() / (1024.0 * 1024.0),
+                    z3Summary.variableCount(),
+                    z3Summary.expressionCount(),
+                    z3Summary.sampleCount(),
                     ConcolicRunDiagnostics.driverFailures());
         });
         executor.shutdown();
@@ -133,10 +131,6 @@ public final class CorpusExperimentRunner {
             Throwable cause = e.getCause() == null ? e : e.getCause();
             return new RunOutcome(null, cause.getClass().getSimpleName() + ":" + cause.getMessage());
         }
-    }
-
-    private static long number(Object value) {
-        return value instanceof Number n ? n.longValue() : 0L;
     }
 
     private static void writeRow(BufferedWriter writer, Coverage coverage, String methodName,
@@ -215,5 +209,18 @@ public final class CorpusExperimentRunner {
         String value = System.getProperty(name);
         if (value == null || value.isBlank()) throw new IllegalArgumentException("Missing -D" + name);
         return value;
+    }
+
+    private static void configureLeanExperimentDefaults() {
+        setDefault(ConcolicLimits.RETAIN_TEST_DATA_PROPERTY, "false");
+        setDefault(ConcolicLimits.WRITE_CONCOLIC_JSON_PROPERTY, "false");
+        setDefault(ConcolicLimits.RETAIN_Z3_STATISTICS_PROPERTY, "false");
+        setDefault(ConcolicLimits.CACHE_SOLVER_RESULTS_PROPERTY, "false");
+    }
+
+    private static void setDefault(String property, String value) {
+        if (System.getProperty(property) == null) {
+            System.setProperty(property, value);
+        }
     }
 }
